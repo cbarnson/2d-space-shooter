@@ -1,0 +1,19 @@
+[test 5c0a747] committing
+ 17 files changed, 1003 insertions(+), 1 deletions(-)
+ create mode 100644 2_time24.cc
+ create mode 100644 Display.cc
+ create mode 100644 Display.h
+ create mode 100644 Drawable.h
+ create mode 100644 Line.h
+ create mode 100644 Makefile
+ create mode 100644 Point.h
+ create mode 100644 Simulator.cc
+ create mode 100644 Simulator.h
+ create mode 100644 Triangle.h
+ create mode 100644 Trunk.h
+ create mode 100644 Updateable.h
+ create mode 100644 Vector.h
+ delete mode 100644 contributors.txt
+ create mode 100644 main-line.cc
+ create mode 100644 main-triangle.cc
+ create mode 100644 mySimulator.h
