@@ -23,6 +23,11 @@ int main() {
    
    Display disp;
    gameSimulator game(disp, 30);
+
+   // sets up the player
+   std::shared_ptr<Player> p = std::make_shared<Player> ();
+   game.addPlayer(p); game.addDrawable(p); game.addUpdateable(p);
+   
    //shared_ptr<Message> m = make_shared<Message> ("Hello World", 24);
    //game.addDrawable(m);
    

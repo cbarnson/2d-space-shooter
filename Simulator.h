@@ -54,7 +54,7 @@ public:
 	virtual void updateModel(double dt) = 0;
 
 
-	virtual void updatePlayer(std::vector<bool>) = 0;
+	virtual void updatePlayerControls(std::vector<bool>) = 0;
 
 
 	

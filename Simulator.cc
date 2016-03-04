@@ -34,7 +34,7 @@ void Simulator::run() {
    // current time and previous time in seconds; needed so we can try
    // to keep track of the passing of real time.
    double crtTime, prevTime = 0;
-   enum KEYS{up, down, left, right};
+   enum KEYS{up, down, left, right, space};
    //bool keys[4]={false, false, false, false};
    std::vector<bool> keys(5, false);
    
@@ -59,6 +59,9 @@ void Simulator::run() {
 	    case ALLEGRO_KEY_LEFT:
 	       keys[left]=true;
 	       break;
+	    case ALLEGRO_KEY_SPACE:
+	       keys[space]=true;
+	       break;
 	 }
       
       //key press has finished
@@ -77,6 +80,9 @@ void Simulator::run() {
 	    case ALLEGRO_KEY_LEFT:
 	       keys[left]=false;
 	       break;
+	    case ALLEGRO_KEY_SPACE:
+	       keys[space]=false;
+	       break;
 	 }
 //************************************************************/
       
@@ -84,7 +90,7 @@ void Simulator::run() {
       
       if(ev.type == ALLEGRO_EVENT_TIMER) {
 	 crtTime = al_current_time();
-	 updatePlayer(keys);
+	 updatePlayerControls(keys);
 	 updateModel(crtTime - prevTime); // put key input here
 	 prevTime = crtTime;
 	 // instead of simply calling drawModel() here, we set this flag so that

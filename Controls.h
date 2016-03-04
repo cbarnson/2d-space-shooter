@@ -6,8 +6,11 @@
 
 class Controls : public Updateable {
   public:
-   void updatePlayer(std::vector<bool>);
+   void updatePlayer(std::vector<bool> action) {
 
+   }
+   
+   
 };
 
 

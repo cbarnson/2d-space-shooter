@@ -14,16 +14,20 @@
 #include "Simulator.h"
 #include "Drawable.h"
 #include "Updateable.h"
+#include "Controls.h"
 #include <allegro5/allegro_primitives.h>
 #include <list>
+#include <vector>
 #include <memory>
 
 class gameSimulator : public Simulator {
   private:
    std::list<std::shared_ptr<Drawable>> toDraw;
    std::list<std::shared_ptr<Updateable>> toUpdate;
-   //std::shared_ptr<
+   std::shared_ptr<Controls> playerControls;
+
    int displayWidth, displayHeight;
+
    
   public:
    
@@ -36,16 +40,16 @@ class gameSimulator : public Simulator {
    void addDrawable(std::shared_ptr<Drawable> p) {
       toDraw.push_back(p);
    }
-
    void addUpdateable(std::shared_ptr<Updateable> p) {
       toUpdate.push_back(p);
    }
+   void addPlayer(std::shared_ptr<Controls> p) {
+      playerControls.push_back(p);      
+   }
 
-   void updatePlayer(bool[] keys) {
-      // playerDirection(d);
-      for (int i = 0; i < 4; i++) {
-	 
-      }
+   // called every time 
+   void updatePlayerControls(std::vector<bool>& action) {
+      playerControls->updatePlayer(action);
    }
 
    
