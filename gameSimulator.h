@@ -44,13 +44,14 @@ class gameSimulator : public Simulator {
       playerControls.push_back(p);
    }
 
-   // called every time 
-   void updatePlayerControls(std::vector<bool>& v, double dt) {      
+   // updates the vector for the player's speed/direction
+   void updatePlayerControls(std::vector<bool>& v) {      
       for (std::list< std::shared_ptr<Controls> >::iterator it = playerControls.begin();
 	   it != playerControls.end(); ++it) 
-	 (*it)->updatePlayer(v, dt);	             
+	 (*it)->updatePlayer(v);	             
    }
-   
+
+   // updates the position for the player's ship
    void updateModel(double dt) {
       for (std::list<std::shared_ptr<Updateable>>::iterator it = toUpdate.begin();
 	   it != toUpdate.end(); ++it) {	 
@@ -58,6 +59,7 @@ class gameSimulator : public Simulator {
       }
    }
 
+   // actually draws the model after each update
    void drawModel() {
       al_clear_to_color(al_map_rgb(0,0,0));      
       for (std::list<std::shared_ptr<Drawable>>::iterator it = toDraw.begin();

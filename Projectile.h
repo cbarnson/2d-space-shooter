@@ -16,7 +16,7 @@ class Projectile : public Drawable, public Updateable {
   Projectile(Point p, Vector s) : start(p.x, p.y), speed(s.x, s.y) { }
    
    void draw() {
-
+      
    }
 
    void update(double dt) {

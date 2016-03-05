@@ -35,6 +35,36 @@ Simulator::~Simulator() {
       al_destroy_event_queue(eventQueue);
 }
 
+void Simulator::setPlayer(std::vector<bool>& p, int code) {
+      switch (code) {
+	 case ALLEGRO_KEY_UP:
+	    p[0] = true; break;
+	 case ALLEGRO_KEY_DOWN:
+	    p[1] = true; break;
+	 case ALLEGRO_KEY_RIGHT:
+	    p[2] = true; break;
+	 case ALLEGRO_KEY_LEFT:
+	    p[3] = true; break;
+	 case ALLEGRO_KEY_PAD_0:
+	    p[4] = true; break;	    
+      }
+}
+
+void Simulator::resetPlayer(std::vector<bool>& p, int code) {
+      switch (code) {
+	 case ALLEGRO_KEY_UP:
+	    p[0] = false; break;
+	 case ALLEGRO_KEY_DOWN:
+	    p[1] = false; break;
+	 case ALLEGRO_KEY_RIGHT:
+	    p[2] = false; break;
+	 case ALLEGRO_KEY_LEFT:
+	    p[3] = false; break;
+	 case ALLEGRO_KEY_PAD_0:
+	    p[4] = false; break;	    
+      }
+}
+
 
 void Simulator::run() {
    // switch to trigger model drawing
@@ -43,7 +73,8 @@ void Simulator::run() {
    // current time and previous time in seconds; needed so we can try
    // to keep track of the passing of real time.
    double crtTime, prevTime = 0;
-   std::vector<bool> keys {false, false, false, false, false};
+   std::vector<bool> keysPlayer1 {false, false, false, false, false};
+   std::vector<bool> keysPlayer2 {false, false, false, false, false};
 
    // this initializes the keyboard for input from the player
    al_install_keyboard();   
@@ -56,39 +87,22 @@ void Simulator::run() {
    while(1) {
       ALLEGRO_EVENT ev;
       al_wait_for_event(eventQueue, &ev);
-
-      //key press has started
+      
+      // PLAYER 1 - KEY PRESSED
       if(ev.type== ALLEGRO_EVENT_KEY_DOWN) {
-	 if (ev.keyboard.keycode == ALLEGRO_KEY_UP)
-	    keys[0] = true;
-	 else if (ev.keyboard.keycode == ALLEGRO_KEY_DOWN)
-	    keys[1] = true;
-	 else if (ev.keyboard.keycode == ALLEGRO_KEY_RIGHT)
-	    keys[2] = true;
-	 else if (ev.keyboard.keycode == ALLEGRO_KEY_LEFT)
-	    keys[3] = true;
-	 else if (ev.keyboard.keycode == ALLEGRO_KEY_SPACE)
-	    keys[4] = true;
+	 int pressed = ev.keyboard.keycode;
+	 setPlayer(keysPlayer1, pressed);
+      }
+      // PLAYER 1 - KEY RELEASED      
+      else if(ev.type==ALLEGRO_EVENT_KEY_UP) {
+	 int released = ev.keyboard.keycode;
+	 resetPlayer(keysPlayer1, released);
       }
       
-      //key press has finished
-      else if(ev.type==ALLEGRO_EVENT_KEY_UP) {
-	 if (ev.keyboard.keycode == ALLEGRO_KEY_UP)
-	    keys[0] = false;
-	 else if (ev.keyboard.keycode == ALLEGRO_KEY_DOWN)
-	    keys[1] = false;
-	 else if (ev.keyboard.keycode == ALLEGRO_KEY_RIGHT)
-	    keys[2] = false;
-	 else if (ev.keyboard.keycode == ALLEGRO_KEY_LEFT)
-	    keys[3] = false;
-	 else if (ev.keyboard.keycode == ALLEGRO_KEY_SPACE)
-	    keys[4] = false;
-      }
-
       // check the event type and call the update functions
       if(ev.type == ALLEGRO_EVENT_TIMER) {	 
 	 crtTime = al_current_time();	 
-	 updatePlayerControls(keys, crtTime - prevTime);
+	 updatePlayerControls(keysPlayer1);
 	 updateModel(crtTime - prevTime);	 
 	 prevTime = crtTime;
 	 

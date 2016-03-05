@@ -18,6 +18,8 @@ private:
 	ALLEGRO_EVENT_QUEUE *eventQueue;  /// event storage 
 	ALLEGRO_TIMER *timer;  /// generates events for the simulation
 
+	// helper function
+	//void getPlayer1Input(std::vector<bool>&, ALLEGRO_EVENT&);
 
 public:
 	/// The constructor initializes the Allegro library
@@ -56,7 +58,7 @@ public:
 	virtual void updateModel(double dt) = 0;
 
 
-	virtual void updatePlayerControls(std::vector<bool>&, double dt) = 0;
+	virtual void updatePlayerControls(std::vector<bool>&) = 0;
 
 
 	
@@ -66,6 +68,9 @@ public:
 		 cntains the drawing code.
 	 **/
 	virtual void drawModel() = 0;
+
+	void setPlayer(std::vector<bool>&, int);
+	void resetPlayer(std::vector<bool>&, int);
 };
 
 #endif

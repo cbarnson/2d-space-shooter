@@ -6,7 +6,7 @@
 
 class Controls {
   public:
-   virtual void updatePlayer(std::vector<bool>&, double) = 0;
+   virtual void updatePlayer(std::vector<bool>&) = 0;
 };
 
 #endif
