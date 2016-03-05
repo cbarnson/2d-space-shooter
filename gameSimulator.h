@@ -22,20 +22,17 @@
 
 class gameSimulator : public Simulator {
   private:
-   std::list<std::shared_ptr<Drawable>> toDraw;
-   std::list<std::shared_ptr<Updateable>> toUpdate;
-   std::shared_ptr<Controls> playerControls;
-
+   std::list< std::shared_ptr<Drawable> > toDraw;
+   std::list< std::shared_ptr<Updateable> > toUpdate;
+   std::list< std::shared_ptr<Controls> > playerControls; // not really any reason to have as
+                                                          // list.. will change later
    int displayWidth, displayHeight;
-
    
   public:
-   
   gameSimulator(const Display& d, int fps) : Simulator(d, fps) {
       displayWidth = d.getW();
       displayHeight = d.getH();
    }
-
    
    void addDrawable(std::shared_ptr<Drawable> p) {
       toDraw.push_back(p);
@@ -44,19 +41,21 @@ class gameSimulator : public Simulator {
       toUpdate.push_back(p);
    }
    void addPlayer(std::shared_ptr<Controls> p) {
-      playerControls.push_back(p);      
+      playerControls.push_back(p);
    }
 
    // called every time 
-   void updatePlayerControls(std::vector<bool>& action) {
-      playerControls->updatePlayer(action);
+   void updatePlayerControls(std::vector<bool>& v, double dt) {      
+      for (std::list< std::shared_ptr<Controls> >::iterator it = playerControls.begin();
+	   it != playerControls.end(); ++it) 
+	 (*it)->updatePlayer(v, dt);	             
    }
-
    
    void updateModel(double dt) {
       for (std::list<std::shared_ptr<Updateable>>::iterator it = toUpdate.begin();
-	   it != toUpdate.end(); ++it)
+	   it != toUpdate.end(); ++it) {	 
 	 (*it)->update(dt);
+      }
    }
 
    void drawModel() {

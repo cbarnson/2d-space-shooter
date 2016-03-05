@@ -50,11 +50,13 @@ public:
 		 model update. The model needs to be changed to a state that
 		 reflects the passing of dt seconds after the current state. It is
 		 possible that dt is zero or negative.
-	 **/
+	**/
+       
+	
 	virtual void updateModel(double dt) = 0;
 
 
-	virtual void updatePlayerControls(std::vector<bool>) = 0;
+	virtual void updatePlayerControls(std::vector<bool>&, double dt) = 0;
 
 
 	

@@ -1,9 +1,18 @@
+/**
+ * @file Display.h
+ * @brief
+ *
+ * @author
+ * @bug
+ */
+
 #include <allegro5/allegro_primitives.h>
 #include <iostream>
 #include <cstdlib>
 
 #include "Display.h"
 
+// constructor
 Display::Display(int w, int h) {
 	width = w;
 	height = h;
@@ -21,6 +30,7 @@ Display::Display(int w, int h) {
 	al_init_primitives_addon();
 }
 
+// destructor
 Display::~Display() {
 	al_destroy_display(display);
 }

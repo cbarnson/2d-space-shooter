@@ -1,17 +1,12 @@
 #ifndef CONTROLS_H
 #define CONTROLS_H
 
-#include "Updateable.h"
+//#include "Updateable.h"
 #include <vector>
 
-class Controls : public Updateable {
+class Controls {
   public:
-   void updatePlayer(std::vector<bool> action) {
-
-   }
-   
-   
+   virtual void updatePlayer(std::vector<bool>&, double) = 0;
 };
-
 
 #endif

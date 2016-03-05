@@ -1,9 +1,15 @@
+/**
+ * @file Display.h
+ * @brief
+ *
+ * @author
+ * @bug
+ */
+
 #ifndef __DISPLAY_H
 #define __DISPLAY_H
 
 #include <allegro5/allegro.h>
-
-
 
 /// Class to initialize allegro and open the main window.
 /**

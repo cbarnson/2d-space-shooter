@@ -1,10 +1,18 @@
+/**
+ * @file Simulator.cc
+ * @brief
+ *
+ * @author
+ * @bug
+ */
+
 #include "Simulator.h"
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 #include <stdexcept>
 #include <vector>
 
-
+// constructor
 Simulator::Simulator(const Display & d, int fps) :
    framesPerSec(fps), timer(NULL), eventQueue(NULL) {
    
@@ -19,7 +27,7 @@ Simulator::Simulator(const Display & d, int fps) :
    al_start_timer(timer);
 }
 
-
+// destructor
 Simulator::~Simulator() {
    if (timer != NULL)
       al_destroy_timer(timer);
@@ -31,73 +39,63 @@ Simulator::~Simulator() {
 void Simulator::run() {
    // switch to trigger model drawing
    bool redraw=true;
+   
    // current time and previous time in seconds; needed so we can try
    // to keep track of the passing of real time.
    double crtTime, prevTime = 0;
-   enum KEYS{up, down, left, right, space};
-   //bool keys[4]={false, false, false, false};
-   std::vector<bool> keys(5, false);
-   
+   std::vector<bool> keys {false, false, false, false, false};
+
+   // this initializes the keyboard for input from the player
+   al_install_keyboard();   
+   al_register_event_source(eventQueue, al_get_keyboard_event_source());
+
+   // main while loop
+   // gets a key press event, sets the appropriate indices of our bool vector to true
+   // then calls updatePlayerControls and updateModel to manipulate the objects
+   // with respect to some time fragment
    while(1) {
       ALLEGRO_EVENT ev;
       al_wait_for_event(eventQueue, &ev);
 
-//******************************************************/
       //key press has started
-      if(ev.type== ALLEGRO_EVENT_KEY_DOWN)
-	 switch(ev.keyboard.keycode)
-	 {
-	    case ALLEGRO_KEY_UP:
-	       keys[up]=true;
-	       break;
-	    case ALLEGRO_KEY_DOWN:
-	       keys[down]=true;
-	       break;
-	    case ALLEGRO_KEY_RIGHT:
-	       keys[right]=true;
-	       break;
-	    case ALLEGRO_KEY_LEFT:
-	       keys[left]=true;
-	       break;
-	    case ALLEGRO_KEY_SPACE:
-	       keys[space]=true;
-	       break;
-	 }
+      if(ev.type== ALLEGRO_EVENT_KEY_DOWN) {
+	 if (ev.keyboard.keycode == ALLEGRO_KEY_UP)
+	    keys[0] = true;
+	 else if (ev.keyboard.keycode == ALLEGRO_KEY_DOWN)
+	    keys[1] = true;
+	 else if (ev.keyboard.keycode == ALLEGRO_KEY_RIGHT)
+	    keys[2] = true;
+	 else if (ev.keyboard.keycode == ALLEGRO_KEY_LEFT)
+	    keys[3] = true;
+	 else if (ev.keyboard.keycode == ALLEGRO_KEY_SPACE)
+	    keys[4] = true;
+      }
       
       //key press has finished
-      else if(ev.type==ALLEGRO_EVENT_KEY_UP)
-	 switch(ev.keyboard.keycode)
-	 {
-	    case ALLEGRO_KEY_UP:
-	       keys[up]=false;
-	       break;
-	    case ALLEGRO_KEY_DOWN:
-	       keys[down]=false;
-	       break;
-	    case ALLEGRO_KEY_RIGHT:
-	       keys[right]=false;
-	       break;
-	    case ALLEGRO_KEY_LEFT:
-	       keys[left]=false;
-	       break;
-	    case ALLEGRO_KEY_SPACE:
-	       keys[space]=false;
-	       break;
-	 }
-//************************************************************/
-      
+      else if(ev.type==ALLEGRO_EVENT_KEY_UP) {
+	 if (ev.keyboard.keycode == ALLEGRO_KEY_UP)
+	    keys[0] = false;
+	 else if (ev.keyboard.keycode == ALLEGRO_KEY_DOWN)
+	    keys[1] = false;
+	 else if (ev.keyboard.keycode == ALLEGRO_KEY_RIGHT)
+	    keys[2] = false;
+	 else if (ev.keyboard.keycode == ALLEGRO_KEY_LEFT)
+	    keys[3] = false;
+	 else if (ev.keyboard.keycode == ALLEGRO_KEY_SPACE)
+	    keys[4] = false;
+      }
 
-      
-      if(ev.type == ALLEGRO_EVENT_TIMER) {
-	 crtTime = al_current_time();
-	 updatePlayerControls(keys);
-	 updateModel(crtTime - prevTime); // put key input here
+      // check the event type and call the update functions
+      if(ev.type == ALLEGRO_EVENT_TIMER) {	 
+	 crtTime = al_current_time();	 
+	 updatePlayerControls(keys, crtTime - prevTime);
+	 updateModel(crtTime - prevTime);	 
 	 prevTime = crtTime;
-	 // instead of simply calling drawModel() here, we set this flag so that
-	 // we redraw only if the event queue is empty; reason: draw is expensive and
-	 // we don't want to delay everything too much
+	 
+	 // set redraw flag to avoid redrawing an empty event_queue
 	 redraw = true;
       }
+      // if the display is closed, end the program
       else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
 	 break;
       }
@@ -108,3 +106,4 @@ void Simulator::run() {
       }
    }
 }
+
