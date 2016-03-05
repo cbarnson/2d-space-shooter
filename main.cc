@@ -25,10 +25,14 @@ int main() {
 
    // sets up the player, provide parameters: start point on the display, and size of player
    std::shared_ptr<Player> player1 = std::make_shared<Player> (Point(320, 240), 50);
-   game.addPlayer(player1); game.addDrawable(player1); game.addUpdateable(player1);
 
-   //std::shared_ptr<Player> player2 = std::make_shared<Player> (Point(320, 240), 50);
-   //game.addPlayer(player2); game.addDrawable(player2);
+   game.addPlayer(player1); game.addDrawable(player1); game.addUpdateable(player1);
+   std::shared_ptr<Enemy> en= std::make_shared<Enemy> (Point(400, 300), Point(0, 300), 10, 10);
+   game.addDrawable(en); game.addUpdateable(en);
+
+
+   // std::shared_ptr<Player> player2 = std::make_shared<Player> (Point(120, 140), 50);
+   //game.addPlayer(player2); game.addDrawable(player2); game.addUpdateable(player2);
 
    
    // start the game, close the display to end

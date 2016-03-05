@@ -15,6 +15,7 @@
 #include <allegro5/allegro_primitives.h>
 #include <list>
 #include <memory>
+#include <iostream>//for testing, remove later
 #include "Point.h"
 #include "Vector.h"
 #include "Drawable.h"
@@ -93,6 +94,8 @@ class Player : public Controls, public Drawable, public Updateable {
 									      Vector(modifierSpeed * 2, 0));
 	 curProjectiles.push_back(new_proj);
       }
+     
+      
 
       
    }
@@ -107,9 +110,28 @@ class Player : public Controls, public Drawable, public Updateable {
       current = current + speed * dt;
       speed = Vector(0, 0);
       
+      //code for handling enemy spawning
+      //int numEnemies=curEnemies.size();
+
+      if(curEnemies.size()<1)
+      {
+	 std::cout<<"enemies";
+	 std::shared_ptr<Enemy> en=std::make_shared<Enemy>(Point(400, 300),
+							   Point(0, 300), 10, 90);
+	 curEnemies.push_back(en);
+      }
+      if(!curEnemies.empty())
+      {
+	 for(std::list<std::shared_ptr<Enemy>>::iterator it=curEnemies.begin(); it!=curEnemies.end(); ++it)
+	 {
+	    (*it)->update(dt);
+	    (*it)->draw();
+	 }
+      }
       
-   }   
-   
+  
+   }
+ 
    
 };
 
