@@ -22,6 +22,13 @@ class Updateable {
     * @param t the change in time since the last position update
     */
    virtual void update(double t) = 0;
+
+
+   /**
+    * @fn virtual void inBound()
+    * @brief returns true if the object is within the display boundaries, false otherwise
+    */
+   virtual bool inBound() = 0;
 };
 
 #endif

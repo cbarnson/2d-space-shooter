@@ -45,27 +45,7 @@ void Simulator::run() {
    // current time and previous time in seconds; needed so we can try
    // to keep track of the passing of real time.
    double crtTime, prevTime = 0;
-   //std::vector< std::shared_ptr<Hotkeys> > keyMapping;
-   //std::vector< std::vector<int> > V;
-   /*
-   std::vector<int> v;
-   v.push_back(ALLEGRO_KEY_UP);
-   v.push_back(ALLEGRO_KEY_DOWN);
-   v.push_back(ALLEGRO_KEY_RIGHT);
-   v.push_back(ALLEGRO_KEY_LEFT);
-   v.push_back(ALLEGRO_KEY_PAD_0);
-   std::shared_ptr<Hotkeys> p1 = std::make_shared<Hotkeys> (v);
-   keyMapping.push_back(p1);
-   v.clear();
    
-   v.push_back(ALLEGRO_KEY_W);
-   v.push_back(ALLEGRO_KEY_S);
-   v.push_back(ALLEGRO_KEY_D);
-   v.push_back(ALLEGRO_KEY_A);
-   v.push_back(ALLEGRO_KEY_SPACE);
-   std::shared_ptr<Hotkeys> p2 = std::make_shared<Hotkeys> (v);
-   keyMapping.push_back(p2);
-   */
    // this initializes the keyboard for input from the player
    al_install_keyboard();   
    al_register_event_source(eventQueue, al_get_keyboard_event_source());
@@ -80,27 +60,16 @@ void Simulator::run() {
 
       if(ev.type == ALLEGRO_EVENT_KEY_DOWN) {
 	 setPlayer(ev.keyboard.keycode);
-	 //int key_down = ev.keyboard.keycode;
-	 //for(std::vector< std::shared_ptr<Hotkeys> >::iterator it = keyMapping.begin();
-	 //  it != keyMapping.end(); ++it)	 
-	 // (*it)->setPlayer(ev.keyboard.keycode);	    	 
       }
       else if (ev.type == ALLEGRO_EVENT_KEY_UP) {
 	 resetPlayer(ev.keyboard.keycode);
-	 //for(std::vector< std::shared_ptr<Hotkeys> >::iterator it = keyMapping.begin();
-	 //  it != keyMapping.end(); ++it)	 
-	 // (*it)->resetPlayer(ev.keyboard.keycode);	 
       }
             
       // check the event type and call the update functions
       if(ev.type == ALLEGRO_EVENT_TIMER) {	 
 	 crtTime = al_current_time();
-	 //for(std::list< std::shared_ptr<Hotkeys> >::iterator it = keyMapping.begin();
-	 // it != keyMapping.end(); ++it) {
 	 updatePlayerControls();
-	    //}	 
 	 updateModel(crtTime - prevTime);
-	 
 	 prevTime = crtTime;
 	 
 	 // set redraw flag to avoid redrawing an empty event_queue

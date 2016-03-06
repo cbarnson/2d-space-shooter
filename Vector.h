@@ -28,7 +28,14 @@ struct Vector {
     */
    Vector operator * (double scalar) {
       return Vector(x*scalar, y*scalar);
-   }   
+   }
+   void xMod(int m) {
+      x = x + m;
+   }
+   void yMod(int m) {
+      y = y + m;
+   }
+   
 };
 
 #endif

@@ -12,12 +12,9 @@
 #include <vector>
 
 
-// provide key mappings for a player
+// provide key mappings for a player - 5 keys
 class Hotkeys {
-   // 5 keys
-   
   public:
-   //std::vector<bool> keys {false, false, false, false, false};   
    std::vector<int> control;
    std::vector<bool> keys;
    
@@ -27,23 +24,6 @@ class Hotkeys {
 	 keys.push_back(false);
       }
    }
-   /*
-   // called when ALLEGRO_EVENT_KEY_UP
-   void setPlayer(int code) {
-      for (int i = 0; i < 5; i++) {
-	 if (code == control[i])
-	    keys[i] = true;
-      }
-   }
-
-   // called when ALLEGRO_EVENT_KEY_DOWN
-   void resetPlayer(int code) {
-      for (int i = 0; i < 5; i++) {
-	 if (code == control[i])
-	     keys[i] = false;
-      }
-      }
-   */
    
 };
 
