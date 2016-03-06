@@ -57,9 +57,9 @@ public:
 	
 	virtual void updateModel(double dt) = 0;
 
-
-	virtual void updatePlayerControls(std::vector<bool>&) = 0;
-
+	virtual void setPlayer(int) = 0;
+	virtual void resetPlayer(int) = 0;
+	virtual void updatePlayerControls() = 0;
 
 	
 	/// called whenever the model needs to be displayed.
@@ -69,8 +69,8 @@ public:
 	 **/
 	virtual void drawModel() = 0;
 
-	void setPlayer(std::vector<bool>&, int);
-	void resetPlayer(std::vector<bool>&, int);
+	//void setPlayer(std::vector<bool>&, int);
+	//void resetPlayer(std::vector<bool>&, int);
 };
 
 #endif

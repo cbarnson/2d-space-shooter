@@ -44,11 +44,23 @@ class gameSimulator : public Simulator {
       playerControls.push_back(p);
    }
 
-   // updates the vector for the player's speed/direction
-   void updatePlayerControls(std::vector<bool>& v) {      
+   void setPlayer(int code) {
       for (std::list< std::shared_ptr<Controls> >::iterator it = playerControls.begin();
 	   it != playerControls.end(); ++it) 
-	 (*it)->updatePlayer(v);	             
+	 (*it)->set(code);
+   }
+
+   void resetPlayer(int code) {
+      for (std::list< std::shared_ptr<Controls> >::iterator it = playerControls.begin();
+	   it != playerControls.end(); ++it) 
+	 (*it)->reset(code);
+   }
+   
+   // updates the vector for the player's speed/direction
+   void updatePlayerControls() {
+      for (std::list< std::shared_ptr<Controls> >::iterator it = playerControls.begin();
+	   it != playerControls.end(); ++it) 
+	 (*it)->updatePlayer();
    }
 
    // updates the position for the player's ship

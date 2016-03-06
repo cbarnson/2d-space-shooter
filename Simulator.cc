@@ -7,10 +7,13 @@
  */
 
 #include "Simulator.h"
+#include "Hotkeys.h"
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 #include <stdexcept>
 #include <vector>
+#include <memory>
+#include <list>
 
 // constructor
 Simulator::Simulator(const Display & d, int fps) :
@@ -35,37 +38,6 @@ Simulator::~Simulator() {
       al_destroy_event_queue(eventQueue);
 }
 
-void Simulator::setPlayer(std::vector<bool>& p, int code) {
-      switch (code) {
-	 case ALLEGRO_KEY_UP:
-	    p[0] = true; break;
-	 case ALLEGRO_KEY_DOWN:
-	    p[1] = true; break;
-	 case ALLEGRO_KEY_RIGHT:
-	    p[2] = true; break;
-	 case ALLEGRO_KEY_LEFT:
-	    p[3] = true; break;
-	 case ALLEGRO_KEY_PAD_0:
-	    p[4] = true; break;	    
-      }
-}
-
-void Simulator::resetPlayer(std::vector<bool>& p, int code) {
-      switch (code) {
-	 case ALLEGRO_KEY_UP:
-	    p[0] = false; break;
-	 case ALLEGRO_KEY_DOWN:
-	    p[1] = false; break;
-	 case ALLEGRO_KEY_RIGHT:
-	    p[2] = false; break;
-	 case ALLEGRO_KEY_LEFT:
-	    p[3] = false; break;
-	 case ALLEGRO_KEY_PAD_0:
-	    p[4] = false; break;	    
-      }
-}
-
-
 void Simulator::run() {
    // switch to trigger model drawing
    bool redraw=true;
@@ -73,9 +45,27 @@ void Simulator::run() {
    // current time and previous time in seconds; needed so we can try
    // to keep track of the passing of real time.
    double crtTime, prevTime = 0;
-   std::vector<bool> keysPlayer1 {false, false, false, false, false};
-   std::vector<bool> keysPlayer2 {false, false, false, false, false};
-
+   //std::vector< std::shared_ptr<Hotkeys> > keyMapping;
+   //std::vector< std::vector<int> > V;
+   /*
+   std::vector<int> v;
+   v.push_back(ALLEGRO_KEY_UP);
+   v.push_back(ALLEGRO_KEY_DOWN);
+   v.push_back(ALLEGRO_KEY_RIGHT);
+   v.push_back(ALLEGRO_KEY_LEFT);
+   v.push_back(ALLEGRO_KEY_PAD_0);
+   std::shared_ptr<Hotkeys> p1 = std::make_shared<Hotkeys> (v);
+   keyMapping.push_back(p1);
+   v.clear();
+   
+   v.push_back(ALLEGRO_KEY_W);
+   v.push_back(ALLEGRO_KEY_S);
+   v.push_back(ALLEGRO_KEY_D);
+   v.push_back(ALLEGRO_KEY_A);
+   v.push_back(ALLEGRO_KEY_SPACE);
+   std::shared_ptr<Hotkeys> p2 = std::make_shared<Hotkeys> (v);
+   keyMapping.push_back(p2);
+   */
    // this initializes the keyboard for input from the player
    al_install_keyboard();   
    al_register_event_source(eventQueue, al_get_keyboard_event_source());
@@ -87,23 +77,30 @@ void Simulator::run() {
    while(1) {
       ALLEGRO_EVENT ev;
       al_wait_for_event(eventQueue, &ev);
-      
-      // PLAYER 1 - KEY PRESSED
-      if(ev.type== ALLEGRO_EVENT_KEY_DOWN) {
-	 int pressed = ev.keyboard.keycode;
-	 setPlayer(keysPlayer1, pressed);
+
+      if(ev.type == ALLEGRO_EVENT_KEY_DOWN) {
+	 setPlayer(ev.keyboard.keycode);
+	 //int key_down = ev.keyboard.keycode;
+	 //for(std::vector< std::shared_ptr<Hotkeys> >::iterator it = keyMapping.begin();
+	 //  it != keyMapping.end(); ++it)	 
+	 // (*it)->setPlayer(ev.keyboard.keycode);	    	 
       }
-      // PLAYER 1 - KEY RELEASED      
-      else if(ev.type==ALLEGRO_EVENT_KEY_UP) {
-	 int released = ev.keyboard.keycode;
-	 resetPlayer(keysPlayer1, released);
+      else if (ev.type == ALLEGRO_EVENT_KEY_UP) {
+	 resetPlayer(ev.keyboard.keycode);
+	 //for(std::vector< std::shared_ptr<Hotkeys> >::iterator it = keyMapping.begin();
+	 //  it != keyMapping.end(); ++it)	 
+	 // (*it)->resetPlayer(ev.keyboard.keycode);	 
       }
-      
+            
       // check the event type and call the update functions
       if(ev.type == ALLEGRO_EVENT_TIMER) {	 
-	 crtTime = al_current_time();	 
-	 updatePlayerControls(keysPlayer1);
-	 updateModel(crtTime - prevTime);	 
+	 crtTime = al_current_time();
+	 //for(std::list< std::shared_ptr<Hotkeys> >::iterator it = keyMapping.begin();
+	 // it != keyMapping.end(); ++it) {
+	 updatePlayerControls();
+	    //}	 
+	 updateModel(crtTime - prevTime);
+	 
 	 prevTime = crtTime;
 	 
 	 // set redraw flag to avoid redrawing an empty event_queue
