@@ -15,29 +15,43 @@ class Enemy : public Drawable, public Updateable {
    int size;
    
   public:
-  Enemy(Point s, Point e, int spd, int size) : start(s.x, s.y), current(s.x, s.y),
-      end(e.x, e.y), speed( (e.x-s.x)/spd, (e.y-s.y)/2) { }
+  Enemy(Point s, Point e) : start(s.x, s.y), end(e.x, e.y){
+      current=Point(start.x, start.y);
+      speed.x=(end.x-start.x)/5.0;
+      speed.y=(end.y-start.y)/5.0;
+      size=20;
+
+   }
 
    // draw image to display of enemy ship
    void draw() {
-      std::cout<<"draw";
-      al_draw_triangle(current.x, current.y,
+      // std::cout<<"draw";
+      al_draw_filled_triangle(current.x, current.y,
 			      current.x, current.y + size,
-			      current.x - size*1.2, current.y + (size/2),
-		       al_map_rgb(255,255,255), 1);
+			      current.x - size, current.y + (size/2),
+			      al_map_rgb(255,255,255));
    }
 
    // update position of enemy ships
    void update(double dt) {
       //std::cout<<"updatehappened ";
-      std::cout<<current.x<<", "<<current.y<<std::endl;
-      current=current+speed*dt;
-      if (current.x<=0)
+      //std::cout<<current.x<<", "<<current.y<<std::endl;
+      Point newCurrent=current;
+      newCurrent=current+speed*dt;
+      if (newCurrent.x<=0)
       {
-	 current.x=800;
+	 newCurrent.x=800;
       }
-      
-
+      if(newCurrent.y<=0)
+      {
+	 this->speed.y=speed.y*-1.0;
+      }
+      if(newCurrent.y>=600-size)
+      {
+	 this->speed.y=speed.y*-1.0;
+      }
+     
+      current=newCurrent;
    }
 
 };

@@ -14,7 +14,7 @@
 
 // constructor
 Simulator::Simulator(const Display & d, int fps) :
-   framesPerSec(fps), timer(NULL), eventQueue(NULL) {
+   framesPerSec(fps), eventQueue(NULL), timer(NULL) {
    
    if ((timer = al_create_timer(1.0 / fps)) == NULL)
       throw std::runtime_error("Cannot create allegro timer");
@@ -101,7 +101,8 @@ void Simulator::run() {
       
       // check the event type and call the update functions
       if(ev.type == ALLEGRO_EVENT_TIMER) {	 
-	 crtTime = al_current_time();	 
+	 crtTime = al_current_time();
+	 // updateModel(crtTime-prevTime);
 	 updatePlayerControls(keysPlayer1);
 	 updateModel(crtTime - prevTime);	 
 	 prevTime = crtTime;

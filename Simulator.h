@@ -13,10 +13,11 @@ the animation.
  **/
 class Simulator {
 private:
-	int framesPerSec; /// the rendering frequency
-
-	ALLEGRO_EVENT_QUEUE *eventQueue;  /// event storage 
-	ALLEGRO_TIMER *timer;  /// generates events for the simulation
+   int framesPerSec; /// the rendering frequency
+   
+   // ALLEGRO_TIMER *timer;
+   ALLEGRO_EVENT_QUEUE *eventQueue;  /// event storage 
+   ALLEGRO_TIMER *timer;  /// generates events for the simulation
 
 	// helper function
 	//void getPlayer1Input(std::vector<bool>&, ALLEGRO_EVENT&);

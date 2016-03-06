@@ -19,6 +19,8 @@
 #include <list>
 #include <vector>
 #include <memory>
+#include <iostream> // added for testing, remove later
+#include <typeinfo> //addded for testing, remove later
 
 class gameSimulator : public Simulator {
   private:
@@ -61,10 +63,11 @@ class gameSimulator : public Simulator {
 
    // actually draws the model after each update
    void drawModel() {
-       al_clear_to_color(al_map_rgb(0,0,0));      
+      al_clear_to_color(al_map_rgb(0,0,0));      
       for (std::list<std::shared_ptr<Drawable>>::iterator it = toDraw.begin();
-	   it != toDraw.end(); ++it)
+	   it != toDraw.end(); ++it){
 	 (*it)->draw();
+      }
       al_flip_display();	    
    }
 };
