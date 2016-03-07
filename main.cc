@@ -38,21 +38,22 @@ int main() {
    h1.push_back(ALLEGRO_KEY_PAD_0);
    
    // hotkeys player 2
-   vector<int> h2;
-   h2.push_back(ALLEGRO_KEY_W);
-   h2.push_back(ALLEGRO_KEY_S);
-   h2.push_back(ALLEGRO_KEY_D);
-   h2.push_back(ALLEGRO_KEY_A);
-   h2.push_back(ALLEGRO_KEY_SPACE);
+   //vector<int> h2;
+   //h2.push_back(ALLEGRO_KEY_W);
+   //h2.push_back(ALLEGRO_KEY_S);
+   //h2.push_back(ALLEGRO_KEY_D);
+   //h2.push_back(ALLEGRO_KEY_A);
+   //h2.push_back(ALLEGRO_KEY_SPACE);
+
+   //shared_ptr<Player> player2 =
+   //  make_shared<Player> (Point(400, 240), al_map_rgb(255,0,0), h2, true);
+   //game.addPlayer(player2); game.addDrawable(player2); game.addUpdateable(player2);
    
    // sets up the player, provide parameters: start point on the display, and size of player
    shared_ptr<Player> player1 =
-      make_shared<Player> (Point(200, 240), al_map_rgb(0,204,0), h1, false);
+      make_shared<Player> (Point(200, 240), al_map_rgb(0,204,0), h1, true, 1);
    game.addPlayer(player1); game.addDrawable(player1); game.addUpdateable(player1);
 
-   shared_ptr<Player> player2 =
-      make_shared<Player> (Point(400, 240), al_map_rgb(255,0,0), h2, true);
-   game.addPlayer(player2); game.addDrawable(player2); game.addUpdateable(player2);
    
    // start the game, close the display to end
    game.run();

@@ -14,32 +14,40 @@ class Projectile : public Drawable, public Updateable {
    Vector speed;   
    ALLEGRO_COLOR color;
    int size;
-   //double length; // represented by seconds traveling at param speed (which supplies direction)
-   //bool live;
-   //bool out;
+   bool live;
    
   public:
-   //bool out;
+   //Point center;
+   //bool live;
+   
   Projectile(Point p, Vector s, ALLEGRO_COLOR c) : center(p), speed(s),
       color(c)
    {
+      live = true;
       size = 5;
-      //out = false;
-      //live = true;
+   }
+
+   
+   
+   void setLive(bool l) {
+      live = l;
+   }
+
+   Point getCenter() {
+      return center;
+   }
+   
+   bool getLive() {
+      return live;
    }
    
    void draw() {
-      //if (inBound()) {
 	 al_draw_filled_rectangle(center.x - size, center.y - size,
 				  center.x + size, center.y + size, color);
-      
    }
 
    void update(double dt) {
-      //if (inBound()) {
 	 center = center + speed * dt;
-	 //end = end + speed * dt;
-	 //}
    }
    
    bool inBound() {
@@ -48,7 +56,6 @@ class Projectile : public Drawable, public Updateable {
 	  (center.y > 550) ||
 	  (center.y < 50)) {
 	 return false; // out of bound
-	 //out = true;
       }
       return true;
    }

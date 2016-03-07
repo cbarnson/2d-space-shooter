@@ -60,7 +60,7 @@ public:
 	virtual void setPlayer(int) = 0;
 	virtual void resetPlayer(int) = 0;
 	virtual void updatePlayerControls() = 0;
-
+	//virtual void updateCollision() = 0;
 	
 	/// called whenever the model needs to be displayed.
 	/**
