@@ -3,7 +3,6 @@
 
 #include "Display.h"
 #include <allegro5/allegro.h>
-#include <vector>
 
 /// Class responsible for setting up the Allegro library for some basic animation.
 /**
@@ -61,7 +60,6 @@ public:
 	virtual void setPlayer(int) = 0;
 	virtual void resetPlayer(int) = 0;
 	virtual void updatePlayerControls() = 0;
-	//virtual void updateCollision() = 0;
 	
 	/// called whenever the model needs to be displayed.
 	/**
@@ -70,8 +68,6 @@ public:
 	 **/
 	virtual void drawModel() = 0;
 
-	//void setPlayer(std::vector<bool>&, int);
-	//void resetPlayer(std::vector<bool>&, int);
 };
 
 #endif

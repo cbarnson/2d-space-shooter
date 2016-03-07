@@ -17,42 +17,34 @@ class Enemy : public Drawable, public Updateable {
    int size;
    
   public:
-<<<<<<< HEAD
   Enemy(Point s, Vector spd) : start(s.x, s.y), speed(spd.x, spd.y)
    {
       current = Point(start.x, start.y);
       size = 50;
-=======
   Enemy(Point s, Point e) : start(s.x, s.y), end(e.x, e.y){
       current=Point(start.x, start.y);
       speed.x=(end.x-start.x)/5.0;
       speed.y=(end.y-start.y)/5.0;
       size=20;
 
->>>>>>> a800d4ddb56872166ca8bb047b962c4930685cce
    }
 
    // draw image to display of enemy ship
    void draw() {
-<<<<<<< HEAD
       al_draw_filled_triangle(current.x, current.y,
 		       current.x, current.y + size,
 		       current.x + size, current.y + (size/2),
 		       al_map_rgb(204,204,0));
-=======
       // std::cout<<"draw";
       al_draw_filled_triangle(current.x, current.y,
 			      current.x, current.y + size,
 			      current.x - size, current.y + (size/2),
 			      al_map_rgb(255,255,255));
->>>>>>> a800d4ddb56872166ca8bb047b962c4930685cce
    }
 
    // update position of enemy ships
    void update(double dt) {
-<<<<<<< HEAD
       current = current + speed * dt;      
-=======
       //std::cout<<"updatehappened ";
       //std::cout<<current.x<<", "<<current.y<<std::endl;
       Point newCurrent=current;
@@ -71,7 +63,6 @@ class Enemy : public Drawable, public Updateable {
       }
      
       current=newCurrent;
->>>>>>> a800d4ddb56872166ca8bb047b962c4930685cce
    }
 
 };
