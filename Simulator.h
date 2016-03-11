@@ -3,6 +3,7 @@
 
 #include "Display.h"
 #include <allegro5/allegro.h>
+#include <vector>
 
 /// Class responsible for setting up the Allegro library for some basic animation.
 /**
@@ -12,11 +13,10 @@ the animation.
  **/
 class Simulator {
 private:
-   int framesPerSec; /// the rendering frequency
-   
-   // ALLEGRO_TIMER *timer;
-   ALLEGRO_EVENT_QUEUE *eventQueue;  /// event storage 
-   ALLEGRO_TIMER *timer;  /// generates events for the simulation
+	int framesPerSec; /// the rendering frequency
+
+	ALLEGRO_EVENT_QUEUE *eventQueue;  /// event storage 
+	ALLEGRO_TIMER *timer;  /// generates events for the simulation
 
 	// helper function
 	//void getPlayer1Input(std::vector<bool>&, ALLEGRO_EVENT&);
@@ -60,6 +60,7 @@ public:
 	virtual void setPlayer(int) = 0;
 	virtual void resetPlayer(int) = 0;
 	virtual void updatePlayerControls() = 0;
+	//virtual void updateCollision() = 0;
 	
 	/// called whenever the model needs to be displayed.
 	/**
@@ -68,6 +69,8 @@ public:
 	 **/
 	virtual void drawModel() = 0;
 
+	//void setPlayer(std::vector<bool>&, int);
+	//void resetPlayer(std::vector<bool>&, int);
 };
 
 #endif

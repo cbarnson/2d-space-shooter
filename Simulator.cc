@@ -17,7 +17,7 @@
 
 // constructor
 Simulator::Simulator(const Display & d, int fps) :
-   framesPerSec(fps), eventQueue(NULL), timer(NULL) {
+   framesPerSec(fps), timer(NULL), eventQueue(NULL) {
    
    if ((timer = al_create_timer(1.0 / fps)) == NULL)
       throw std::runtime_error("Cannot create allegro timer");
