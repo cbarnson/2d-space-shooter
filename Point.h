@@ -55,11 +55,6 @@ Point(double a=0.0, double b=0.0): x(a), y(b) {};
    Point operator + (Vector v) {
       return Point(x+v.x, y+v.y);
    }
-    Point operator = (Point p){
-       this->x=p.x;
-       this->y=p.y;
-       return (*this);
-    }
 };
 
 #endif

@@ -16,7 +16,6 @@
 #include <list>
 #include <memory>
 #include <iostream>
-#include <iostream>//for testing, remove later
 #include "Point.h"
 #include "Vector.h"
 #include "Drawable.h"
@@ -166,18 +165,6 @@ class Player : public Controls, public Drawable, public Updateable {
 	 }
       }
       
-       al_draw_filled_triangle(current.x, current.y,
-			      current.x, current.y + size,
-			      current.x + size, current.y + (size/2),
-			      al_map_rgb(0,204,0));
-      if(!curEnemies.empty())
-      {
-	 for(std::list<std::shared_ptr<Enemy>>::iterator it=curEnemies.begin(); it!=curEnemies.end(); ++it)
-	 {
-	    (*it)->draw();
-	 }
-      }
-     
    }
 
 
@@ -377,8 +364,6 @@ class Player : public Controls, public Drawable, public Updateable {
       otherPlayers.clear();	 
       otherPlayers.assign(newListPlayer.begin(), newListPlayer.end());
       
-     
-      
 
       
       
@@ -397,26 +382,6 @@ class Player : public Controls, public Drawable, public Updateable {
       return true;      
    }
       
-      //code for handling enemy spawning
-      //int numEnemies=curEnemies.size();
-
-      if(curEnemies.size()<5)
-      {//rand numbers just allow enemies to travel along different paths
-	 std::shared_ptr<Enemy> en=std::make_shared<Enemy>(Point(800, rand()%600),
-							   Point(0, rand()%600));
-	 curEnemies.push_back(en);
-      }
-      if(!curEnemies.empty())
-      {
-	 for(std::list<std::shared_ptr<Enemy>>::iterator it=curEnemies.begin(); it!=curEnemies.end(); ++it)
-	 {
-	    (*it)->update(dt);
-	 }
-      }
-      
-  
-   }
- 
    
 };
 
