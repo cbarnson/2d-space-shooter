@@ -127,9 +127,10 @@ void Root::collision() {
 		   (A.x < B.x + b) &&
 		   (A.y > B.y - b) &&
 		   (A.y < B.y + b)) {
-		  // is a hit
+		  // is a hit on Player
 		  std::cout << "hit on PLAYER\n";
 		  (*p)->hit();
+		  updateScore((*i)->getColor());
 		  (*i)->setDead(); ++i;
 	       }		  
 	    }
@@ -143,7 +144,7 @@ void Root::collision() {
 		   (A.x < B.x + b) &&
 		   (A.y > B.y - b) &&
 		   (A.y < B.y + b)) {
-		  // is a hit
+		  // is a hit on Enemy
 		  std::cout << "hit on ENEMY\n";
 		  (*e)->hit();
 		  (*i)->setDead(); ++i;
@@ -186,6 +187,17 @@ void Root::clean() {
    }
 }
 
+void Root::updateScore(ALLEGRO_COLOR c) {
+   if (!play.empty()) {
+      for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) {
+	 ALLEGRO_COLOR tmp = (*it)->getColor();
+	 if (tmp.r == c.r && tmp.g == c.g && tmp.b == c.b) {
+	    (*it)->setScore(1);
+	    break;
+	 }
+      }
+   }
+}
 
 void Root::set(int code) {
    if (!play.empty()) {

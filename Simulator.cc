@@ -54,9 +54,13 @@ void Simulator::run() {
 	    case ALLEGRO_KEY_2: // multi player mode
 	       multi_player();
 	       break;
+	       //case ALLEGRO_KEY_ESCAPE:
+	       
+	    default:
+	       break;
 	 }
 	 
-	 break;
+	 
       }
       if (ev.type == ALLEGRO_EVENT_TIMER) {
 	 menuMessage();

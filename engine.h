@@ -14,6 +14,7 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
+#include <allegro5/allegro_image.h>
 #include <memory>
 
 using std::shared_ptr;
@@ -23,7 +24,7 @@ class engine : public Simulator {
    shared_ptr<Root> root;
    ALLEGRO_FONT *menuFont;
    ALLEGRO_FONT *modeFont;
-   //BITMAP *bmp = create_bitmap(SCR_X, SCR_Y);
+   ALLEGRO_BITMAP *space;
    int game_fps;
    int windowWidth;
    int windowHeight;
@@ -36,13 +37,21 @@ class engine : public Simulator {
       windowHeight = d.getH();
       menuFont = al_load_font("/usr/share/fonts/dejavu/DejaVuSerif.ttf", 48, 0);
       modeFont = al_load_font("/usr/share/fonts/culmus/DavidCLM-Bold.ttf", 32, 0);
+      space = al_load_bitmap("/home/barc2720/images/space.png");
    }
 
+   ~engine() {
+      al_destroy_font(menuFont);
+      al_destroy_font(modeFont);
+      al_destroy_bitmap(space);      
+   }
+   
    void menuMessage() {
-      al_clear_to_color(al_map_rgb(0,0,0));      
+      //al_clear_to_color(al_map_rgb(0,0,0));
+      al_draw_bitmap(space, 0, 0, 0);
       al_draw_text(menuFont, al_map_rgb(0, 204, 204), 0.5 * windowWidth,
 		   0.5 * windowHeight, ALLEGRO_ALIGN_CENTRE,
-		   "DEF(initely not)ENDER");
+		   "ASSEROIDS");
       al_draw_text(modeFont, al_map_rgb(0, 204, 102), 0.5 * windowWidth,
 		   0.7 * windowHeight, ALLEGRO_ALIGN_CENTRE,
 		   "[ 1 ] SINGLE PLAYER   [ 2 ] MULTI PLAYER");

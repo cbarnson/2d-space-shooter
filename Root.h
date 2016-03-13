@@ -16,6 +16,7 @@
 #include "Enemy.h"
 #include "Player.h"
 
+#include <allegro5/allegro.h>
 #include <memory>
 #include <list>
 #include <iostream>
@@ -63,6 +64,7 @@ class Root : public Drawable, public Updateable, public Controls {
    void updatePlayer();
    void collision();
    void clean();
+   void updateScore(ALLEGRO_COLOR);
    void set(int);
    void reset(int);
 };

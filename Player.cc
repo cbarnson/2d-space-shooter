@@ -6,6 +6,7 @@
 
 // set methods
 void Player::setLives(int l) { lives = l; }
+void Player::setScore(int s) { score += s; }
 void Player::setFire(bool f) { fire = f; }
 //void Player::setDead() { dead = true; }
 void Player::hit() {

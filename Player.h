@@ -89,6 +89,7 @@ class Player : public Controls, public Drawable, public Updateable {
 
    // set methods
    void setLives(int);
+   void setScore(int); // increments score by param value
    void setFire(bool);
    void hit();
 
