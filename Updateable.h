@@ -28,7 +28,7 @@ class Updateable {
     * @fn virtual void inBound()
     * @brief returns true if the object is within the display boundaries, false otherwise
     */
-   virtual bool inBound() = 0;
+   //virtual bool inBound() = 0;
 };
 
 #endif

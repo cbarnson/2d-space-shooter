@@ -10,28 +10,41 @@
 
 class Enemy : public Drawable, public Updateable {
   private:
-   Point start, current;
+   Point centre;
+   ALLEGRO_COLOR color;
    Vector speed;
+   
    int size;
+   int lives;
+   bool dead;
    
   public:
-  Enemy(Point s, Vector spd) : start(s.x, s.y), speed(spd.x, spd.y)
-   {
-      current = Point(start.x, start.y);
-      size = 50;
+  Enemy(Point p, ALLEGRO_COLOR c, Vector s) : centre(p), color(c), speed(s)
+   {      
+      lives = 1;
+      dead = false;
+      size = 20;
    }
 
+   int getSize() { return size; }
+   Point getCentre() { return centre; }
+   
+   void hit() {
+      lives = lives - 1;
+      if (lives < 1)
+	 dead = true;
+   }
+   
    // draw image to display of enemy ship
    void draw() {
-      al_draw_filled_triangle(current.x, current.y,
-		       current.x, current.y + size,
-		       current.x + size, current.y + (size/2),
-		       al_map_rgb(204,204,0));
+      al_draw_rectangle(centre.x - size, centre.y - size,
+			centre.x + size, centre.y + size,
+			color, 3);
    }
 
    // update position of enemy ships
    void update(double dt) {
-      current = current + speed * dt;      
+      centre = centre + speed * dt;      
    }
 
 };

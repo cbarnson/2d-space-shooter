@@ -11,14 +11,15 @@
 #include <allegro5/allegro_primitives.h>
 #include <vector>
 
+using std::vector;
 
 // provide key mappings for a player - 5 keys
 class Hotkeys {
   public:
-   std::vector<int> control;
-   std::vector<bool> keys;
+   vector<int> control;
+   vector<bool> keys;
    
-  Hotkeys(const std::vector<int>& v) : control(v)
+  Hotkeys(const vector<int>& v) : control(v)
    {
       for (int i = 0; i < 5; i++) {
 	 keys.push_back(false);

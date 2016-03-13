@@ -1,0 +1,151 @@
+/**
+ * @file Root.cc
+ * @brief
+ *
+ * @author
+ * @bug
+ */
+
+#include "Root.h"
+
+void Root::addProj(shared_ptr<Projectile> p) {
+   proj.push_back(p);
+}
+
+void Root::addEnem(shared_ptr<Enemy> e) {
+   enem.push_back(e);
+}
+
+void Root::addPlay(int p) {
+   vector<int> h;
+   switch (p) {
+      case 1: // controls for first player
+	 h.push_back(ALLEGRO_KEY_UP);
+	 h.push_back(ALLEGRO_KEY_DOWN);
+	 h.push_back(ALLEGRO_KEY_RIGHT);
+	 h.push_back(ALLEGRO_KEY_LEFT);
+	 h.push_back(ALLEGRO_KEY_PAD_0);
+	 play.push_back(make_shared<Player> (Point(200, 300),
+					     al_map_rgb(255,0,0), h,
+					     false, fps ));	 
+	 break;
+      case 2: // controls for second player
+	 h.push_back(ALLEGRO_KEY_W);
+	 h.push_back(ALLEGRO_KEY_S);
+	 h.push_back(ALLEGRO_KEY_D);
+	 h.push_back(ALLEGRO_KEY_A);
+	 h.push_back(ALLEGRO_KEY_SPACE);
+	 play.push_back(make_shared<Player> (Point(600, 300),
+					     al_map_rgb(0,200,0), h,
+					     true, fps ));	 
+	 break;
+	 // could theoretically add more players with own control scheme if desired
+   }      
+}
+
+
+
+void Root::update(double dt) {
+   if (!play.empty())
+      for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) 
+	 (*it)->update(dt);
+   if (!proj.empty())
+      for (list< shared_ptr<Projectile> >::iterator it = proj.begin(); it != proj.end(); ++it) 
+	 (*it)->update(dt);          
+   if (!enem.empty())
+      for (list< shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end(); ++it) 
+	 (*it)->update(dt);
+      
+}
+
+
+
+void Root::draw() {
+   if (!play.empty())
+      for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) 
+	 (*it)->draw();
+   if (!proj.empty())
+      for (list< shared_ptr<Projectile> >::iterator it = proj.begin(); it != proj.end(); ++it) 
+	 (*it)->draw();
+   if (!enem.empty())
+      for (list< shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end(); ++it) 
+	 (*it)->draw();
+}
+
+
+
+void Root::updatePlayer() {
+   if (!play.empty()) {
+      for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) {
+	 (*it)->updatePlayer();	 
+	 if ((*it)->getFire()) {
+	    addProj(make_shared<Projectile> ((*it)->getCentre(), (*it)->getColor(),
+					     (*it)->getSpeed()));
+	    (*it)->setFire(false);
+	 }	 
+      }
+   }
+}
+
+// Player has:
+// lives, which is an integer value
+// Point centre, use getCentre to access
+
+// Projectile has:
+// bool live, use setDead() to set live = false
+// Point centre, use getCentre to access; represented as a single (x,y) point in display
+
+// simple square-bound box collision detection
+void Root::collision() {
+   if (!proj.empty()) {
+      // projectiles exist
+      for (list< shared_ptr<Projectile> >::iterator i = proj.begin(); i != proj.end(); ++i) {
+	 // check against players
+	 if (!play.empty()) {
+	    for (list< shared_ptr<Player> >::iterator p = play.begin(); p != play.end(); ++p) {
+	       Point A = (*i)->getCentre();
+	       Point B = (*p)->getCentre(); int b = (*p)->getSize();
+	       if ((A.x > B.x - b) &&
+		   (A.x < B.x + b) &&
+		   (A.y > B.y - b) &&
+		   (A.y < B.y + b)) {
+		  // is a hit
+		  (*p)->hit();
+		  (*i)->setDead(); ++i;
+	       }		  
+	    }
+	 }	 
+	 // check against enemies
+	 if (!enem.empty()) {
+	    for (list< shared_ptr<Enemy> >::iterator e = enem.begin(); e != enem.end(); ++e) {
+	       Point A = (*i)->getCentre();
+	       Point B = (*e)->getCentre(); int b = (*e)->getSize();
+	       if ((A.x > B.x - b) &&
+		   (A.x < B.x + b) &&
+		   (A.y > B.y - b) &&
+		   (A.y < B.y + b)) {
+		  // is a hit
+		  (*e)->hit();
+		  (*i)->setDead(); ++i;
+	       }
+	    }
+	 }
+      }
+   }
+}
+
+
+void Root::set(int code) {
+   if (!play.empty()) {
+      for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) {
+	 (*it)->set(code);
+      }
+   }
+}
+
+void Root::reset(int code) {
+   if (!play.empty())
+      for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) 
+	 (*it)->reset(code);        
+}
+
