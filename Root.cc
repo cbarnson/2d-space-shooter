@@ -147,9 +147,10 @@ void Root::collision() {
 		   (A.y < B.y + b)) {
 		  // is a hit on Enemy
 		  std::cout << "hit on ENEMY\n";
-		  (*e)->hit();
 		  (*i)->setDead();
-		  
+		  (*e)->hit();
+		  if ((*e)->getDead())
+		     updateScore((*i)->getColor());
 	       }
 	    }
 	 }
