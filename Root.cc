@@ -7,7 +7,7 @@
  */
 
 #include "Root.h"
-
+#include<iostream>
 /*
 void Root::spawn() {
    if (enem.empty()) {
@@ -64,12 +64,17 @@ void Root::update(double dt) {
       for (list< shared_ptr<Projectile> >::iterator it = proj.begin(); it != proj.end(); ++it) 
 	 (*it)->update(dt);          
    if (!enem.empty())
-      for (list< shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end(); ++it) {
+    {
+      for (list< shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end(); ++it)
+      {
 	 (*it)->update(dt);
-	 // if ((*it)->getFire())
-	 // addProj(make_shared<Projectile>
-	 
+	 if((*it)->getFireE()){
+	    addProj(make_shared<Projectile>((*it)->getCentreE(), (*it)->getColorE(), (*it)->getSpeedE()));
+	    (*it)->setFireE(false);
+	 }
       }
+   }
+      else{spawn();}
 }
 
 
@@ -83,11 +88,7 @@ void Root::draw() {
 	 (*it)->draw();
    if (!enem.empty())
       for (list< shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end(); ++it)  
-	 (*it)->draw();
-
-	 
-      
-   
+	 (*it)->draw(); 
 }
 
 
@@ -201,3 +202,41 @@ void Root::reset(int code) {
 	 (*it)->reset(code);        
 }
 
+void Root::spawn(){
+   Vector speed;
+   shared_ptr<Enemy> e1, e2, e3, e4, e5;
+   int n=(rand()%2)+1;
+   std::cout<<n;
+   int x=3;
+   int count=0;
+   switch(n)
+   {
+      case 1:
+      
+
+	 speed.x=-100;
+	 speed.y=0;
+	 e1=make_shared<Enemy>(Point(800, 300), al_map_rgb(204, 35, 99), speed);
+	 e2=make_shared<Enemy>(Point(850, 200), al_map_rgb(204, 35, 99), speed);
+	 e3=make_shared<Enemy>(Point(850, 400), al_map_rgb(204, 35, 99), speed);
+	 e4=make_shared<Enemy>(Point(900, 500), al_map_rgb(204, 35, 99), speed);
+	 e5=make_shared<Enemy>(Point(900, 100), al_map_rgb(204, 35, 99), speed);
+	 addEnem(e1);addEnem(e2); addEnem(e3); addEnem(e4); addEnem(e5);
+	 break;
+      
+      case 2:
+      
+	 speed.x=-100;
+	 speed.y=-100;
+	 if(static_cast<int>(al_get_time())%x==0&&count<5){
+	    e1=make_shared<Enemy>(Point(800, 20), al_map_rgb(204, 35, 99), speed) ;
+	    addEnem(e1);
+	    count++;
+	    x+=2;
+	    std::cout<<"somethinghappened";
+	 }
+	 break;
+	 
+   }
+}
+   
