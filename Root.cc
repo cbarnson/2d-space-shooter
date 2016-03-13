@@ -129,10 +129,11 @@ void Root::collision() {
 		   (A.y < B.y + b)) {
 		  // is a hit on Player
 		  std::cout << "hit on PLAYER\n";
+		  (*i)->setDead();
 		  (*p)->hit();
-		  updateScore((*i)->getColor());
-		  (*i)->setDead(); ++i;
-	       }		  
+		  if ((*p)->getDead())
+		     updateScore((*i)->getColor());
+	       }       	  
 	    }
 	 }	 
 	 // check against enemies
@@ -147,7 +148,8 @@ void Root::collision() {
 		  // is a hit on Enemy
 		  std::cout << "hit on ENEMY\n";
 		  (*e)->hit();
-		  (*i)->setDead(); ++i;
+		  (*i)->setDead();
+		  
 	       }
 	    }
 	 }

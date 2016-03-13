@@ -39,7 +39,8 @@ Simulator::~Simulator() {
 void Simulator::run() {
    al_install_keyboard();
    al_register_event_source(eventQueue, al_get_keyboard_event_source());
-	
+   bool selected = false;
+   
    while(1) {
       ALLEGRO_EVENT ev;
       al_wait_for_event(eventQueue, &ev);	
@@ -50,17 +51,17 @@ void Simulator::run() {
 	 switch (ev.keyboard.keycode) {	    
 	    case ALLEGRO_KEY_1: // single player mode
 	       single_player();
+	       selected = true;
 	       break;
 	    case ALLEGRO_KEY_2: // multi player mode
 	       multi_player();
+	       selected = true;
 	       break;
-	       //case ALLEGRO_KEY_ESCAPE:
-	       
 	    default:
 	       break;
 	 }
-	 
-	 
+	 if (selected)
+	    break;	 	 
       }
       if (ev.type == ALLEGRO_EVENT_TIMER) {
 	 menuMessage();

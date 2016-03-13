@@ -44,8 +44,10 @@ class Projectile : public Drawable, public Updateable {
       centre = centre + speed * dt;
    }   
    void draw() {
-	 al_draw_filled_rectangle(centre.x - size, centre.y - size,
-				  centre.x + size, centre.y + size, color);
+      //al_draw_filled_rectangle(centre.x - size, centre.y - size,
+      //			  centre.x + size, centre.y + size, color);
+      Point tracer = centre + speed * (-0.1);
+      al_draw_line(centre.x, centre.y, tracer.x, tracer.y, color, 3);
    }
    bool inBound() {
       if ((centre.x > 750) ||

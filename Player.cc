@@ -46,6 +46,23 @@ void Player::draw() {
    al_draw_rectangle(centre.x - size, centre.y - size,
 		     centre.x + size, centre.y + size,
 		     color, 3);
+   switch (lives) {
+      case 1:
+	 al_draw_line(centre.x - size*2, centre.y + size*2,
+		      centre.x - size*0.5, centre.y + size*2,
+		      al_map_rgb(255, 0, 0), 4);
+	 break;
+      case 2:
+	 al_draw_line(centre.x - size*2, centre.y + size*2,
+		      centre.x + size*0.5, centre.y + size*2,
+		      al_map_rgb(255, 128, 0), 4);
+	 break;
+      case 3:
+	 al_draw_line(centre.x - size*2, centre.y + size*2,
+		      centre.x + size*2, centre.y + size*2,
+		      al_map_rgb(0, 255, 0), 4);
+	 break;
+   }
    
    //al_draw_bitmap(ship, current.x, current.y, 0);
    

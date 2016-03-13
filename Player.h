@@ -72,7 +72,7 @@ class Player : public Controls, public Drawable, public Updateable {
       //shipHeight = al_get_bitmap_height(ship);
       
       speed = Vector(0,0);
-      lives = 1;
+      lives = 3;
       size = 10;
       score = 0;
       
