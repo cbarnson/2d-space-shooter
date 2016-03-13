@@ -78,8 +78,8 @@ class Player : public Controls, public Drawable, public Updateable {
       
       dead = false;
       fire = false;
-      speed_modifier = 300;
-      projSpeed = (flipped) ? Vector(-200,0) : Vector(200,0);
+      speed_modifier = 200;
+      projSpeed = (flipped) ? Vector(-400,0) : Vector(400,0);
    }
 
    ~Player() {
@@ -105,9 +105,7 @@ class Player : public Controls, public Drawable, public Updateable {
    void reset(int);
    void draw();
    void updatePlayer();
-   void update(double);
-
-      
+   void update(double);      
    
 };
 

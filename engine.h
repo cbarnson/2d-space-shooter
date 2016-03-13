@@ -23,6 +23,7 @@ class engine : public Simulator {
    shared_ptr<Root> root;
    ALLEGRO_FONT *menuFont;
    ALLEGRO_FONT *modeFont;
+   //BITMAP *bmp = create_bitmap(SCR_X, SCR_Y);
    int game_fps;
    int windowWidth;
    int windowHeight;

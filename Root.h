@@ -18,6 +18,8 @@
 
 #include <memory>
 #include <list>
+#include <iostream>
+
 
 using std::shared_ptr;
 using std::make_shared;
@@ -53,8 +55,8 @@ class Root : public Drawable, public Updateable, public Controls {
    void addProj(shared_ptr<Projectile>);
    void addEnem(shared_ptr<Enemy>);
 
-
-   //virtual void spawn() = 0;
+   
+   void spawn();
    // virtuals
    void update(double);
    void draw();

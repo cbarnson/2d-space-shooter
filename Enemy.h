@@ -45,11 +45,9 @@ class Enemy : public Drawable, public Updateable {
 
    // update position of enemy ships
    void update(double dt) {
-      centre = centre + speed * dt;      
+      centre = centre + speed * dt;
    }
 
-   //void spawn();
-   
 };
 
 

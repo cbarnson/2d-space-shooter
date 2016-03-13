@@ -8,6 +8,17 @@
 
 #include "Root.h"
 
+/*
+void Root::spawn() {
+   if (enem.empty()) {
+      // create 5 enemies
+      for (int i = 0; i < 5; i++) {
+	 //addEnem(make_shared<Enemy> (Point(
+      }
+   }      
+   }
+*/
+
 void Root::addProj(shared_ptr<Projectile> p) {
    proj.push_back(p);
 }
@@ -53,8 +64,12 @@ void Root::update(double dt) {
       for (list< shared_ptr<Projectile> >::iterator it = proj.begin(); it != proj.end(); ++it) 
 	 (*it)->update(dt);          
    if (!enem.empty())
-      for (list< shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end(); ++it) 
-	 (*it)->update(dt);      
+      for (list< shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end(); ++it) {
+	 (*it)->update(dt);
+	 // if ((*it)->getFire())
+	 // addProj(make_shared<Projectile>
+	 
+      }
 }
 
 
@@ -67,8 +82,12 @@ void Root::draw() {
       for (list< shared_ptr<Projectile> >::iterator it = proj.begin(); it != proj.end(); ++it) 
 	 (*it)->draw();
    if (!enem.empty())
-      for (list< shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end(); ++it) 
+      for (list< shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end(); ++it)  
 	 (*it)->draw();
+
+	 
+      
+   
 }
 
 
@@ -109,6 +128,7 @@ void Root::collision() {
 		   (A.y > B.y - b) &&
 		   (A.y < B.y + b)) {
 		  // is a hit
+		  std::cout << "hit on PLAYER\n";
 		  (*p)->hit();
 		  (*i)->setDead(); ++i;
 	       }		  
@@ -124,6 +144,7 @@ void Root::collision() {
 		   (A.y > B.y - b) &&
 		   (A.y < B.y + b)) {
 		  // is a hit
+		  std::cout << "hit on ENEMY\n";
 		  (*e)->hit();
 		  (*i)->setDead(); ++i;
 	       }
@@ -147,7 +168,7 @@ void Root::clean() {
    list< shared_ptr<Projectile> > newProj;
    if (!proj.empty()) {
       for (list< shared_ptr<Projectile> >::iterator it = proj.begin(); it != proj.end(); ++it) {
-	 if ((*it)->getLive()) // if live
+	 if ((*it)->getLive() && (*it)->inBound()) // if live
 	    newProj.push_back(*it);
       }
       proj.clear();

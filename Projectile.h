@@ -30,7 +30,7 @@ class Projectile : public Drawable, public Updateable {
    {
       live = true;
       size = 5;
-      centre = centre + speed * 2;
+      centre = centre + speed * 0.1;
    }
    
    void setDead() { live = false; }
