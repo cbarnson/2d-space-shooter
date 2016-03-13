@@ -1,3 +1,10 @@
+/**
+ * @file Projectile.h
+ * @brief
+ *
+ * @author
+ * @bug
+ */
 #ifndef PROJECTILE_H
 #define PROJECTILE_H
 
@@ -10,51 +17,41 @@
 
 class Projectile : public Drawable, public Updateable {
   private:
-   Point center; // origin point
-   Vector speed;   
+   Point centre; // origin point
    ALLEGRO_COLOR color;
+   Vector speed;   
+   
    int size;
    bool live;
    
   public:
-   //Point center;
-   //bool live;
    
-  Projectile(Point p, Vector s, ALLEGRO_COLOR c) : center(p), speed(s),
-      color(c)
+  Projectile(Point p, ALLEGRO_COLOR c, Vector s) : centre(p), color(c), speed(s)
    {
       live = true;
       size = 5;
-   }
-
-   
-   
-   void setLive(bool l) {
-      live = l;
-   }
-
-   Point getCenter() {
-      return center;
+      centre = centre + speed * 2;
    }
    
-   bool getLive() {
-      return live;
-   }
+   void setDead() { live = false; }
    
-   void draw() {
-	 al_draw_filled_rectangle(center.x - size, center.y - size,
-				  center.x + size, center.y + size, color);
-   }
-
+   Point getCentre() { return centre; }
+   ALLEGRO_COLOR getColor() { return color; }
+   Vector getSpeed() { return speed; }
+   bool getLive() { return live; }
+   
    void update(double dt) {
-	 center = center + speed * dt;
+      centre = centre + speed * dt;
+   }   
+   void draw() {
+	 al_draw_filled_rectangle(centre.x - size, centre.y - size,
+				  centre.x + size, centre.y + size, color);
    }
-   
    bool inBound() {
-      if ((center.x > 750) ||
-	  (center.x < 50) ||
-	  (center.y > 550) ||
-	  (center.y < 50)) {
+      if ((centre.x > 750) ||
+	  (centre.x < 50) ||
+	  (centre.y > 550) ||
+	  (centre.y < 50)) {
 	 return false; // out of bound
       }
       return true;
