@@ -37,7 +37,7 @@ class engine : public Simulator {
       windowHeight = d.getH();
       menuFont = al_load_font("/usr/share/fonts/dejavu/DejaVuSerif.ttf", 48, 0);
       modeFont = al_load_font("/usr/share/fonts/culmus/DavidCLM-Bold.ttf", 32, 0);
-      space = al_load_bitmap("/home/barc2720/images/space.png");
+      space = al_load_bitmap("/home/mohj2720/images/space.png");
    }
 
    ~engine() {
