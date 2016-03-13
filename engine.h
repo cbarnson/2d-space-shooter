@@ -72,7 +72,8 @@ class engine : public Simulator {
    void multi_player() { root = make_shared<Root> (2, game_fps); }
    void setRoot(int code) { root->set(code); }
    void resetRoot(int code) { root->reset(code); }
-   void collisionRoot() { root->collision(); }
+   void collisionRoot() { root->collision(); root->clean(); }
+   
    void controlRoot() { root->updatePlayer(); }
    void updateRoot(double dt) { root->update(dt); }
 

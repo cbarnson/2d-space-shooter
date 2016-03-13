@@ -28,6 +28,7 @@ class Enemy : public Drawable, public Updateable {
 
    int getSize() { return size; }
    Point getCentre() { return centre; }
+   bool getDead() { return dead; }
    
    void hit() {
       lives = lives - 1;
@@ -47,6 +48,8 @@ class Enemy : public Drawable, public Updateable {
       centre = centre + speed * dt;      
    }
 
+   //void spawn();
+   
 };
 
 

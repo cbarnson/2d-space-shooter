@@ -30,6 +30,7 @@ class Root : public Drawable, public Updateable, public Controls {
    list< shared_ptr<Enemy> > enem;
    list< shared_ptr<Player> > play;
    int fps;
+   //bool single;
       
   public:
    // root is initialized with some integer p (1 or 2), which represents the game mode
@@ -52,11 +53,14 @@ class Root : public Drawable, public Updateable, public Controls {
    void addProj(shared_ptr<Projectile>);
    void addEnem(shared_ptr<Enemy>);
 
+
+   //virtual void spawn() = 0;
    // virtuals
    void update(double);
    void draw();
    void updatePlayer();
    void collision();
+   void clean();
    void set(int);
    void reset(int);
 };

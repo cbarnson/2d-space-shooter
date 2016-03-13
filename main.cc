@@ -27,7 +27,7 @@ int main() {
    // this sets the root to initialize the game with either 1 or 2 players
    
    //game.single_player();
-   game.multi_player();
+   //game.multi_player();
       
    // start the game, close the display to end
    game.run();

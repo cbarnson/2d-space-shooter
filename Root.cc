@@ -54,8 +54,7 @@ void Root::update(double dt) {
 	 (*it)->update(dt);          
    if (!enem.empty())
       for (list< shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end(); ++it) 
-	 (*it)->update(dt);
-      
+	 (*it)->update(dt);      
 }
 
 
@@ -131,6 +130,38 @@ void Root::collision() {
 	    }
 	 }
       }
+   }
+}
+
+void Root::clean() {
+   list< shared_ptr<Player> > newPlay;
+   if (!play.empty()) {
+      for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) {
+	 if (!(*it)->getDead()) // if not dead
+	    newPlay.push_back(*it);
+      }
+      play.clear();
+      play.assign(newPlay.begin(), newPlay.end());      
+   }
+
+   list< shared_ptr<Projectile> > newProj;
+   if (!proj.empty()) {
+      for (list< shared_ptr<Projectile> >::iterator it = proj.begin(); it != proj.end(); ++it) {
+	 if ((*it)->getLive()) // if live
+	    newProj.push_back(*it);
+      }
+      proj.clear();
+      proj.assign(newProj.begin(), newProj.end());      
+   }
+   
+   list< shared_ptr<Enemy> > newEnem;
+   if (!enem.empty()) {
+      for (list< shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end(); ++it) {
+	 if (!(*it)->getDead()) // if not dead
+	    newEnem.push_back(*it);
+      }
+      enem.clear();
+      enem.assign(newEnem.begin(), newEnem.end());      
    }
 }
 
