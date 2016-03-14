@@ -10,6 +10,8 @@
 
 #include "Simulator.h"
 #include "Root.h"
+#include "Single.h"
+#include "Versus.h"
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
@@ -22,10 +24,12 @@ using std::shared_ptr;
 class engine : public Simulator {
   private:
    shared_ptr<Root> root;
+   
    ALLEGRO_PATH *path;
    ALLEGRO_FONT *menuFont;
    ALLEGRO_FONT *modeFont;
    ALLEGRO_BITMAP *space;
+   bool game_over;
    int game_fps;
    int windowWidth;
    int windowHeight;
@@ -35,7 +39,8 @@ class engine : public Simulator {
    {
       windowWidth = d.getW();
       windowHeight = d.getH();
-
+      game_over = false;
+      
       path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
       al_append_path_component(path, "resources");
       al_change_directory(al_path_cstr(path, '/'));
@@ -51,6 +56,15 @@ class engine : public Simulator {
       al_destroy_font(modeFont);
       al_destroy_bitmap(space);      
    }
+
+   bool is_game_over() {
+      if (root->is_game_over()) {
+	 root = NULL;
+	 return true;
+      }
+      else
+	 return false;
+   }
    
    void menuMessage() {
       //al_clear_to_color(al_map_rgb(0,0,0));
@@ -63,15 +77,26 @@ class engine : public Simulator {
 		   "[ 1 ] SINGLE PLAYER   [ 2 ] MULTI PLAYER");
       al_flip_display();
    }
+   
 
-   void single_player() { root = make_shared<Root> (1, game_fps); }
-   void multi_player() { root = make_shared<Root> (2, game_fps); }
+   void single_player() {
+      root = make_shared<Single> (game_fps);
+      root->setup();
+   }
+
+   
+   void multi_player() {
+      root = make_shared<Versus> (game_fps);
+      root->setup();
+   }
+
+   
    void setRoot(int code) { root->set(code); }
    void resetRoot(int code) { root->reset(code); }
    void collisionRoot() { root->collision(); root->clean(); }   
    void controlRoot() { root->updatePlayer(); }
    void updateRoot(double dt) { root->update(dt); }
-
+   
    void drawRoot() {
       al_clear_to_color(al_map_rgb(0,0,0));
       root->draw();

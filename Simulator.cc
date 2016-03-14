@@ -38,78 +38,96 @@ Simulator::~Simulator() {
 
 void Simulator::run() {
 
-   
+   bool mode_selected = false;
    bool redraw = true;
    double crtTime, prevTime = 0;
    al_install_keyboard();
    al_register_event_source(eventQueue, al_get_keyboard_event_source());
 
-   
-   // MENU LOOP
+  
    while(1) {
-      ALLEGRO_EVENT ev;
-      al_wait_for_event(eventQueue, &ev);	
+   
+      // MENU LOOP
+      while(1) {
+	 ALLEGRO_EVENT ev;
+	 al_wait_for_event(eventQueue, &ev);	
 
-      if (ev.type == ALLEGRO_EVENT_KEY_DOWN) {
-	 
-	 switch (ev.keyboard.keycode) {
-	    
-	    case ALLEGRO_KEY_1: // single player mode
-	       single_player(); break;
-	    case ALLEGRO_KEY_2: // multi player mode
-	       multi_player(); break;
+	 if (ev.type == ALLEGRO_EVENT_KEY_DOWN) 	 
+	    switch (ev.keyboard.keycode) {
 	       
-	    default:
-	       break;
+	       case ALLEGRO_KEY_ESCAPE:
+		  return;
+		  
+	       case ALLEGRO_KEY_1: // single player mode
+		  single_player();
+		  mode_selected = true;
+		  break;
+		  
+	       case ALLEGRO_KEY_2: // multi player mode
+		  mode_selected = true;
+		  multi_player();
+		  break;
+		  
+	       default:
+		  break;
+	    }
+	 
+	 
+	 if (ev.type == ALLEGRO_EVENT_TIMER) 
+	    menuMessage();	 	 
+	 else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) 
+	    return;
+
+	 
+	 if (mode_selected)
+	    break;      
+      } // end of menu loop
+
+
+      
+      // GAME LOOP //////////////////////////////////////////////
+      while(1) {
+	 
+	 ALLEGRO_EVENT ev;
+	 al_wait_for_event(eventQueue, &ev);
+	 if(ev.type == ALLEGRO_EVENT_KEY_DOWN) {
+	    if (ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
+	       return;	       
+	    setRoot(ev.keyboard.keycode);
 	 }
-      }
-      if (ev.type == ALLEGRO_EVENT_TIMER) {
-	 menuMessage();
-      }
-      else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-	 break;
-      }
-   } // end of menu loop
+	 else if (ev.type == ALLEGRO_EVENT_KEY_UP) 
+	    resetRoot(ev.keyboard.keycode);
+	 
 
-   
+	 // check the event type and call the update functions
+	 if(ev.type == ALLEGRO_EVENT_TIMER) {	 
+	    crtTime = al_current_time();
+	    controlRoot();
+	    updateRoot(crtTime - prevTime);
+	    collisionRoot();
+	    prevTime = crtTime;
+	 
+	    if (is_game_over()) {
+	       mode_selected = false;
+	       break;
+	    }
+	    // set redraw flag to avoid redrawing an empty event_queue
+	    redraw = true;
+	 }
+	 // if the display is closed, end the program
+	 else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) 
+	    return;
 
-   // GAME LOOP
-   while(1) {
-      ALLEGRO_EVENT ev;
-      al_wait_for_event(eventQueue, &ev);
+	 
+	 if(redraw && al_is_event_queue_empty(eventQueue)) {
+	    drawRoot();
+	    redraw = false;
+	 }
+	 
+      } // end of game loop ///////////////////////////////////
 
-      if(ev.type == ALLEGRO_EVENT_KEY_DOWN) {
-	 setRoot(ev.keyboard.keycode);
-      }
-      else if (ev.type == ALLEGRO_EVENT_KEY_UP) {
-	 resetRoot(ev.keyboard.keycode);
-      }
-
-      // check the event type and call the update functions
-      if(ev.type == ALLEGRO_EVENT_TIMER) {	 
-	 crtTime = al_current_time();
-	 // update control > all positions > check collision
-	 controlRoot();
-	 updateRoot(crtTime - prevTime);
-	 collisionRoot();
-	 prevTime = crtTime;
-
-	 // set redraw flag to avoid redrawing an empty event_queue
-	 redraw = true;
-      }
-      // if the display is closed, end the program
-      else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-	 break;
-      }
-
-      if(redraw && al_is_event_queue_empty(eventQueue)) {
-	 drawRoot();
-	 redraw = false;
-      }
-   } // end of game loop
-
-
-
-   
+      
+   }
+  
 }
 

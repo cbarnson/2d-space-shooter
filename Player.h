@@ -82,6 +82,7 @@ class Player : public Controls, public Drawable, public Updateable {
    ~Player() {
       if (fireDelay != NULL)
 	 al_destroy_timer(fireDelay);
+      al_destroy_font(scoreFont);
    }
 
    // set methods

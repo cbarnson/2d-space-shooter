@@ -29,13 +29,13 @@ using std::list;
 class Root : public Drawable, public Updateable, public Controls {
    
   private:
-   list< shared_ptr<Projectile> > proj;
-   list< shared_ptr<Enemy> > enem;
-   list< shared_ptr<Player> > play;
-   int fps;
+   //list< shared_ptr<Projectile> > proj;
+   //list< shared_ptr<Enemy> > enem;
+   //list< shared_ptr<Player> > play;
+   //int fps;
    
-   bool single_mode;
-   bool versus_mode;
+   //bool single_mode;
+   //bool versus_mode;
    //bool coop_mode;
       
   public:
@@ -43,33 +43,30 @@ class Root : public Drawable, public Updateable, public Controls {
    // ie. 1 - single player; 2 - multi player
    // addPlay takes care of this setup process and assigns a key configuration for each
    // player depending on the mode selected
-  Root(int p, int frames) : fps(frames)
-   {
-      for (int i = 1; i <= p; i++)
-	 addPlay(i);
-      
-   }
-
+   int fps;
+  Root(int frames) : fps(frames) { }
+   
    // game setup
-   void addPlay(int);
-
+   virtual void setup() = 0;
+   
    // with this new structure we need to make sure that whenever something is added (Player,
    // Enemy, Projectile, etc.) it is done through the Root class.  This means using some kind
    // of flag (bool, int, etc. ) inside the object classes to signal that a change needs to
    // occur from root
-   void addProj(shared_ptr<Projectile>);
-   void addEnem(shared_ptr<Enemy>);
+   //virtual void addProj(shared_ptr<Projectile>) = 0;
+   //virtual void addEnem(shared_ptr<Enemy>) = 0;
    
    // virtuals
-   void update(double);
-   void draw();
-   void updatePlayer();
-   void collision();
-   void clean();
-   void updateScore(ALLEGRO_COLOR);
-   void set(int);
-   void reset(int);
-   void spawn();
+   virtual bool is_game_over() = 0;
+   virtual void update(double) = 0;
+   virtual void draw() = 0;
+   virtual void updatePlayer() = 0;
+   virtual void collision() = 0;
+   virtual void clean() = 0;
+   virtual void updateScore(ALLEGRO_COLOR) = 0;
+   virtual void set(int) = 0;
+   virtual void reset(int) = 0;
+   //virtual void spawn() = 0;
 };
 
 #endif

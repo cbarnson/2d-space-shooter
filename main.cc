@@ -23,10 +23,6 @@
 #include <list>
 
 
-
-
-
-
 int main() {   
    Display disp;
 /*

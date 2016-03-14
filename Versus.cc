@@ -1,55 +1,40 @@
 /**
- * @file Root.cc
+ * @file Versus.cc
  * @brief
  *
  * @author
  * @bug
  */
 
-#include "Root.h"
+#include "Versus.h"
 
-/*
-void Root::addProj(shared_ptr<Projectile> p) {
-   proj.push_back(p);
-}
-
-void Root::addEnem(shared_ptr<Enemy> e) {
-   enem.push_back(e);
-}
-*/
-
-
-/*
-void Root::addPlay(int p) {
+void Versus::setup() {
    vector<int> h;
-   switch (p) {
-      case 1: // controls for first player
-	 h.push_back(ALLEGRO_KEY_UP);
-	 h.push_back(ALLEGRO_KEY_DOWN);
-	 h.push_back(ALLEGRO_KEY_RIGHT);
-	 h.push_back(ALLEGRO_KEY_LEFT);
-	 h.push_back(ALLEGRO_KEY_PAD_0);
-	 play.push_back(make_shared<Player> (Point(200, 300),
-					     al_map_rgb(255,0,0), h,
-					     false, fps ));	 
-	 break;
-      case 2: // controls for second player
-	 h.push_back(ALLEGRO_KEY_W);
-	 h.push_back(ALLEGRO_KEY_S);
-	 h.push_back(ALLEGRO_KEY_D);
-	 h.push_back(ALLEGRO_KEY_A);
-	 h.push_back(ALLEGRO_KEY_SPACE);
-	 play.push_back(make_shared<Player> (Point(600, 300),
-					     al_map_rgb(0,200,0), h,
-					     true, fps ));	 
-	 break;
-	 // could theoretically add more players with own control scheme if desired
-   }      
+   h.push_back(ALLEGRO_KEY_UP);
+   h.push_back(ALLEGRO_KEY_DOWN);
+   h.push_back(ALLEGRO_KEY_RIGHT);
+   h.push_back(ALLEGRO_KEY_LEFT);
+   h.push_back(ALLEGRO_KEY_PAD_0);
+   play.push_back(make_shared<Player> (Point(200, 300),
+				       al_map_rgb(255,0,0), h,
+				       false, fps ));
+   h.clear();
+   h.push_back(ALLEGRO_KEY_W);
+   h.push_back(ALLEGRO_KEY_S);
+   h.push_back(ALLEGRO_KEY_D);
+   h.push_back(ALLEGRO_KEY_A);
+   h.push_back(ALLEGRO_KEY_SPACE);
+   play.push_back(make_shared<Player> (Point(600, 300),
+				       al_map_rgb(0,200,0), h,
+				       true, fps ));	 
 }
-*/
 
-/*
-void Root::update(double dt) {
+bool Versus::is_game_over() {
+   return game_over;
+}
+
+
+void Versus::update(double dt) {
    if (!play.empty())
       for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) 
 	 (*it)->update(dt);
@@ -60,19 +45,17 @@ void Root::update(double dt) {
       for (list< shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end(); ++it) {
 	 (*it)->update(dt);
 	 if((*it)->getFire()){
-	    addProj(make_shared<Projectile>((*it)->getCentre(), (*it)->getColor(),
-					    (*it)->getProjSpeed()));
+	    proj.push_back(make_shared<Projectile>((*it)->getCentre(), (*it)->getColor(),
+						   (*it)->getProjSpeed()));
 	    (*it)->setFire(false);
 	 }	 	 
       }
-   else
-      spawn();
 }
-*/
 
 
-/*
-void Root::draw() {
+
+
+void Versus::draw() {
    if (!play.empty())
       for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) 
 	 (*it)->draw();
@@ -86,13 +69,13 @@ void Root::draw() {
 
 
 
-void Root::updatePlayer() {
+void Versus::updatePlayer() {
    if (!play.empty()) {
       for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) {
 	 (*it)->updatePlayer();	 
 	 if ((*it)->getFire()) {
-	    addProj(make_shared<Projectile> ((*it)->getCentre(), (*it)->getColor(),
-					     (*it)->getProjSpeed()));
+	    proj.push_back(make_shared<Projectile> ((*it)->getCentre(), (*it)->getColor(),
+						    (*it)->getProjSpeed()));
 	    (*it)->setFire(false);
 	 }	 
       }
@@ -100,7 +83,7 @@ void Root::updatePlayer() {
 }
 
 // simple square-bound box collision detection
-void Root::collision() {
+void Versus::collision() {
    if (!proj.empty()) {
       // projectiles exist
       for (list< shared_ptr<Projectile> >::iterator i = proj.begin(); i != proj.end(); ++i) {
@@ -144,7 +127,7 @@ void Root::collision() {
    }
 }
 
-void Root::clean() {
+void Versus::clean() {
    list< shared_ptr<Player> > newPlay;
    if (!play.empty()) {
       for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) {
@@ -176,7 +159,7 @@ void Root::clean() {
    }
 }
 
-void Root::updateScore(ALLEGRO_COLOR c) {
+void Versus::updateScore(ALLEGRO_COLOR c) {
    if (!play.empty()) {
       for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) {
 	 ALLEGRO_COLOR tmp = (*it)->getColor();
@@ -188,49 +171,18 @@ void Root::updateScore(ALLEGRO_COLOR c) {
    }
 }
 
-void Root::set(int code) {
+void Versus::set(int code) {
    if (!play.empty()) {
       for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) {
 	 (*it)->set(code);
       }
    }
-   }
+}
 
 
-*/
-/*
-void Root::reset(int code) {
+void Versus::reset(int code) {
    if (!play.empty())
       for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) 
 	 (*it)->reset(code);        
 }
-void Root::spawn(){
-   Vector speed;
-   int n = (rand() % 2) + 1;
-   //std::cout<<n;
-   int x = 3;
-   int count = 0;
-   switch(n) {
-      case 1:
-	 speed.x = -100;
-	 speed.y = 0;
-	 addEnem(make_shared<Enemy>(Point(800, 300), al_map_rgb(204, 35, 99), speed));
-	 addEnem(make_shared<Enemy>(Point(850, 200), al_map_rgb(204, 35, 99), speed));
-	 addEnem(make_shared<Enemy>(Point(850, 400), al_map_rgb(204, 35, 99), speed));
-	 addEnem(make_shared<Enemy>(Point(900, 500), al_map_rgb(204, 35, 99), speed));
-	 addEnem(make_shared<Enemy>(Point(900, 100), al_map_rgb(204, 35, 99), speed));
-	 break;
-      
-      case 2:      
-	 speed.x = -100;
-	 speed.y = -100;
-	 if(static_cast<int>(al_get_time()) % x == 0 && count < 5){
-	    addEnem(make_shared<Enemy>(Point(800, 20), al_map_rgb(204, 35, 99), speed));
-	    count++;
-	    x += 2;
-	    //std::cout << "somethinghappened";
-	 }
-	 break;	 
-   }
-}
-*/
+
