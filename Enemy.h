@@ -5,6 +5,8 @@
 #include "Updateable.h"
 #include "Point.h"
 #include "Vector.h"
+#include <memory>
+#include<stdexcept>
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
@@ -12,7 +14,7 @@
 
 class Enemy : public Drawable, public Updateable {
   private:
-   Point centre;
+   Point centre, end; 
    ALLEGRO_COLOR color;
    Vector speed;
    
@@ -39,17 +41,6 @@ class Enemy : public Drawable, public Updateable {
       projSpeed = speed * 1.5;
    }
    
-   // CONSTRUCTOR 2
-   /*
-  Enemy(Point s, Point e, ALLEGRO_COLOR c) : centre(s), end(e), color(c)
-   {
-      lives=1;
-      dead=false;
-      size=20;
-      speed.x=(end.x/centre.x)/intspeed;
-      speed.y=(end.y/centre.y)/intspeed;
-   }
-   */
    ~Enemy() {
       if(fireDelay != NULL)
 	 al_destroy_timer(fireDelay);
@@ -102,44 +93,6 @@ class Enemy : public Drawable, public Updateable {
 	 al_start_timer(fireDelay);
       }    
    }
-   
-
-   
-   /*
-   int size;
-   int lives;
-   bool dead;
-   
-  public:
-  Enemy(Point p, ALLEGRO_COLOR c, Vector s) : centre(p), color(c), speed(s)
-   {      
-      lives = 1;
-      dead = false;
-      size = 20;
-   }
-
-   int getSize() { return size; }
-   Point getCentre() { return centre; }
-   bool getDead() { return dead; }
-   
-   void hit() {
-      lives = lives - 1;
-      if (lives < 1)
-	 dead = true;
-   }
-   
-   // draw image to display of enemy ship
-   void draw() {
-      al_draw_rectangle(centre.x - size, centre.y - size,
-			centre.x + size, centre.y + size,
-			color, 3);
-   }
-
-   // update position of enemy ships
-   void update(double dt) {
-      centre = centre + speed * dt;
-   }
-   */
 };
 
 
