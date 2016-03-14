@@ -41,8 +41,7 @@ void Versus::update(double dt) {
    if (!proj.empty())
       for (list< shared_ptr<Projectile> >::iterator it = proj.begin(); it != proj.end(); ++it) 
 	 (*it)->update(dt);          
-   if (!enem.empty())
-         {
+   if (!enem.empty()) {
       for (list< shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end(); ++it)
       {
 	 (*it)->update(dt);
@@ -53,7 +52,8 @@ void Versus::update(double dt) {
 	 }	 	 
       }
    }
-      else{spawn();}
+   //else
+   //spawn();
 }
 
 
@@ -190,7 +190,8 @@ void Versus::reset(int code) {
 	 (*it)->reset(code);        
 }
 
-void Root::spawn(){
+/*
+void Versus::spawn(){
    Vector speed;
    shared_ptr<Enemy> e1, e2, e3, e4, e5;
    int n=(rand()%2)+1;
@@ -227,5 +228,5 @@ void Root::spawn(){
 	 
    }
 }
-   
+*/  
 
