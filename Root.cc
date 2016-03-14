@@ -8,17 +8,6 @@
 
 #include "Root.h"
 
-/*
-void Root::spawn() {
-   if (enem.empty()) {
-      // create 5 enemies
-      for (int i = 0; i < 5; i++) {
-	 //addEnem(make_shared<Enemy> (Point(
-      }
-   }      
-   }
-*/
-
 void Root::addProj(shared_ptr<Projectile> p) {
    proj.push_back(p);
 }
@@ -66,13 +55,15 @@ void Root::update(double dt) {
    if (!enem.empty())
       for (list< shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end(); ++it) {
 	 (*it)->update(dt);
-	 // if ((*it)->getFire())
-	 // addProj(make_shared<Projectile>
-	 
+	 if((*it)->getFire()){
+	    addProj(make_shared<Projectile>((*it)->getCentre(), (*it)->getColor(),
+					    (*it)->getProjSpeed()));
+	    (*it)->setFire(false);
+	 }	 	 
       }
+   else
+      spawn();
 }
-
-
 
 void Root::draw() {
    if (!play.empty())
@@ -84,10 +75,6 @@ void Root::draw() {
    if (!enem.empty())
       for (list< shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end(); ++it)  
 	 (*it)->draw();
-
-	 
-      
-   
 }
 
 
@@ -98,20 +85,12 @@ void Root::updatePlayer() {
 	 (*it)->updatePlayer();	 
 	 if ((*it)->getFire()) {
 	    addProj(make_shared<Projectile> ((*it)->getCentre(), (*it)->getColor(),
-					     (*it)->getSpeed()));
+					     (*it)->getProjSpeed()));
 	    (*it)->setFire(false);
 	 }	 
       }
    }
 }
-
-// Player has:
-// lives, which is an integer value
-// Point centre, use getCentre to access
-
-// Projectile has:
-// bool live, use setDead() to set live = false
-// Point centre, use getCentre to access; represented as a single (x,y) point in display
 
 // simple square-bound box collision detection
 void Root::collision() {
@@ -215,4 +194,33 @@ void Root::reset(int code) {
       for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) 
 	 (*it)->reset(code);        
 }
-
+void Root::spawn(){
+   Vector speed;
+   int n = (rand() % 2) + 1;
+   //std::cout<<n;
+   int x = 3;
+   int count = 0;
+   switch(n) {
+      case 1:
+	 speed.x = -100;
+	 speed.y = 0;
+	 addEnem(make_shared<Enemy>(Point(800, 300), al_map_rgb(204, 35, 99), speed));
+	 addEnem(make_shared<Enemy>(Point(850, 200), al_map_rgb(204, 35, 99), speed));
+	 addEnem(make_shared<Enemy>(Point(850, 400), al_map_rgb(204, 35, 99), speed));
+	 addEnem(make_shared<Enemy>(Point(900, 500), al_map_rgb(204, 35, 99), speed));
+	 addEnem(make_shared<Enemy>(Point(900, 100), al_map_rgb(204, 35, 99), speed));
+	 break;
+      
+      case 2:      
+	 speed.x = -100;
+	 speed.y = -100;
+	 if(static_cast<int>(al_get_time()) % x == 0 && count < 5){
+	    addEnem(make_shared<Enemy>(Point(800, 20), al_map_rgb(204, 35, 99), speed));
+	    count++;
+	    x += 2;
+	    //std::cout << "somethinghappened";
+	 }
+	 break;	 
+   }
+}
+   

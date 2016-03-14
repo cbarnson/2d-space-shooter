@@ -33,7 +33,10 @@ class Root : public Drawable, public Updateable, public Controls {
    list< shared_ptr<Enemy> > enem;
    list< shared_ptr<Player> > play;
    int fps;
-   //bool single;
+   
+   bool single_mode;
+   bool versus_mode;
+   //bool coop_mode;
       
   public:
    // root is initialized with some integer p (1 or 2), which represents the game mode
@@ -44,6 +47,7 @@ class Root : public Drawable, public Updateable, public Controls {
    {
       for (int i = 1; i <= p; i++)
 	 addPlay(i);
+      
    }
 
    // game setup
@@ -55,9 +59,7 @@ class Root : public Drawable, public Updateable, public Controls {
    // occur from root
    void addProj(shared_ptr<Projectile>);
    void addEnem(shared_ptr<Enemy>);
-
    
-   void spawn();
    // virtuals
    void update(double);
    void draw();
@@ -67,6 +69,7 @@ class Root : public Drawable, public Updateable, public Controls {
    void updateScore(ALLEGRO_COLOR);
    void set(int);
    void reset(int);
+   void spawn();
 };
 
 #endif

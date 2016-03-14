@@ -37,23 +37,20 @@ class Player : public Controls, public Drawable, public Updateable {
    ALLEGRO_COLOR color; // ship color
    Vector speed;        // movement speed in any direction
    Hotkeys config;      // key mapping profile
-   bool flipped;
-   int fps;
+   bool flipped;        // for 'versus' mode
+   int fps;             // for our timer
 
-   ALLEGRO_TIMER *fireDelay = NULL;
-   //ALLEGRO_BITMAP *ship = NULL;
-   ALLEGRO_FONT *scoreFont = al_load_font("/usr/share/fonts/dejavu/DejaVuSerif.ttf", 18, 0);
-
-   //int shipWidth;
-   //int shipHeight;
+   ALLEGRO_TIMER *fireDelay = NULL;   
+   ALLEGRO_PATH *path;
+   ALLEGRO_FONT *scoreFont;
 
    bool dead;           // signals Player object has been killed
-   bool fire;           // true if fire-key has been hit
-   Vector projSpeed;    // speed of projectiles
-   int lives;           // lives remaining before destroyed
-   int speed_modifier;
+   bool fire;           // signals fire-key has been hit
+   Vector projSpeed;    // speed of projectiles from Player object
+   int lives;           // lives remaining of Player object before destroyed
+   int speed_modifier;  // affects speed of Player object
    int size;            // ship size in pixels
-   int score;
+   int score;           // score of Player object
    
   public:
 
@@ -63,13 +60,13 @@ class Player : public Controls, public Drawable, public Updateable {
       if ((fireDelay = al_create_timer(1.0 / fps)) == NULL)
 	 throw std::runtime_error("Cannot create fireDelay timer");
       al_start_timer(fireDelay);
+
+      path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
+      al_append_path_component(path, "resources");
+      al_change_directory(al_path_cstr(path, '/'));
       
-      //scoreFont = al_load_font("/usr/share/fonts/dejavu/DejaVuSerif.ttf", 18, 0);
-      //ship = al_load_bitmap("/home/barc2720/assn/al2/goodFighter.png");
-      //if (ship == NULL)
-      // std::cout << "image was not loaded\n";
-      //shipWidth = al_get_bitmap_width(ship);
-      //shipHeight = al_get_bitmap_height(ship);
+      scoreFont = al_load_font("ipag.ttf", 18, 0);
+      al_destroy_path(path);
       
       speed = Vector(0,0);
       lives = 3;
@@ -91,7 +88,6 @@ class Player : public Controls, public Drawable, public Updateable {
    void setLives(int);
    void setScore(int); // increments score by param value
    void setFire(bool);
-   void hit();
 
    // get methods
    int getLives();
@@ -99,8 +95,11 @@ class Player : public Controls, public Drawable, public Updateable {
    bool getDead();
    bool getFire();
    Point getCentre();
+   Vector getProjSpeed();
    Vector getSpeed();
    ALLEGRO_COLOR getColor();
+   
+   void hit();
    
    void set(int);
    void reset(int);

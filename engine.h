@@ -22,22 +22,28 @@ using std::shared_ptr;
 class engine : public Simulator {
   private:
    shared_ptr<Root> root;
+   ALLEGRO_PATH *path;
    ALLEGRO_FONT *menuFont;
    ALLEGRO_FONT *modeFont;
    ALLEGRO_BITMAP *space;
    int game_fps;
    int windowWidth;
    int windowHeight;
-   //bool select_left;
 
   public:
   engine(const Display& d, int fps) : Simulator(d, fps), game_fps(fps)
    {
       windowWidth = d.getW();
       windowHeight = d.getH();
-      menuFont = al_load_font("/usr/share/fonts/dejavu/DejaVuSerif.ttf", 48, 0);
-      modeFont = al_load_font("/usr/share/fonts/culmus/DavidCLM-Bold.ttf", 32, 0);
-      space = al_load_bitmap("/home/barc2720/images/space.png");
+
+      path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
+      al_append_path_component(path, "resources");
+      al_change_directory(al_path_cstr(path, '/'));
+      
+      menuFont = al_load_font("ipag.ttf", 48, 0);
+      modeFont = al_load_font("DavidCLM-Bold.ttf", 32, 0);
+      space = al_load_bitmap("space.png");   
+      al_destroy_path(path);
    }
 
    ~engine() {
@@ -58,32 +64,11 @@ class engine : public Simulator {
       al_flip_display();
    }
 
-   // menuSelection was planned to be a selection box that would enclose the
-   // text "single player" or "multi player" at the beginning of the game
-   // you would be able to use the arrow keys to go back and forth between the two modes
-   // then hit enter to start the game
-/*
-   void menuSelection(int code) {
-      if (code == ALLEGRO_KEY_LEFT)
-	 select_left = true;
-      if (code == ALLEGRO_KEY_RIGHT)
-	 select_left = false;
-      if (code == ALLEGRO_KEY_ENTER) {
-	 switch (select_left) {
-	    case true:
-	       single_player(); break;
-	    case false:
-	       multi_player(); break;
-	 }
-      }	 
-   }
-*/	
    void single_player() { root = make_shared<Root> (1, game_fps); }
    void multi_player() { root = make_shared<Root> (2, game_fps); }
    void setRoot(int code) { root->set(code); }
    void resetRoot(int code) { root->reset(code); }
-   void collisionRoot() { root->collision(); root->clean(); }
-   
+   void collisionRoot() { root->collision(); root->clean(); }   
    void controlRoot() { root->updatePlayer(); }
    void updateRoot(double dt) { root->update(dt); }
 

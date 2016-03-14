@@ -37,31 +37,31 @@ Simulator::~Simulator() {
 
 
 void Simulator::run() {
+
+   
+   bool redraw = true;
+   double crtTime, prevTime = 0;
    al_install_keyboard();
    al_register_event_source(eventQueue, al_get_keyboard_event_source());
-   bool selected = false;
+
    
+   // MENU LOOP
    while(1) {
       ALLEGRO_EVENT ev;
       al_wait_for_event(eventQueue, &ev);	
 
       if (ev.type == ALLEGRO_EVENT_KEY_DOWN) {
-	 //menuSelection(ev.keyboard.keycode);
 	 
-	 switch (ev.keyboard.keycode) {	    
+	 switch (ev.keyboard.keycode) {
+	    
 	    case ALLEGRO_KEY_1: // single player mode
-	       single_player();
-	       selected = true;
-	       break;
+	       single_player(); break;
 	    case ALLEGRO_KEY_2: // multi player mode
-	       multi_player();
-	       selected = true;
-	       break;
+	       multi_player(); break;
+	       
 	    default:
 	       break;
 	 }
-	 if (selected)
-	    break;	 	 
       }
       if (ev.type == ALLEGRO_EVENT_TIMER) {
 	 menuMessage();
@@ -69,17 +69,11 @@ void Simulator::run() {
       else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
 	 break;
       }
-   }
+   } // end of menu loop
 
+   
 
-   // switch to trigger model drawing
-   bool redraw=true;
-
-   // current time and previous time in seconds; needed so we can try
-   // to keep track of the passing of real time.
-   double crtTime, prevTime = 0;
-
-   // game loop
+   // GAME LOOP
    while(1) {
       ALLEGRO_EVENT ev;
       al_wait_for_event(eventQueue, &ev);
@@ -112,6 +106,10 @@ void Simulator::run() {
 	 drawRoot();
 	 redraw = false;
       }
-   }
+   } // end of game loop
+
+
+
+   
 }
 
