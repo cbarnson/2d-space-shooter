@@ -13,14 +13,14 @@ class Single : public Root {
    list< shared_ptr<Projectile> > proj;
    list< shared_ptr<Enemy> > enem;
    list< shared_ptr<Player> > play;
-   bool game_over;
+   //bool game_over;
    
    
   public:
    
   Single(int frames) : Root(frames)
    {
-      game_over = false;
+      //game_over = false;
    }
 
 

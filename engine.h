@@ -18,13 +18,17 @@
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_image.h>
 #include <memory>
+#include <list>
 
 using std::shared_ptr;
+using std::make_shared;
+using std::list;
 
 class engine : public Simulator {
   private:
-   shared_ptr<Root> root;
-   bool game_over;
+   list< shared_ptr<Root> > root;
+   //shared_ptr<Root> root;
+   //bool game_over;
    int game_fps;
    int windowWidth;
    int windowHeight;
@@ -48,7 +52,7 @@ class engine : public Simulator {
       
       windowWidth = d.getW();
       windowHeight = d.getH();
-      game_over = false;
+      //game_over = false;
    }
 
    ~engine() {
@@ -57,13 +61,21 @@ class engine : public Simulator {
       al_destroy_bitmap(space);
    }
 
+   void reset_game() {
+      root.clear();
+   }
+   
    bool is_game_over() {
-      if (root->is_game_over()) {
-	 root = NULL;
-	 return true;
-      }
-      else
-	 return false;
+      for (list< shared_ptr<Root> >::iterator it = root.begin(); it != root.end();
+	   ++it) 
+	 return ((*it)->is_game_over()) ? true : false;
+      return true;
+	 /*
+	 if ((*it)->is_game_over()) 
+	    return true;	 
+	 else
+	 return false;*/
+      
    }
    
    void menuMessage() {
@@ -81,27 +93,72 @@ class engine : public Simulator {
    
 
    void single_player() {
-      
-      root = make_shared<Single> (game_fps);
-      root->setup();
+      root.push_back(make_shared<Single> (game_fps));
+      for (list< shared_ptr<Root> >::iterator it = root.begin(); it != root.end();
+	   ++it) {
+	 (*it)->setup();
+      }
+      //root = make_shared<Single> (game_fps);
+      //root->setup();
    }
 
    
    void multi_player() {
-      root = make_shared<Versus> (game_fps);
-      root->setup();
+      root.push_back(make_shared<Versus> (game_fps));
+      for (list< shared_ptr<Root> >::iterator it = root.begin(); it != root.end();
+	   ++it) {
+	 (*it)->setup();
+      }
+      //root = make_shared<Versus> (game_fps);
+      //root->setup();
    }
 
    
-   void setRoot(int code) { root->set(code); }
-   void resetRoot(int code) { root->reset(code); }
-   void collisionRoot() { root->collision(); root->clean(); }   
-   void controlRoot() { root->updatePlayer(); }
-   void updateRoot(double dt) { root->update(dt); }
+   void setRoot(int code) {
+      for (list< shared_ptr<Root> >::iterator it = root.begin(); it != root.end();
+	   ++it) {
+	 (*it)->set(code);
+      }
+      //root->set(code);
+   }
+   void resetRoot(int code) {
+      for (list< shared_ptr<Root> >::iterator it = root.begin(); it != root.end();
+	   ++it) {
+	 (*it)->reset(code);
+      }
+      //root->reset(code);
+   }
+   void collisionRoot() {
+      for (list< shared_ptr<Root> >::iterator it = root.begin(); it != root.end();
+	   ++it) {
+	 (*it)->collision();
+	 (*it)->clean();
+      }
+      //root->collision();
+      //root->clean();
+   }   
+   void controlRoot() {
+      for (list< shared_ptr<Root> >::iterator it = root.begin(); it != root.end();
+	   ++it) {
+	 (*it)->updatePlayer();
+      }
+      //root->updatePlayer();
+   }
+   void updateRoot(double dt) {
+      for (list< shared_ptr<Root> >::iterator it = root.begin(); it != root.end();
+	   ++it) {
+	 (*it)->update(dt);
+      }
+      //root->update(dt);
+   }
    
    void drawRoot() {
       al_clear_to_color(al_map_rgb(0,0,0));
-      root->draw();
+      for (list< shared_ptr<Root> >::iterator it = root.begin(); it != root.end();
+	   ++it) {
+	 (*it)->draw();
+      }
+      //root->draw();
       al_flip_display();
    }
 

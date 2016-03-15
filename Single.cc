@@ -13,7 +13,9 @@ void Single::setup() {
 }
 
 bool Single::is_game_over() {
-   return game_over;
+   if (play.empty())
+      return true;
+   return false;
 }
 
 
@@ -69,6 +71,7 @@ void Single::collision() {
       for (list< shared_ptr<Projectile> >::iterator i = proj.begin(); i != proj.end(); ++i) {
 	 // check against players
 	 //if (play) {
+	 
 	 if (!play.empty()) {
 	    for (list< shared_ptr<Player> >::iterator p = play.begin(); p != play.end(); ++p) {
 	       Point A = (*i)->getCentre();
@@ -79,12 +82,13 @@ void Single::collision() {
 		  
 		  std::cout << "hit on PLAYER\n";
 		  (*i)->setDead();
-		  (*p)->hit();
-		  if ((*p)->getDead())
-		     updateScore((*i)->getColor());
+		  (*p)->hit(); // reduce player life
+		  //if ((*p)->getDead()) // true if player is dead
+		  //updateScore((*i)->getColor());
 	       }	    
 	    }
-	 }	 
+	 }
+	 
 	 // check against enemies
 	 if (!enem.empty()) {
 	    for (list< shared_ptr<Enemy> >::iterator e = enem.begin(); e != enem.end(); ++e) {
@@ -170,7 +174,8 @@ void Single::reset(int code) {
 
 void Single::spawn() {
    Vector speed;
-   int n = (rand() % 2) + 1;
+   //int n = (rand() % 2) + 1;
+   int n = 1;
    //std::cout<<n;
    int x = 3;
    int count = 0;
