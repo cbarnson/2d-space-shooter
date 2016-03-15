@@ -12,8 +12,9 @@ class Single : public Root {
   private:
    list< shared_ptr<Projectile> > proj;
    list< shared_ptr<Enemy> > enem;
-   shared_ptr<Player> play;
+   list< shared_ptr<Player> > play;
    bool game_over;
+   
    
   public:
    

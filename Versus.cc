@@ -34,6 +34,7 @@ bool Versus::is_game_over() {
 }
 
 
+
 void Versus::update(double dt) {
    if (!play.empty())
       for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) 
@@ -186,11 +187,9 @@ void Versus::updateScore(ALLEGRO_COLOR c) {
 }
 
 void Versus::set(int code) {
-   if (!play.empty()) {
-      for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) {
+   if (!play.empty()) 
+      for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) 
 	 (*it)->set(code);
-      }
-   }
 }
 
 

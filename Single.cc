@@ -7,9 +7,9 @@ void Single::setup() {
    h.push_back(ALLEGRO_KEY_D);
    h.push_back(ALLEGRO_KEY_A);
    h.push_back(ALLEGRO_KEY_PAD_0);
-   play = make_shared<Player> (Point(600, 300),
-			       al_map_rgb(0,200,0), h,
-			       false, fps);	 
+   play.push_back(make_shared<Player> (Point(600, 300),
+				       al_map_rgb(0,200,0), h,
+				       false, fps ));	 
 }
 
 bool Single::is_game_over() {
@@ -18,8 +18,9 @@ bool Single::is_game_over() {
 
 
 void Single::update(double dt) {
-   if (play)
-      play->update(dt);
+   if (!play.empty())
+      for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) 
+	 (*it)->update(dt);
    if (!proj.empty())
       for (list< shared_ptr<Projectile> >::iterator it = proj.begin(); it != proj.end(); ++it) 
 	 (*it)->update(dt);          
@@ -37,8 +38,9 @@ void Single::update(double dt) {
 }
 
 void Single::draw() {
-   if (play)
-      play->draw();
+   if (!play.empty())
+      for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) 
+	 (*it)->draw();
    if (!proj.empty())
       for (list< shared_ptr<Projectile> >::iterator it = proj.begin(); it != proj.end(); ++it) 
 	 (*it)->draw();
@@ -48,13 +50,15 @@ void Single::draw() {
 }
 
 void Single::updatePlayer() {
-   if (play) {
-      play->updatePlayer();
-      if (play->getFire()) {
-	 proj.push_back(make_shared<Projectile> (play->getCentre(), play->getColor(),
-						 play->getProjSpeed()));
-	 play->setFire(false);
-      }	 
+   if (!play.empty()) {
+      for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) {
+	 (*it)->updatePlayer();	 
+	 if ((*it)->getFire()) {
+	    proj.push_back(make_shared<Projectile> ((*it)->getCentre(), (*it)->getColor(),
+						    (*it)->getProjSpeed()));
+	    (*it)->setFire(false);
+	 }	 
+      }
    }
 }
 
@@ -64,21 +68,23 @@ void Single::collision() {
       // projectiles exist
       for (list< shared_ptr<Projectile> >::iterator i = proj.begin(); i != proj.end(); ++i) {
 	 // check against players
-	 if (play) {
-	    Point A = (*i)->getCentre();
-	    Point B = play->getCentre(); int b = play->getSize();
-	    if ((A.x > B.x - b) && (A.x < B.x + b) &&
-		(A.y > B.y - b) && (A.y < B.y + b)) {
-	       // is a hit on Player
-	       
-	       std::cout << "hit on PLAYER\n";
-	       (*i)->setDead();
-	       play->hit();
-	       if (play->getDead())
-		  updateScore((*i)->getColor());
-	    }	    
-	 }
-	 	 
+	 //if (play) {
+	 if (!play.empty()) {
+	    for (list< shared_ptr<Player> >::iterator p = play.begin(); p != play.end(); ++p) {
+	       Point A = (*i)->getCentre();
+	       Point B = (*p)->getCentre(); int b = (*p)->getSize();
+	       if ((A.x > B.x - b) && (A.x < B.x + b) &&
+		   (A.y > B.y - b) && (A.y < B.y + b)) {
+		  // is a hit on Player
+		  
+		  std::cout << "hit on PLAYER\n";
+		  (*i)->setDead();
+		  (*p)->hit();
+		  if ((*p)->getDead())
+		     updateScore((*i)->getColor());
+	       }	    
+	    }
+	 }	 
 	 // check against enemies
 	 if (!enem.empty()) {
 	    for (list< shared_ptr<Enemy> >::iterator e = enem.begin(); e != enem.end(); ++e) {
@@ -107,11 +113,14 @@ void Single::collision() {
 
 
 void Single::clean() {
-   if (play) {
-      if (play->getDead()) {
-	 play = NULL;
-	 game_over = true;
-      }	 
+   list< shared_ptr<Player> > newPlay;
+   if (!play.empty()) {
+      for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) {
+	 if (!(*it)->getDead()) // if not dead
+	    newPlay.push_back(*it);
+      }
+      play.clear();
+      play.assign(newPlay.begin(), newPlay.end());      
    }
 
    list< shared_ptr<Projectile> > newProj;
@@ -136,24 +145,27 @@ void Single::clean() {
 }
 
 void Single::updateScore(ALLEGRO_COLOR c) {
-   if (play) {
-      ALLEGRO_COLOR tmp = play->getColor();
-      if (tmp.r == c.r && tmp.g == c.g && tmp.b == c.b) {
-	 play->setScore(1);	 
+   if (!play.empty()) {
+      for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) {
+	 ALLEGRO_COLOR tmp = (*it)->getColor();
+	 if (tmp.r == c.r && tmp.g == c.g && tmp.b == c.b) {
+	    (*it)->setScore(1);
+	    break;
+	 }
       }
    }
 }
 
 void Single::set(int code) {
-   if (play) {
-      play->set(code);
-   }
+   if (!play.empty()) 
+      for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) 
+	 (*it)->set(code);
 }
 
 void Single::reset(int code) {
-   if (play) {
-      play->reset(code);
-   }
+   if (!play.empty())
+      for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) 
+	 (*it)->reset(code);        
 }
 
 void Single::spawn() {

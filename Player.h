@@ -40,18 +40,21 @@ class Player : public Controls, public Drawable, public Updateable {
    bool flipped;        // for 'versus' mode
    int fps;             // for our timer
 
-   ALLEGRO_TIMER *fireDelay = NULL;
+   ALLEGRO_TIMER *fireDelay;
    
    //ALLEGRO_PATH *path;
-   ALLEGRO_FONT *scoreFont = NULL;
+   //ALLEGRO_FONT *scoreFont;
+
    /*
-   ALLEGRO_BITMAP *ship00 = NULL;
-   ALLEGRO_BITMAP *ship01 = NULL;
-   ALLEGRO_BITMAP *ship10 = NULL;
-   ALLEGRO_BITMAP *ship11 = NULL;
-   ALLEGRO_BITMAP *ship20 = NULL;
-   ALLEGRO_BITMAP *ship21 = NULL;
+   ALLEGRO_BITMAP *ship00;   
+   ALLEGRO_BITMAP *ship01;
+   ALLEGRO_BITMAP *ship10;
+   ALLEGRO_BITMAP *ship11;
+   ALLEGRO_BITMAP *ship20;
+   ALLEGRO_BITMAP *ship21;
+   ALLEGRO_BITMAP *curAnim;
    */
+   
    bool dead;           // signals Player object has been killed
    bool fire;           // signals fire-key has been hit
    Vector projSpeed;    // speed of projectiles from Player object
@@ -70,19 +73,19 @@ class Player : public Controls, public Drawable, public Updateable {
 	 throw std::runtime_error("Cannot create fireDelay timer");
       al_start_timer(fireDelay);
       
-      ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
-      al_append_path_component(path, "resources");
-      al_change_directory(al_path_cstr(path, '/'));
+      //ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
+      //al_append_path_component(path, "resources");
+      //al_change_directory(al_path_cstr(path, '/'));
       /*
-      ship00 = al_load_bitmap("ship00.png");
+      ship00 = al_load_bitmap("ship00.png");      
       ship01 = al_load_bitmap("ship01.png");
       ship10 = al_load_bitmap("ship10.png");
       ship11 = al_load_bitmap("ship11.png");
       ship20 = al_load_bitmap("ship20.png");
       ship21 = al_load_bitmap("ship21.png");
       */
-      scoreFont = al_load_font("ipag.tff", 16, 0);
-      al_destroy_path(path);
+      //scoreFont = al_load_font("ipag.tff", 16, 0);
+      //al_destroy_path(path);
             
       speed = Vector(0,0);
       lives = 3;
@@ -105,7 +108,7 @@ class Player : public Controls, public Drawable, public Updateable {
       al_destroy_bitmap(ship20);
       al_destroy_bitmap(ship21);
       */
-      al_destroy_font(scoreFont);
+      //al_destroy_font(scoreFont);
    }
 
    // set methods

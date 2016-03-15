@@ -29,7 +29,6 @@ class engine : public Simulator {
    int windowWidth;
    int windowHeight;
    
-   //ALLEGRO_PATH *path;
    ALLEGRO_FONT *menuFont;
    ALLEGRO_FONT *modeFont;
    ALLEGRO_BITMAP *space;
@@ -40,9 +39,11 @@ class engine : public Simulator {
       ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
       al_append_path_component(path, "resources");
       al_change_directory(al_path_cstr(path, '/'));
+      
       space = al_load_bitmap("space.png");
       menuFont = al_load_font("DavidCLM-BoldItalic.ttf", 48, 0);
       modeFont = al_load_font("DavidCLM-Medium.ttf", 24, 0);
+      
       al_destroy_path(path);
       
       windowWidth = d.getW();
@@ -68,6 +69,7 @@ class engine : public Simulator {
    void menuMessage() {
       //al_clear_to_color(al_map_rgb(0,0,0));
       al_draw_bitmap(space, 0, 0, 0);
+      //al_set_target_bitmap(space);
       al_draw_text(menuFont, al_map_rgb(0, 204, 204), 0.5 * windowWidth,
 		   0.5 * windowHeight, ALLEGRO_ALIGN_CENTRE,
 		   "ASSEROIDS");
@@ -79,6 +81,7 @@ class engine : public Simulator {
    
 
    void single_player() {
+      
       root = make_shared<Single> (game_fps);
       root->setup();
    }

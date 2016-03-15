@@ -3,7 +3,7 @@
  */
 
 #include "Player.h"
-
+//#include <iostream>
 // set methods
 void Player::setLives(int l) { lives = l; }
 void Player::setScore(int s) { score += s; }
@@ -27,7 +27,7 @@ void Player::hit() {
 
 // called when ALLEGRO_EVENT_KEY_UP
 void Player::set(int code) {
-   for (int i = 0; i < config.keys.size(); i++) {
+   for (unsigned int i = 0; i < config.keys.size(); i++) {
       if (code == config.control[i])
 	 config.keys[i] = true;
    }   
@@ -36,13 +36,14 @@ void Player::set(int code) {
 
 // called when ALLEGRO_EVENT_KEY_DOWN
 void Player::reset(int code) {
-   for (int i = 0; i < config.keys.size(); i++) {
+   for (unsigned int i = 0; i < config.keys.size(); i++) {
       if (code == config.control[i])
 	 config.keys[i] = false;
    }
 }   
 
 void Player::draw() {
+
    /*
    if (speed.x > 0) {
       if (speed.y > 0)
@@ -72,8 +73,19 @@ void Player::draw() {
 			centre.y - (al_get_bitmap_height(ship10)* 0.5), 0);
    }
    */
-
-
+   /*
+   if (curAnim != NULL) {
+      al_draw_bitmap(curAnim,
+		     centre.x - (al_get_bitmap_width(curAnim) * 0.5),
+		     centre.y - (al_get_bitmap_height(curAnim)* 0.5), 0);
+      std::cout << "failed\n";
+   }
+   else
+      al_draw_bitmap(ship10,
+		     centre.x - (al_get_bitmap_width(ship10) * 0.5),
+		     centre.y - (al_get_bitmap_height(ship10)* 0.5), 0);
+   */		     
+   
    al_draw_rectangle(centre.x - size, centre.y - size,
 		     centre.x + size, centre.y + size,
 		     color, 3);
@@ -125,6 +137,17 @@ void Player::updatePlayer() {
 
 void Player::update(double dt) {
    centre = centre + speed * dt;
+/*
+   if (speed.x > 0) {
+      if (speed.y > 0) curAnim = ship01;
+      else if (speed.y < 0) curAnim = ship21;
+      else curAnim = ship11;
+   } else {
+      if (speed.y > 0) curAnim = ship00;
+      else if (speed.y < 0) curAnim = ship20;
+      else curAnim = ship10;
+   }
+*/ 
    speed = Vector(0, 0);
    
    // check x bound and adjust if out
