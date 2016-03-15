@@ -76,7 +76,7 @@ class Enemy : public Drawable, public Updateable {
    void update(double dt) {
       centre = centre + speed * dt;
       
-      // check x bound and adjust if out
+      
       if (centre.x < 0)
 	 dead = true;      
       // check y bound and adjust if out

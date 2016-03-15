@@ -24,37 +24,36 @@ using std::shared_ptr;
 class engine : public Simulator {
   private:
    shared_ptr<Root> root;
-   
-   ALLEGRO_PATH *path;
-   ALLEGRO_FONT *menuFont;
-   ALLEGRO_FONT *modeFont;
-   ALLEGRO_BITMAP *space;
    bool game_over;
    int game_fps;
    int windowWidth;
    int windowHeight;
-
+   
+   //ALLEGRO_PATH *path;
+   ALLEGRO_FONT *menuFont;
+   ALLEGRO_FONT *modeFont;
+   ALLEGRO_BITMAP *space;
+   
   public:
   engine(const Display& d, int fps) : Simulator(d, fps), game_fps(fps)
    {
+      ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
+      al_append_path_component(path, "resources");
+      al_change_directory(al_path_cstr(path, '/'));
+      space = al_load_bitmap("space.png");
+      menuFont = al_load_font("DavidCLM-BoldItalic.ttf", 48, 0);
+      modeFont = al_load_font("DavidCLM-Medium.ttf", 24, 0);
+      al_destroy_path(path);
+      
       windowWidth = d.getW();
       windowHeight = d.getH();
       game_over = false;
-      
-      path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
-      al_append_path_component(path, "resources");
-      al_change_directory(al_path_cstr(path, '/'));
-      
-      menuFont = al_load_font("ipag.ttf", 48, 0);
-      modeFont = al_load_font("DavidCLM-Bold.ttf", 32, 0);
-      space = al_load_bitmap("space.png");   
-      al_destroy_path(path);
    }
 
    ~engine() {
       al_destroy_font(menuFont);
       al_destroy_font(modeFont);
-      al_destroy_bitmap(space);      
+      al_destroy_bitmap(space);
    }
 
    bool is_game_over() {

@@ -27,16 +27,6 @@ using std::make_shared;
 using std::list;
 
 class Root : public Drawable, public Updateable, public Controls {
-   
-  private:
-   //list< shared_ptr<Projectile> > proj;
-   //list< shared_ptr<Enemy> > enem;
-   //list< shared_ptr<Player> > play;
-   //int fps;
-   
-   //bool single_mode;
-   //bool versus_mode;
-   //bool coop_mode;
       
   public:
    // root is initialized with some integer p (1 or 2), which represents the game mode
@@ -53,9 +43,7 @@ class Root : public Drawable, public Updateable, public Controls {
    // Enemy, Projectile, etc.) it is done through the Root class.  This means using some kind
    // of flag (bool, int, etc. ) inside the object classes to signal that a change needs to
    // occur from root
-   //virtual void addProj(shared_ptr<Projectile>) = 0;
-   //virtual void addEnem(shared_ptr<Enemy>) = 0;
-   
+
    // virtuals
    virtual bool is_game_over() = 0;
    virtual void update(double) = 0;
@@ -66,7 +54,6 @@ class Root : public Drawable, public Updateable, public Controls {
    virtual void updateScore(ALLEGRO_COLOR) = 0;
    virtual void set(int) = 0;
    virtual void reset(int) = 0;
-   //virtual void spawn() = 0;
 };
 
 #endif

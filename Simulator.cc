@@ -126,8 +126,8 @@ void Simulator::run() {
 	 
       } // end of game loop ///////////////////////////////////
 
-      
    }
+   
   
 }
 

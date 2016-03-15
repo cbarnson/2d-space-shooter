@@ -40,10 +40,10 @@ void Versus::update(double dt) {
 	 (*it)->update(dt);
    if (!proj.empty())
       for (list< shared_ptr<Projectile> >::iterator it = proj.begin(); it != proj.end(); ++it) 
-	 (*it)->update(dt);          
+	 (*it)->update(dt);
+   /*
    if (!enem.empty()) {
-      for (list< shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end(); ++it)
-      {
+      for (list< shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end(); ++it) {
 	 (*it)->update(dt);
 	 if((*it)->getFire()){
 	    proj.push_back(make_shared<Projectile>((*it)->getCentre(), (*it)->getColor(),
@@ -52,8 +52,7 @@ void Versus::update(double dt) {
 	 }	 	 
       }
    }
-   //else
-   //spawn();
+   */
 }
 
 
@@ -66,9 +65,13 @@ void Versus::draw() {
    if (!proj.empty())
       for (list< shared_ptr<Projectile> >::iterator it = proj.begin(); it != proj.end(); ++it) 
 	 (*it)->draw();
+
+   /*
    if (!enem.empty())
       for (list< shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end(); ++it)  
 	 (*it)->draw();
+
+   */
 }
 
 
@@ -108,7 +111,11 @@ void Versus::collision() {
 		     updateScore((*i)->getColor());
 	       }       	  
 	    }
-	 }	 
+	 }
+      }
+   }
+}
+	 /*
 	 // check against enemies
 	 if (!enem.empty()) {
 	    for (list< shared_ptr<Enemy> >::iterator e = enem.begin(); e != enem.end(); ++e) {
@@ -125,11 +132,13 @@ void Versus::collision() {
 		  if ((*e)->getDead())
 		     updateScore((*i)->getColor());
 	       }
-	    }
+	       }
 	 }
+	 
       }
    }
 }
+	 */
 
 void Versus::clean() {
    list< shared_ptr<Player> > newPlay;
@@ -151,7 +160,7 @@ void Versus::clean() {
       proj.clear();
       proj.assign(newProj.begin(), newProj.end());      
    }
-   
+   /*
    list< shared_ptr<Enemy> > newEnem;
    if (!enem.empty()) {
       for (list< shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end(); ++it) {
@@ -161,6 +170,7 @@ void Versus::clean() {
       enem.clear();
       enem.assign(newEnem.begin(), newEnem.end());      
    }
+   */
 }
 
 void Versus::updateScore(ALLEGRO_COLOR c) {

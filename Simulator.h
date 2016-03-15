@@ -2,8 +2,6 @@
 #define __SIMULATOR_H
 
 #include "Display.h"
-#include "Root.h"
-//#include <vector>
 
 /// Class responsible for setting up the Allegro library for some basic animation.
 /**

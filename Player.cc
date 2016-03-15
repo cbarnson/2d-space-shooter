@@ -27,7 +27,7 @@ void Player::hit() {
 
 // called when ALLEGRO_EVENT_KEY_UP
 void Player::set(int code) {
-   for (int i = 0; i < 5; i++) {
+   for (int i = 0; i < config.keys.size(); i++) {
       if (code == config.control[i])
 	 config.keys[i] = true;
    }   
@@ -36,16 +36,49 @@ void Player::set(int code) {
 
 // called when ALLEGRO_EVENT_KEY_DOWN
 void Player::reset(int code) {
-   for (int i = 0; i < 5; i++) {
+   for (int i = 0; i < config.keys.size(); i++) {
       if (code == config.control[i])
 	 config.keys[i] = false;
    }
 }   
 
 void Player::draw() {
+   /*
+   if (speed.x > 0) {
+      if (speed.y > 0)
+	 al_draw_bitmap(ship01,
+			centre.x - (al_get_bitmap_width(ship01) * 0.5),
+			centre.y - (al_get_bitmap_height(ship01)* 0.5), 0);
+      else if (speed.y < 0)
+	 al_draw_bitmap(ship21,
+			centre.x - (al_get_bitmap_width(ship21) * 0.5),
+			centre.y - (al_get_bitmap_height(ship21)* 0.5), 0);
+      else
+	 al_draw_bitmap(ship11,
+			centre.x - (al_get_bitmap_width(ship11) * 0.5),
+			centre.y - (al_get_bitmap_height(ship11)* 0.5), 0);
+   } else {
+      if (speed.y > 0)
+	 al_draw_bitmap(ship00,
+			centre.x - (al_get_bitmap_width(ship00) * 0.5),
+			centre.y - (al_get_bitmap_height(ship00)* 0.5), 0);
+      else if (speed.y < 0)
+	 al_draw_bitmap(ship20,
+			centre.x - (al_get_bitmap_width(ship20) * 0.5),
+			centre.y - (al_get_bitmap_height(ship20)* 0.5), 0);
+      else
+	 al_draw_bitmap(ship10,
+			centre.x - (al_get_bitmap_width(ship10) * 0.5),
+			centre.y - (al_get_bitmap_height(ship10)* 0.5), 0);
+   }
+   */
+
+
    al_draw_rectangle(centre.x - size, centre.y - size,
 		     centre.x + size, centre.y + size,
 		     color, 3);
+
+   
    switch (lives) {
       case 1:
 	 al_draw_line(centre.x - size*2, centre.y + size*2,
@@ -64,8 +97,8 @@ void Player::draw() {
 	 break;
    }
    
-   al_draw_textf(scoreFont, color, centre.x, centre.y - 60, ALLEGRO_ALIGN_CENTRE,
-		 "Score: %i", score);
+   //al_draw_textf(scoreFont, al_map_rgb(255, 255, 255), centre.x, centre.y - 60,
+   // ALLEGRO_ALIGN_CENTRE, "Score: %i", score);
 }
 
 void Player::updatePlayer() {
@@ -93,7 +126,7 @@ void Player::updatePlayer() {
 void Player::update(double dt) {
    centre = centre + speed * dt;
    speed = Vector(0, 0);
-      
+   
    // check x bound and adjust if out
    if (centre.x > 800 - size)
       centre.x = 800 - size;

@@ -40,10 +40,18 @@ class Player : public Controls, public Drawable, public Updateable {
    bool flipped;        // for 'versus' mode
    int fps;             // for our timer
 
-   ALLEGRO_TIMER *fireDelay = NULL;   
-   ALLEGRO_PATH *path;
-   ALLEGRO_FONT *scoreFont;
-
+   ALLEGRO_TIMER *fireDelay = NULL;
+   
+   //ALLEGRO_PATH *path;
+   ALLEGRO_FONT *scoreFont = NULL;
+   /*
+   ALLEGRO_BITMAP *ship00 = NULL;
+   ALLEGRO_BITMAP *ship01 = NULL;
+   ALLEGRO_BITMAP *ship10 = NULL;
+   ALLEGRO_BITMAP *ship11 = NULL;
+   ALLEGRO_BITMAP *ship20 = NULL;
+   ALLEGRO_BITMAP *ship21 = NULL;
+   */
    bool dead;           // signals Player object has been killed
    bool fire;           // signals fire-key has been hit
    Vector projSpeed;    // speed of projectiles from Player object
@@ -51,6 +59,7 @@ class Player : public Controls, public Drawable, public Updateable {
    int speed_modifier;  // affects speed of Player object
    int size;            // ship size in pixels
    int score;           // score of Player object
+
    
   public:
 
@@ -60,19 +69,25 @@ class Player : public Controls, public Drawable, public Updateable {
       if ((fireDelay = al_create_timer(1.0 / fps)) == NULL)
 	 throw std::runtime_error("Cannot create fireDelay timer");
       al_start_timer(fireDelay);
-
-      path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
+      
+      ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
       al_append_path_component(path, "resources");
       al_change_directory(al_path_cstr(path, '/'));
-      
-      scoreFont = al_load_font("ipag.ttf", 18, 0);
+      /*
+      ship00 = al_load_bitmap("ship00.png");
+      ship01 = al_load_bitmap("ship01.png");
+      ship10 = al_load_bitmap("ship10.png");
+      ship11 = al_load_bitmap("ship11.png");
+      ship20 = al_load_bitmap("ship20.png");
+      ship21 = al_load_bitmap("ship21.png");
+      */
+      scoreFont = al_load_font("ipag.tff", 16, 0);
       al_destroy_path(path);
-      
+            
       speed = Vector(0,0);
       lives = 3;
       size = 10;
-      score = 0;
-      
+      score = 0;      
       dead = false;
       fire = false;
       speed_modifier = 200;
@@ -82,6 +97,14 @@ class Player : public Controls, public Drawable, public Updateable {
    ~Player() {
       if (fireDelay != NULL)
 	 al_destroy_timer(fireDelay);
+      /*
+      al_destroy_bitmap(ship00);
+      al_destroy_bitmap(ship01);
+      al_destroy_bitmap(ship10);
+      al_destroy_bitmap(ship11);
+      al_destroy_bitmap(ship20);
+      al_destroy_bitmap(ship21);
+      */
       al_destroy_font(scoreFont);
    }
 
@@ -99,9 +122,8 @@ class Player : public Controls, public Drawable, public Updateable {
    Vector getProjSpeed();
    Vector getSpeed();
    ALLEGRO_COLOR getColor();
-   
-   void hit();
-   
+
+   void hit();   
    void set(int);
    void reset(int);
    void draw();

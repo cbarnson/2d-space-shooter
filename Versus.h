@@ -4,14 +4,14 @@
 #include "Root.h"
 #include "Projectile.h"
 #include "Player.h"
-#include "Enemy.h"
+//#include "Enemy.h"
 
 
 class Versus : public Root {
 
   private:
    list< shared_ptr<Projectile> > proj;
-   list< shared_ptr<Enemy> > enem;
+   //list< shared_ptr<Enemy> > enem;
    list< shared_ptr<Player> > play;
    bool game_over;
 

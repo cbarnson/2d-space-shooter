@@ -6,10 +6,6 @@
  * @bug
  */
 
-//#include <allegro5/allegro_primitives.h>
-//#include <iostream>
-//#include <cstdlib>
-
 #include "Display.h"
 
 // constructor
@@ -30,7 +26,7 @@ Display::Display(int w, int h) {
    al_init_primitives_addon();
    al_init_font_addon();
    al_init_ttf_addon();
-   al_init_image_addon();   
+   al_init_image_addon();
 }
 
 // destructor
