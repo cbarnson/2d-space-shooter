@@ -2,6 +2,13 @@
 #define __SIMULATOR_H
 
 #include "Display.h"
+#include "Hotkeys.h"
+#include <allegro5/allegro.h>
+#include <allegro5/allegro_primitives.h>
+#include <stdexcept>
+#include <iostream>
+
+using std::cout;
 
 /// Class responsible for setting up the Allegro library for some basic animation.
 /**

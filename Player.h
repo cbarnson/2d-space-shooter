@@ -17,6 +17,7 @@
 #include "Drawable.h"
 #include "Controls.h"
 #include "Hotkeys.h"
+#include "Sprite.h"
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
@@ -26,7 +27,10 @@
 #include <memory>
 #include <iostream>
 #include <stdexcept>
+#include <iostream>
+#include <vector>
 
+using std::cout;
 using std::shared_ptr;
 using std::make_shared;
 using std::vector;
@@ -41,19 +45,17 @@ class Player : public Controls, public Drawable, public Updateable {
    int fps;             // for our timer
 
    ALLEGRO_TIMER *fireDelay;
-   
-   //ALLEGRO_PATH *path;
    //ALLEGRO_FONT *scoreFont;
+   //ALLEGRO_PATH *playerPath;
 
+   Sprite *ship;
    /*
-   ALLEGRO_BITMAP *ship00;   
-   ALLEGRO_BITMAP *ship01;
-   ALLEGRO_BITMAP *ship10;
-   ALLEGRO_BITMAP *ship11;
-   ALLEGRO_BITMAP *ship20;
-   ALLEGRO_BITMAP *ship21;
-   ALLEGRO_BITMAP *curAnim;
-   */
+   Sprite *neutral_up;
+   Sprite *neutral_mid;
+   Sprite *neutral_down;
+   Sprite *forward_up;
+   Sprite *forward_mid;
+   Sprite *forward_down;   */
    
    bool dead;           // signals Player object has been killed
    bool fire;           // signals fire-key has been hit
@@ -62,7 +64,11 @@ class Player : public Controls, public Drawable, public Updateable {
    int speed_modifier;  // affects speed of Player object
    int size;            // ship size in pixels
    int score;           // score of Player object
+   int row = 0;
+   int col = 0;
+   
 
+   //vector<bool> anim;
    
   public:
 
@@ -72,19 +78,33 @@ class Player : public Controls, public Drawable, public Updateable {
       if ((fireDelay = al_create_timer(1.0 / fps)) == NULL)
 	 throw std::runtime_error("Cannot create fireDelay timer");
       al_start_timer(fireDelay);
+
+      cout << "pre player load assets\n";
+      load_assets();
+      cout << "post player load assets\n";
       
-      //ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
-      //al_append_path_component(path, "resources");
-      //al_change_directory(al_path_cstr(path, '/'));
       /*
-      ship00 = al_load_bitmap("ship00.png");      
-      ship01 = al_load_bitmap("ship01.png");
-      ship10 = al_load_bitmap("ship10.png");
-      ship11 = al_load_bitmap("ship11.png");
-      ship20 = al_load_bitmap("ship20.png");
-      ship21 = al_load_bitmap("ship21.png");
-      */
-      //scoreFont = al_load_font("ipag.tff", 16, 0);
+      if ((ship00 = al_load_bitmap("ship00.png")) == NULL)
+	 cout << "00 not loaded\n";
+      if ((ship00 = al_load_bitmap("ship01.png")) == NULL)
+	 cout << "01 not loaded\n";
+      if ((ship00 = al_load_bitmap("ship10.png")) == NULL)
+	 cout << "10 not loaded\n";
+      if ((ship00 = al_load_bitmap("ship11.png")) == NULL)
+	 cout << "11 not loaded\n";
+      if ((ship00 = al_load_bitmap("ship20.png")) == NULL)
+	 cout << "20 not loaded\n";
+      if ((ship00 = al_load_bitmap("ship21.png")) == NULL)
+      cout << "21 not loaded\n";*/
+      //ship00 = al_load_bitmap("ship00.png");
+      //ship01 = al_load_bitmap("ship01.png");
+      //ship10 = al_load_bitmap("ship10.png");
+      //ship11 = al_load_bitmap("ship11.png");
+      //ship20 = al_load_bitmap("ship20.png");
+      //ship21 = al_load_bitmap("ship21.png");
+      
+      //scoreFont = al_load_font("DavidCLM-Medium.tff", 16, 0);
+      
       //al_destroy_path(path);
             
       speed = Vector(0,0);
@@ -97,19 +117,7 @@ class Player : public Controls, public Drawable, public Updateable {
       projSpeed = (flipped) ? Vector(-400,0) : Vector(400,0);
    }
 
-   ~Player() {
-      if (fireDelay != NULL)
-	 al_destroy_timer(fireDelay);
-      /*
-      al_destroy_bitmap(ship00);
-      al_destroy_bitmap(ship01);
-      al_destroy_bitmap(ship10);
-      al_destroy_bitmap(ship11);
-      al_destroy_bitmap(ship20);
-      al_destroy_bitmap(ship21);
-      */
-      //al_destroy_font(scoreFont);
-   }
+   ~Player();
 
    // set methods
    void setLives(int);
@@ -126,6 +134,7 @@ class Player : public Controls, public Drawable, public Updateable {
    Vector getSpeed();
    ALLEGRO_COLOR getColor();
 
+   void load_assets();
    void hit();   
    void set(int);
    void reset(int);

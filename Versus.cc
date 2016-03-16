@@ -30,7 +30,9 @@ void Versus::setup() {
 }
 
 bool Versus::is_game_over() {
-   return game_over;
+   if (2 > play.size())
+      return true;
+   return false;
 }
 
 
@@ -60,13 +62,14 @@ void Versus::update(double dt) {
 
 
 void Versus::draw() {
+   al_clear_to_color(al_map_rgb(50, 0, 0));
    if (!play.empty())
       for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) 
 	 (*it)->draw();
    if (!proj.empty())
       for (list< shared_ptr<Projectile> >::iterator it = proj.begin(); it != proj.end(); ++it) 
 	 (*it)->draw();
-
+   al_flip_display();
    /*
    if (!enem.empty())
       for (list< shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end(); ++it)  

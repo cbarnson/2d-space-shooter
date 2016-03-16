@@ -40,15 +40,31 @@ void Single::update(double dt) {
 }
 
 void Single::draw() {
-   if (!play.empty())
-      for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) 
+   //cout << "inside single draw beginning\n";
+   al_clear_to_color(al_map_rgb(0, 0, 0));
+   //cout << "after clear to color\n";
+   if (!play.empty()) {
+      //cout << "inside if .empty()\n";
+      for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) {
 	 (*it)->draw();
-   if (!proj.empty())
-      for (list< shared_ptr<Projectile> >::iterator it = proj.begin(); it != proj.end(); ++it) 
+      }
+   }
+   //cout << "after player\n";
+   if (!proj.empty()) {
+      for (list< shared_ptr<Projectile> >::iterator it = proj.begin(); it != proj.end(); ++it){ 
 	 (*it)->draw();
-   if (!enem.empty())
-      for (list< shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end(); ++it)  
+      }
+   }
+   //cout << "after proj\n";
+   if (!enem.empty()) {
+      for (list< shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end(); ++it) {
 	 (*it)->draw();
+      }
+   }
+   //cout << "after enemy\n";
+   
+   al_flip_display();
+   //cout << "after display flip\n";
 }
 
 void Single::updatePlayer() {

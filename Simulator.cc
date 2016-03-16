@@ -7,10 +7,6 @@
  */
 
 #include "Simulator.h"
-#include "Hotkeys.h"
-#include <allegro5/allegro.h>
-#include <allegro5/allegro_primitives.h>
-#include <stdexcept>
 
 // constructor
 Simulator::Simulator(const Display & d, int fps) :
@@ -45,7 +41,8 @@ void Simulator::run() {
    al_register_event_source(eventQueue, al_get_keyboard_event_source());
 
   
-   while(1) {
+   //while(1) {
+   cout << "now entering menu loop\n";
    
       // MENU LOOP
       while(1) {
@@ -61,20 +58,19 @@ void Simulator::run() {
 		  
 	       case ALLEGRO_KEY_1: // SINGLE PLAYER
 		  single_player();
+		  cout << "sim - selected single\n";
 		  mode_selected = true;
 		  break;
 		  
 	       case ALLEGRO_KEY_2: // MULTI PLAYER
-		  mode_selected = true;
 		  multi_player();
+		  cout << "sim - selected multi\n";
+		  mode_selected = true;
 		  break;
 		  
 	       default:
 		  break;
 	    }
-	 // ENTER GAME LOOP
-	 if (mode_selected)
-	    break;      
 	 
 	 // MENU SCENE
 	 if (ev.type == ALLEGRO_EVENT_TIMER) 
@@ -83,25 +79,37 @@ void Simulator::run() {
 	 else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) 
 	    return;
 
+	 
+	 // ENTER GAME LOOP
+	 if (mode_selected && al_is_event_queue_empty(eventQueue)) {
+	    cout << "mode has been selected\n";
+	    break;
+	 }
+
       } // end of menu loop
 
+      cout << "now entering game loop\n";
+      if (al_is_keyboard_installed())
+	 cout << "keyboard is installed\n";
 
       
       // GAME LOOP //////////////////////////////////////////////
       while(1) {	 
 	 ALLEGRO_EVENT ev;
 	 al_wait_for_event(eventQueue, &ev);
-
+	 cout << "waiting for input\n";
 	 // INPUT
 	 if(ev.type == ALLEGRO_EVENT_KEY_DOWN) {	    
-	    if (ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
-	       return;	    
+	    //if (ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
+	    //return;
+	    cout << "key event down\n";
 	    setRoot(ev.keyboard.keycode);
 	 }
 	 else if (ev.type == ALLEGRO_EVENT_KEY_UP) 
 	    resetRoot(ev.keyboard.keycode);
 	 
-
+	 cout << "I am past input set/reset section\n";
+	 
 	 // DO EVERYTHING FOR GAME
 	 if(ev.type == ALLEGRO_EVENT_TIMER) {	 
 	    crtTime = al_current_time();
@@ -112,18 +120,28 @@ void Simulator::run() {
 	    redraw = true;
 	 }
 
+	 cout << "I am past allegro event timer section\n";
+	 
 	 // DISPLAY CLOSES
-	 else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) 
+	 if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
 	    return;
+	 }
 
+	 cout << "about to enter redraw section\n";
+	 
 	 // DRAW
 	 if(redraw && al_is_event_queue_empty(eventQueue)) {
+	    //al_clear_to_color(al_map_rgb(0, 0, 0));
 	    drawRoot();
+	    //al_flip_display();
 	    redraw = false;
 	 }
 
+	 cout << "now checking if game is over\n";
+	 
 	 // CHECK GAME OVER
 	 if (is_game_over()) {
+	    cout << "game over\n";
 	    mode_selected = false;
 	    reset_game();
 	    break;
@@ -131,8 +149,8 @@ void Simulator::run() {
  
       } // end of game loop //
       // RETURN TO MENU SCENE
-
-   }
+      cout << "end of game loop\n";
+      //}
    
   
 }
