@@ -156,7 +156,7 @@ void Single::clean() {
    list< shared_ptr<Enemy> > newEnem;
    if (!enem.empty()) {
       for (list< shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end(); ++it) {
-	 if (!(*it)->getDead()) // if not dead
+	 if (!(*it)->getdAnim_complete()) // if not dead (death animation not complete)
 	    newEnem.push_back(*it);
       }
       enem.clear();
@@ -189,32 +189,26 @@ void Single::reset(int code) {
 }
 
 void Single::spawn() {
-   Vector speed;
-   //int n = (rand() % 2) + 1;
-   int n = 1;
-   //std::cout<<n;
-   int x = 3;
-   int count = 0;
+   Point pt;
+   Vector spd;
+   int n = rand() % 2 + 1;
    switch(n) {
-      case 1:
-	 speed.x = -100;
-	 speed.y = 0;
-	 enem.push_back(make_shared<Enemy>(Point(800, 300), al_map_rgb(204, 35, 99), speed));
-	 enem.push_back(make_shared<Enemy>(Point(850, 200), al_map_rgb(204, 35, 99), speed));
-	 enem.push_back(make_shared<Enemy>(Point(850, 400), al_map_rgb(204, 35, 99), speed));
-	 enem.push_back(make_shared<Enemy>(Point(900, 500), al_map_rgb(204, 35, 99), speed));
-	 enem.push_back(make_shared<Enemy>(Point(900, 100), al_map_rgb(204, 35, 99), speed));
+      case 1: // wave of 5
+	 spd.x = 0;
+	 for (int i = 0; i < 5; i++) {
+	    pt.rollRandom();
+	    spd.rollRandomY();
+	    enem.push_back(make_shared<Enemy> (pt, al_map_rgb(246, 64, 234), spd));
+	 }	 
 	 break;
-      
-      case 2:      
-	 speed.x = -100;
-	 speed.y = -100;
-	 if (static_cast<int> (al_get_time()) % x == 0 && count < 5) {
-	    enem.push_back(make_shared<Enemy> (Point(800, 20), al_map_rgb(204, 35, 99), speed));
-	    count++;
-	    x += 2;
-	    //std::cout << "somethinghappened";
+	 
+      case 2: // wave of 8
+	 for (int i = 0; i < 8; i++) {
+	    pt.rollRandom();
+	    spd.rollRandom();
+	    enem.push_back(make_shared<Enemy> (pt, al_map_rgb(255, 159, 48), spd));
 	 }
-	 break;	 
-   }   
+	 break;
+   }
+   
 }

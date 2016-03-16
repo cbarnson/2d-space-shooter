@@ -22,8 +22,12 @@
 //#include <memory>
 //#include <list>
 
+#include <ctime>
+#include <cstdlib>
 
-int main() {   
+int main() {
+   srand(time(0));
+   
    Display disp;
    int fps = 30;
    engine game(disp, fps);

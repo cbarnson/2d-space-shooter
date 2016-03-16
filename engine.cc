@@ -79,9 +79,9 @@ void engine::menuMessage() {
 void engine::single_player() {
    //single = make_shared<Single> (game_fps);
 
-   cout << "creating single from engine\n";
+   //cout << "creating single from engine\n";
    root.push_back(make_shared<Single> (game_fps));
-   cout << "created single from engine\n";
+   //cout << "created single from engine\n";
    
    //for (list< shared_ptr<Root> >::iterator it = root.begin(); it != root.end();
 //	++it) {
@@ -210,12 +210,12 @@ void engine::drawRoot() {
    }
    */
 
-   cout << "in engine.cc drawRoot pre-call\n";
+   //cout << "in engine.cc drawRoot pre-call\n";
    
    for (list< shared_ptr<Root> >::iterator it = root.begin(); it != root.end();
 	++it) {
       (*it)->draw();
    }
-   cout << "in engine.cc drawRoot post-call\n";
+   //cout << "in engine.cc drawRoot post-call\n";
    
 }

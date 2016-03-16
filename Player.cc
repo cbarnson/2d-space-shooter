@@ -22,7 +22,7 @@ ALLEGRO_COLOR Player::getColor() { return color; }
 Player::~Player() {
    if (fireDelay != NULL)
       al_destroy_timer(fireDelay);
-   //al_destroy_font(scoreFont);
+   al_destroy_font(scoreFont);
    //al_destroy_path(playerPath);
    delete ship;
    /*
@@ -39,24 +39,9 @@ void Player::load_assets() {
    al_append_path_component(path, "resources");
    al_change_directory(al_path_cstr(path, '/'));
 
+   scoreFont = al_load_font("ipag.ttf", 14, 0);
    ship = new Sprite("Sprite.png");
    
-   //scoreFont = al_load_font("/home/barc2720/assn/alTest/resources/ipag.ttf", 48, 0);
-   //neutral_up = new Sprite("/home/barc2720/assn/alTest/resources/ship00.png");   
-   //neutral_mid = new Sprite("/home/barc2720/assn/alTest/resources/ship01.png");
-   //neutral_down = new Sprite("/home/barc2720/assn/alTest/resources/ship10.png");
-   //forward_up = new Sprite("/home/barc2720/assn/alTest/resources/ship11.png");
-   //forward_mid = new Sprite("/home/barc2720/assn/alTest/resources/ship20.png");
-   //forward_down = new Sprite("/home/barc2720/assn/alTest/resources/ship21.png");
-
-   /*
-   neutral_up->convert();
-   neutral_mid->convert();
-   neutral_down->convert();
-   forward_up->convert();
-   forward_mid->convert();
-   forward_down->convert();
-   */
    al_destroy_path(path);
 }
 
@@ -85,39 +70,15 @@ void Player::reset(int code) {
 
 void Player::draw() {
 
-/*
-   if (speed.x > 0) {
-      if (speed.y > 0) forward_down->draw(centre, 0);
-      else if (speed.y < 0) forward_up->draw(centre, 0);
-      else forward_mid->draw(centre, 0);
-   } else {
-      if (speed.y > 0) neutral_down->draw(centre, 0);
-      else if (speed.y < 0) neutral_up->draw(centre, 0);
-      else neutral_mid->draw(centre, 0);
-      }
-*/
-   // reset speed to 0
-   //al_clear_to_color(al_map_rgb(0, 0, 0));
-
-   //int row, col;
-   cout << "about to draw region\n";
-   ship->draw_region(row, col, centre, 0);
-   //speed = Vector(0, 0);
-   
-   /*
-   al_draw_bitmap(ship00,
-		  centre.x - al_get_bitmap_width(ship00) * 0.5,
-		  centre.y - al_get_bitmap_height(ship00) * 0.5, 0);
-   */
-
-
+   //cout << "about to draw region\n";
+   ship->draw_region(row, col, 47.0, 40.0, centre, 0);
 /*
    
    al_draw_rectangle(centre.x - size, centre.y - size,
 		     centre.x + size, centre.y + size,
 		     color, 3);
 */
-   cout << "region has been drawn\n";
+   //cout << "region has been drawn\n";
    switch (lives) {
       case 1:
 	 al_draw_line(centre.x - size*2, centre.y + size*2,
@@ -136,8 +97,8 @@ void Player::draw() {
 	 break;
    }
    
-   //al_draw_textf(scoreFont, al_map_rgb(255, 255, 255), centre.x, centre.y - 60,
-   //	 ALLEGRO_ALIGN_CENTRE, "Score: %i", score);
+   al_draw_textf(scoreFont, al_map_rgb(255, 255, 255), centre.x, centre.y - 60,
+   		 ALLEGRO_ALIGN_CENTRE, "Score: %i", score);
 }
 
 void Player::updatePlayer() {

@@ -14,7 +14,8 @@
 
 #include "Vector.h"
 #include <cmath>
-
+#include <ctime>
+#include <cstdlib>
 
 /**
  * @struct Point
@@ -55,6 +56,22 @@ Point(double a=0.0, double b=0.0): x(a), y(b) {};
    Point operator + (Vector v) {
       return Point(x+v.x, y+v.y);
    }
+
+   void rollRandom() {
+      x = rand() % 200 + 850;
+      y = rand() % 600 + 50;
+   }
+   
+   // range [850, 1050]
+   void rollRandomX() {
+      x = rand() % 200 + 850;
+   }
+   
+   // range [50, 600]
+   void rollRandomY() {
+      y = rand() % 600 + 50;
+   }
+   
 };
 
 #endif

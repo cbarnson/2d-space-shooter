@@ -44,10 +44,18 @@ class Sprite {
       al_draw_bitmap(image, p.x - width/2, p.y - height/2, f);
    }
 
-   void draw_region(int r, int c, Point destination, int f) {
+   void draw_death_anim(int c, Point p, int f) {
       al_draw_bitmap_region(image,
-			    c * 47.0, r * 40.0,
-			    47.0, 40.0,
+			    c * 118.0, 0.0,
+			    118.0, 118.0,
+			    p.x - 118.0 / 2,
+			    p.y - 118.0 / 2, f);
+   }
+   
+   void draw_region(int r, int c, float bw, float bh, Point destination, int f) {
+      al_draw_bitmap_region(image,
+			    c * bw, r * bh,
+			    bw, bh,
 			    destination.x - 47.0 / 2,
 			    destination.y - 40.0 / 2, f);
    }

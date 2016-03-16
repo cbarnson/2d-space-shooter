@@ -11,6 +11,8 @@
 #include <list>
 #include <memory>
 #include <iostream>
+#include <ctime>
+#include <cstdlib>
 
 
 using std::cout;
@@ -31,9 +33,9 @@ class Single : public Root {
 
    
   Single(int frames) : Root(frames) {
-      cout << "setting up single\n";      
+      //cout << "setting up single\n";      
       setup();
-      cout << "setup completed in single\n";
+      //cout << "setup completed in single\n";
    }
    /*
    Single(int frames) {

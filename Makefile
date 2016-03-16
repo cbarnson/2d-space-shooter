@@ -2,7 +2,7 @@ GPP = g++11
 CFLAGS = -std=c++11 -Wall -I/home/lib2720/allegro/include
 LIBDIR = /home/lib2720/allegro/lib
 LNFLAGS = -lallegro -lallegro_primitives -lallegro_image -lallegro_font -lallegro_ttf
-OBJECTS =  main.o Display.o Simulator.o engine.o Player.o Single.o Versus.o
+OBJECTS =  main.o Display.o Simulator.o engine.o Player.o Enemy.o Single.o Versus.o
 
 all : main
 
@@ -21,7 +21,9 @@ Simulator.o : Simulator.h Display.h
 
 engine.o : engine.h Simulator.h Display.h Sprite.h Root.h Versus.h Single.h
 
-Player.o : Player.h Point.h Vector.h Updateable.h Drawable.h Controls.h Projectile.h Hotkeys.h Enemy.h Sprite.h
+Player.o : Player.h Point.h Vector.h Projectile.h Hotkeys.h Enemy.h Sprite.h 
+
+Enemy.o : Enemy.h Vector.h Sprite.h
 
 Single.o : Single.h Root.h
 
