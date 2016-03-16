@@ -44,6 +44,10 @@ class Sprite {
       al_draw_bitmap(image, p.x - width/2, p.y - height/2, f);
    }
 
+   void set_as_display() {
+      al_set_target_bitmap(image);
+   }
+   
    void draw_death_anim(int c, Point p, int f) {
       al_draw_bitmap_region(image,
 			    c * 118.0, 0.0,

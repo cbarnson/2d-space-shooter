@@ -68,12 +68,12 @@ void Enemy::update(double dt) {
    if (centre.x < 0)
       dead = true;      
    // check y bound and adjust if out
-   if (centre.y > 600 - size)
+   if (centre.y > 600 - size || centre.y < size)
       speed.reflectY();
-      //speed.y = -speed.y;
-   else if (centre.y < size)
-      speed.reflectX();
-      //speed.x = -speed.x;
+   //speed.y = -speed.y;
+   //else if (centre.y < size)
+   //speed.reflectX();
+   //speed.x = -speed.x;
 
 		
    if(al_get_timer_count(fireDelay) > 80){

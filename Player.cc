@@ -23,15 +23,7 @@ Player::~Player() {
    if (fireDelay != NULL)
       al_destroy_timer(fireDelay);
    al_destroy_font(scoreFont);
-   //al_destroy_path(playerPath);
    delete ship;
-   /*
-   delete neutral_up;
-   delete neutral_mid;
-   delete neutral_down;
-   delete forward_up;
-   delete forward_mid;
-   delete forward_down;*/
 }
 
 void Player::load_assets() {
@@ -72,12 +64,6 @@ void Player::draw() {
 
    //cout << "about to draw region\n";
    ship->draw_region(row, col, 47.0, 40.0, centre, 0);
-/*
-   
-   al_draw_rectangle(centre.x - size, centre.y - size,
-		     centre.x + size, centre.y + size,
-		     color, 3);
-*/
    //cout << "region has been drawn\n";
    switch (lives) {
       case 1:

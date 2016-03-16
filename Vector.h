@@ -36,18 +36,18 @@ struct Vector {
 
    
    void rollRandom() {
-      x = -(rand() % 200 + 1); // range [-200, -1]
-      y = (rand() % 400) - 200; // range [-200, 200]
+      x = rand() % 200 - 400; // range
+      y = rand() % 400 - 200; // range [-200, 200]
    }
    
    // range [-200, 200]
    void rollRandomY() {
-      y = (rand() % 400) - 200;
+      y = rand() % 400 - 200;
    }
 
    // range [-200,-1]
    void rollRandomX() {
-      x = -(rand() % 200 + 1);
+      x = rand() % 200 - 400;
    }
    
    void reflectY() {

@@ -6,14 +6,16 @@
  * @bug
  */
 
+
 #include "Display.h"
 #include "Simulator.h"
 #include "engine.h"
+
 //#include "Hotkeys.h"
 //#include "Player.h"
 //#include "Root.h"
-//#include "Point.h"
-//#include "Vector.h"
+#include "Point.h"
+#include "Vector.h"
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>

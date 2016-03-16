@@ -1,5 +1,13 @@
 #include "Single.h"
 
+Single::~Single() {
+   //delete map1;
+   proj.clear();
+   enem.clear();
+   play.clear();
+   cout << "destructor\n";
+}
+
 void Single::setup() {
    vector<int> h;
    h.push_back(ALLEGRO_KEY_W);
@@ -9,7 +17,18 @@ void Single::setup() {
    h.push_back(ALLEGRO_KEY_PAD_0);
    play.push_back(make_shared<Player> (Point(600, 300),
 				       al_map_rgb(0,200,0), h,
-				       false, fps ));	 
+				       false, fps ));
+}
+
+void Single::load_assets() {
+   ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
+   al_append_path_component(path, "resources");
+   al_change_directory(al_path_cstr(path, '/'));
+   //cout << "about to load map\n";
+   //map1 = new Sprite("green-space.png");
+   //cout << "map has been loaded\n";
+   
+   al_destroy_path(path);   
 }
 
 bool Single::is_game_over() {
@@ -42,6 +61,9 @@ void Single::update(double dt) {
 void Single::draw() {
    //cout << "inside single draw beginning\n";
    al_clear_to_color(al_map_rgb(0, 0, 0));
+   //map1->set_as_display();
+   //map1->drawToOrigin();
+   
    //cout << "after clear to color\n";
    if (!play.empty()) {
       //cout << "inside if .empty()\n";
@@ -189,15 +211,16 @@ void Single::reset(int code) {
 }
 
 void Single::spawn() {
-   Point pt;
-   Vector spd;
+   Point pt(0, 0);
+   Vector spd(0, 0);
    int n = rand() % 2 + 1;
+   //int n = 1;
    switch(n) {
       case 1: // wave of 5
-	 spd.x = 0;
+	 //spd.x = 0;
 	 for (int i = 0; i < 5; i++) {
 	    pt.rollRandom();
-	    spd.rollRandomY();
+	    spd.rollRandom();
 	    enem.push_back(make_shared<Enemy> (pt, al_map_rgb(246, 64, 234), spd));
 	 }	 
 	 break;

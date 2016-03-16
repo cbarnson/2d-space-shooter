@@ -58,18 +58,18 @@ Point(double a=0.0, double b=0.0): x(a), y(b) {};
    }
 
    void rollRandom() {
-      x = rand() % 200 + 850;
-      y = rand() % 600 + 50;
+      x = rand() % 200 + 600;
+      y = rand() % 300 + 100;
    }
    
    // range [850, 1050]
    void rollRandomX() {
-      x = rand() % 200 + 850;
+      x = rand() % 200 + 600;
    }
    
    // range [50, 600]
    void rollRandomY() {
-      y = rand() % 600 + 50;
+      y = rand() % 300 + 100;
    }
    
 };
