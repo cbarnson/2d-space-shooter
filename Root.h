@@ -15,6 +15,7 @@
 #include "Projectile.h"
 #include "Enemy.h"
 #include "Player.h"
+#include "Sprite.h"
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
@@ -39,6 +40,7 @@ class Root : public Drawable, public Updateable, public Controls {
    int fps;
    Root(int frames) {
       fps = frames;
+      //setup();
    }
    
    // game setup

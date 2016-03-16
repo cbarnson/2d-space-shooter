@@ -85,8 +85,8 @@ void engine::single_player() {
    
    //for (list< shared_ptr<Root> >::iterator it = root.begin(); it != root.end();
 //	++it) {
-   //    (*it)->setup();
-   //}
+   //(*it)->setup();
+   // }
 }
 
    

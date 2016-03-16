@@ -13,7 +13,7 @@ main : $(OBJECTS)
 
 #main.o : Display.h Vector.h Point.h Drawable.h Updateable.h Controls.h engine.h Projectile.h Enemy.h Player.h Hotkeys.h Single.h Versus.h
 
-main.o : Display.h Simulator.h engine.h
+main.o : Display.h Simulator.h engine.h Point.h Vector.h
 
 Display.o : Display.h
 
