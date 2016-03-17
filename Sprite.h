@@ -45,6 +45,12 @@ class Sprite {
       al_draw_bitmap(image, p.x - width/2, p.y - height/2, f);
    }
 
+   void draw_tinted_scaled(Point p, ALLEGRO_COLOR c, int f) {
+   	al_draw_tinted_scaled_bitmap(image, c, 0, 0, 290, 74, 
+   		p.x - width/2, p.y - height/2, 30, 8, f);
+
+   }
+
    void set_as_display() {
       al_set_target_bitmap(image);
    }
