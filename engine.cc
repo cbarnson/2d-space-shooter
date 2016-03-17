@@ -9,7 +9,7 @@
 engine::~engine() {
    al_destroy_font(menuFont);
    al_destroy_font(modeFont);
-   delete menu;
+   //delete menu;
 }
 
 
@@ -21,7 +21,8 @@ void engine::load_assets() {
    menuFont = al_load_font("DavidCLM-Medium.ttf", 48, 0);
    modeFont = al_load_font("ipag.ttf", 32, 0);   
 
-   menu = new Sprite("space.png");
+   //menu = new Sprite("space.png");
+   menu = make_shared<Sprite> ("space.png");
 
    cout << "assets loaded\n";
    al_destroy_path(path);
@@ -59,9 +60,9 @@ void engine::menuMessage() {
    
 
 void engine::single_player() {
-   //cout << "creating single from engine\n";
+   cout << "creating single from engine\n";
    root.push_back(make_shared<Single> (game_fps));
-   //cout << "created single from engine\n";
+   cout << "created single from engine\n";
 }
 
    

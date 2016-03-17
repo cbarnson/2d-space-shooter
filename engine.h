@@ -31,13 +31,14 @@ using std::cout;
 class engine : public Simulator {
   private:
    list< shared_ptr<Root> > root;
+   shared_ptr<Sprite> menu;
    int game_fps;
    int windowWidth;
    int windowHeight;
 
    ALLEGRO_FONT *menuFont;
    ALLEGRO_FONT *modeFont;
-   Sprite *menu;
+   //Sprite *menu;
    
   public:
   engine(const Display& d, int fps) : Simulator(d, fps)

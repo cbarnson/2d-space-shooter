@@ -24,10 +24,11 @@ void Single::load_assets() {
    ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
    al_append_path_component(path, "resources");
    al_change_directory(al_path_cstr(path, '/'));
-   //cout << "about to load map\n";
+   cout << "about to load map\n";
    //map1 = new Sprite("green-space.png");
-   //cout << "map has been loaded\n";
    
+   map1 = make_shared<Sprite> ("stars.png");
+   cout << "map has been loaded\n";
    al_destroy_path(path);   
 }
 
@@ -65,9 +66,9 @@ void Single::update(double dt) {
 
 void Single::draw() {
    //cout << "inside single draw beginning\n";
-   al_clear_to_color(al_map_rgb(0, 0, 0));
+   //al_clear_to_color(al_map_rgb(0, 0, 0));
    //map1->set_as_display();
-   //map1->drawToOrigin();
+   map1->drawToOrigin();
    
    //cout << "after clear to color\n";
    if (!play.empty()) {

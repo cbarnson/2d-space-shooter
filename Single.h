@@ -19,7 +19,8 @@
 
 using std::cout;
 using std::list;
-
+using std::shared_ptr;
+using std::make_shared;
 
 class Single : public Root {
 
@@ -28,6 +29,7 @@ class Single : public Root {
    list< shared_ptr<Enemy> > enem;
    list< shared_ptr<Player> > play;
    //Sprite *map1;
+   shared_ptr<Sprite> map1;
    
    
   public:
@@ -35,7 +37,7 @@ class Single : public Root {
   Single(int frames) : Root(frames) {
       //cout << "setting up single\n";      
       setup();
-      //load_assets();
+      load_assets();
       //cout << "setup completed in single\n";
    }
    ~Single();

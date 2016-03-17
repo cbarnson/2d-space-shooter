@@ -4,7 +4,7 @@
 Enemy::~Enemy() {
    if(fireDelay != NULL)
       al_destroy_timer(fireDelay);
-   delete death;
+   //delete death;
 }
 
 
@@ -24,7 +24,8 @@ void Enemy::load_assets() {
    al_append_path_component(path, "resources");
    al_change_directory(al_path_cstr(path, '/'));
 
-   death = new Sprite("explode.png");
+   death = make_shared<Sprite> ("explode.png");
+   //death = new Sprite("explode.png");
 
    al_destroy_path(path);
 }

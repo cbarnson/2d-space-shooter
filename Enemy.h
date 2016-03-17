@@ -13,6 +13,8 @@
 #include <iostream>
 #include <stdexcept>
 
+using std::shared_ptr;
+using std::make_shared;
 using std::cout;
 
 class Enemy : public Drawable, public Updateable {
@@ -22,7 +24,8 @@ class Enemy : public Drawable, public Updateable {
    Vector speed;
 	
    ALLEGRO_TIMER *fireDelay;
-   Sprite *death;
+   shared_ptr<Sprite> death;
+   //Sprite *death;
 
    Vector projSpeed;
    int size;

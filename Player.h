@@ -47,8 +47,8 @@ class Player : public Controls, public Drawable, public Updateable {
 
    ALLEGRO_TIMER *fireDelay;
    ALLEGRO_FONT *scoreFont;
-
-   Sprite *ship;
+   shared_ptr<Sprite> ship;
+   //Sprite *ship;
    
    bool dead;           // signals Player object has been killed
    bool fire;           // signals fire-key has been hit
@@ -70,7 +70,7 @@ class Player : public Controls, public Drawable, public Updateable {
 	 throw std::runtime_error("Cannot create fireDelay timer");
       al_start_timer(fireDelay);
 
-      //cout << "pre player load assets\n";
+      cout << "pre player load assets\n";
       load_assets();
       
       projSpeed = (flipped) ? Vector(-400,0) : Vector(400,0);

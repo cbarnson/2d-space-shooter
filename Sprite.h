@@ -32,6 +32,7 @@ class Sprite {
       al_draw_bitmap(image, 0, 0, 0);
    }
 
+
    //void convert() {
    // al_convert_mask_to_alpha(image, al_get_pixel(image, 0, 0));
    //}
