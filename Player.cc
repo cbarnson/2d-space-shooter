@@ -61,7 +61,7 @@ void Player::reset(int code) {
 }   
 
 void Player::draw() {
-
+   
    //cout << "about to draw region\n";
    ship->draw_region(row, col, 47.0, 40.0, centre, 0);
    //cout << "region has been drawn\n";

@@ -18,6 +18,8 @@
 #include "Controls.h"
 #include "Hotkeys.h"
 #include "Sprite.h"
+#include "Projectile.h"
+#include "Laser.h"
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
@@ -102,7 +104,8 @@ class Player : public Controls, public Drawable, public Updateable {
    ALLEGRO_COLOR getColor();
 
    void load_assets();
-   void hit();   
+   void hit();
+   
    void set(int);
    void reset(int);
    void draw();
