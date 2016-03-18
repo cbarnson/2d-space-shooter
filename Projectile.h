@@ -1,6 +1,6 @@
 /**
  * @file Projectile.h
- * @brief
+ * @brief Declaration of Projectile interface
  *
  * @author
  * @bug

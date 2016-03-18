@@ -1,6 +1,6 @@
 /**
  * @file Laser.cc
- * @brief
+ * @brief Implementation of Laser class- draws, updates and destroys laser object
  *
  * @author
  */

@@ -1,3 +1,10 @@
+/**
+ * @file Versus.h
+ * @brief Declaration of Versus class
+ *
+ * @author
+ * @bug
+ */
 #ifndef VERSUS_H
 #define VERSUS_H
 

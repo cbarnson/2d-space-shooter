@@ -1,3 +1,10 @@
+/**
+ * @file Simulator.h
+ * @brief Declaration of Simulator class
+ *
+ * @author
+ * @bug
+ */
 #ifndef __SIMULATOR_H
 #define __SIMULATOR_H
 

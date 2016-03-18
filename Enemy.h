@@ -1,3 +1,10 @@
+/**
+ * @file Enemy.h
+ * @brief Declaration of Enemy class
+ *
+ * @author
+ * @bug
+ */
 #ifndef ENEMY_H
 #define ENEMY_H
 

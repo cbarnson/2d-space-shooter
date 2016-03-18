@@ -1,3 +1,10 @@
+/**
+ * @file Enemy.cc
+ * @brief Implementation of Enemy class- draws, updates and destroys enemies
+ *
+ * @author
+ * @bug
+ */
 #include "Enemy.h"
 
 	

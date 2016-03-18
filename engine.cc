@@ -1,6 +1,6 @@
 /**
  * @file engine.cc
- * @brief
+ * @brief Implementation of engine class- runs main menu, game mode selection
  * @author
  */
 

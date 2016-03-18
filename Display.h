@@ -1,6 +1,6 @@
 /**
  * @file Display.h
- * @brief
+ * @brief Declaration of Display class
  *
  * @author
  * @bug

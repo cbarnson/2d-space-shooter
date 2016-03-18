@@ -1,7 +1,10 @@
 /**
  * @file Player.cc
+ * @brief Implementation of Player class- handles drawing and updating of player
+ *
+ * @author
+ * @bug
  */
-
 #include "Player.h"
 
 // set methods
