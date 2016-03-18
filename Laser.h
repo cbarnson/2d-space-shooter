@@ -35,8 +35,7 @@ class Laser : public Projectile {
       load_assets();      
    }
 
-   void load_assets();
-   
+   void load_assets();   
    void draw();
    void update(double dt);
    
