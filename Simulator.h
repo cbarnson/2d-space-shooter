@@ -2,7 +2,7 @@
 #define __SIMULATOR_H
 
 #include "Display.h"
-#include "Hotkeys.h"
+//#include "Hotkeys.h"
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 #include <stdexcept>

@@ -23,7 +23,8 @@
  constructor. A single object must be instantiated prior to attempting
  any kind of drawing. The instantiated object can be used to retrieve
  the dimensions of the window.
-*/ 
+*/
+
 class Display {
 private:
 	ALLEGRO_DISPLAY *display;
