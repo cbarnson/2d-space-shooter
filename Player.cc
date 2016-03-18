@@ -6,6 +6,7 @@
  * @bug
  */
 #include "Player.h"
+#include <iostream>
 
 // set methods
 void Player::setLives(int l) { lives = l; }
@@ -66,8 +67,33 @@ void Player::reset(int code) {
 }   
 
 void Player::draw() {
+<<<<<<< HEAD
+<<<<<<< HEAD
+   // al_draw_rectangle(centre.x - size, centre.y - size,
+//		     centre.x + size, centre.y + size,
+//		     color, 3);
+  
+   //sprite changed points from current
+   //changing from centre.x-size
+   //frameHeight and Width work as is!! dont think about it
+   int fx = (animCol*frameWidth); //animCols
+   int fy = (animRow*frameHeight); 
+   
+   al_draw_bitmap_region(ship, fx, fy, frameWidth, frameHeight,
+			 (centre.x - (frameWidth/2)),
+			 (centre.y - (frameHeight/2)), 0);
+
+   //al_draw_bitmap(ship, centre.x-frameWidth, centre.y - frameHeight, 0);
+   al_draw_textf(scoreFont, color, centre.x, centre.y - 60,
+		 ALLEGRO_ALIGN_CENTRE,
+		 "Score: %i", score);
+=======
+
+   //cout << "about to draw region\n";
+=======
    
    cout << "player about to draw region\n";
+>>>>>>> 2player
    ship->draw_region(row, col, 47.0, 40.0, centre, 0);
    cout << "player region has been drawn\n";
    switch (lives) {
@@ -90,31 +116,76 @@ void Player::draw() {
    
    al_draw_textf(scoreFont, al_map_rgb(255, 255, 255), centre.x, centre.y - 60,
    		 ALLEGRO_ALIGN_CENTRE, "Score: %i", score);
+>>>>>>> bce9dd668c6fa32b872f3c8ae3f237ff53541e1a
 }
 
 void Player::updatePlayer() {
    // up
-   if (config.keys[0]) 
+   if (config.keys[0])
+   {
+      //animRow = 0;
       speed.yMod(-speed_modifier);
+   }
    // down
    if (config.keys[1])
+   {
+      //animRow = 2;
       speed.yMod(speed_modifier);
+   }
+
    // right
-   if (config.keys[2]) 
-      speed.xMod(speed_modifier);      
+   if (config.keys[2])
+   {
+      //animCol = 1;
+      speed.xMod(speed_modifier);
+   }
    // left
-   if (config.keys[3]) 
+   if (config.keys[3])
+   {
+      //animCol = 2;
       speed.xMod(-speed_modifier);
+<<<<<<< HEAD
+   }
+=======
+>>>>>>> bce9dd668c6fa32b872f3c8ae3f237ff53541e1a
    // fire
    if (config.keys[4] && (al_get_timer_count(fireDelay) > 5)) {
       fire = true;
       al_stop_timer(fireDelay);
       al_set_timer_count(fireDelay, 0);
       al_start_timer(fireDelay);
-   }
+   }   
 }
 
+/********void Player::resetAnimation()
+{
+   if()
+   {
+      animRow = 1;
+   }
+   else
+      currFrame = 0;
+      }*/
 void Player::update(double dt) {
+<<<<<<< HEAD
+   centre = centre + speed * dt;
+   
+   //for changing the frame of animation! 
+   if(speed.x > 0)
+      animCol = 1;
+   else if(speed.x < 0)
+      animCol = 2;
+   else
+      animCol = 0;
+   
+   if(speed.y > 0)
+      animRow = 2;
+   else if(speed.y < 0)
+      animRow = 0;
+   else
+      animRow = 1;
+
+=======
    centre = centre + speed * dt;   
    
    if (speed.x > 0) {
@@ -129,6 +200,7 @@ void Player::update(double dt) {
       else row = 1;
    }
    
+>>>>>>> bce9dd668c6fa32b872f3c8ae3f237ff53541e1a
    speed = Vector(0, 0);
    
    // check x bound and adjust if out
