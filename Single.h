@@ -3,6 +3,7 @@
 
 #include "Root.h"
 #include "Projectile.h"
+#include "Laser.h"
 #include "Player.h"
 #include "Enemy.h"
 #include "Sprite.h"
@@ -18,7 +19,8 @@
 
 using std::cout;
 using std::list;
-
+using std::shared_ptr;
+using std::make_shared;
 
 class Single : public Root {
 
@@ -26,8 +28,8 @@ class Single : public Root {
    list< shared_ptr<Projectile> > proj;
    list< shared_ptr<Enemy> > enem;
    list< shared_ptr<Player> > play;
-   //int fps;
    //Sprite *map1;
+   shared_ptr<Sprite> map1;
    
    
   public:
@@ -35,16 +37,22 @@ class Single : public Root {
   Single(int frames) : Root(frames) {
       //cout << "setting up single\n";      
       setup();
-      //load_assets();
+      load_assets();
       //cout << "setup completed in single\n";
    }
    ~Single();
    
    
-   // Single now has all public function of Root
-
+   
    void setup(); // has its own setup
    void load_assets();
+   
+   // virtuals from others
+   void update(double);
+   void draw();
+   void updatePlayer();
+   void set(int);
+   void reset(int);
    
    // virtuals from Root
    bool is_game_over();
@@ -52,14 +60,20 @@ class Single : public Root {
    void clean();
    void updateScore(ALLEGRO_COLOR);
 
-   // virtuals from others
-   void update(double);
-   void draw();
-   void updatePlayer();
-   void set(int);
-   void reset(int);
    void spawn();
 
 };
 
 #endif
+/*
+   virtual void draw() = 0;
+   virtual void update(double) = 0;
+   virtual void updatePlayer() = 0;
+   virtual void set(int) = 0;
+   virtual void reset(int) = 0;
+   
+   virtual bool is_game_over() = 0;
+   virtual void collision() = 0;
+   virtual void clean() = 0;
+   virtual void updateScore(ALLEGRO_COLOR) = 0;
+*/

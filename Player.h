@@ -18,6 +18,8 @@
 #include "Controls.h"
 #include "Hotkeys.h"
 #include "Sprite.h"
+#include "Projectile.h"
+#include "Laser.h"
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
@@ -45,8 +47,8 @@ class Player : public Controls, public Drawable, public Updateable {
 
    ALLEGRO_TIMER *fireDelay;
    ALLEGRO_FONT *scoreFont;
-
-   Sprite *ship;
+   shared_ptr<Sprite> ship;
+   //Sprite *ship;
    
    bool dead;           // signals Player object has been killed
    bool fire;           // signals fire-key has been hit
@@ -68,7 +70,7 @@ class Player : public Controls, public Drawable, public Updateable {
 	 throw std::runtime_error("Cannot create fireDelay timer");
       al_start_timer(fireDelay);
 
-      //cout << "pre player load assets\n";
+      cout << "pre player load assets\n";
       load_assets();
       
       projSpeed = (flipped) ? Vector(-400,0) : Vector(400,0);
@@ -102,7 +104,8 @@ class Player : public Controls, public Drawable, public Updateable {
    ALLEGRO_COLOR getColor();
 
    void load_assets();
-   void hit();   
+   void hit();
+   
    void set(int);
    void reset(int);
    void draw();
