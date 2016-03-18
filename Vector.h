@@ -15,6 +15,10 @@
  * @brief represents the change in position of x and y
  */
 
+#include <ctime>
+#include <cstdlib>
+
+
 struct Vector {
    double x;
    double y;
@@ -29,6 +33,31 @@ struct Vector {
    Vector operator * (double scalar) {
       return Vector(x*scalar, y*scalar);
    }
+
+   
+   void rollRandom() {
+      x = rand() % 200 - 400; // range
+      y = rand() % 400 - 200; // range [-200, 200]
+   }
+   
+   // range [-200, 200]
+   void rollRandomY() {
+      y = rand() % 400 - 200;
+   }
+
+   // range [-200,-1]
+   void rollRandomX() {
+      x = rand() % 200 - 400;
+   }
+   
+   void reflectY() {
+      y = -y;
+   }
+
+   void reflectX() {
+      x = -x;
+   }
+   
    void xMod(int m) {
       x = x + m;
    }

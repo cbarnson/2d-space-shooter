@@ -1,52 +1,78 @@
 #ifndef ENEMY_H
 #define ENEMY_H
 
-#include <allegro5/allegro.h>
-#include <allegro5/allegro_primitives.h>
 #include "Drawable.h"
 #include "Updateable.h"
 #include "Point.h"
 #include "Vector.h"
+#include "Sprite.h"
+
+#include <allegro5/allegro.h>
+#include <allegro5/allegro_primitives.h>
+#include <memory>
+#include <iostream>
+#include <stdexcept>
+
+using std::cout;
 
 class Enemy : public Drawable, public Updateable {
   private:
-   Point centre;
+   Point centre, end; 
    ALLEGRO_COLOR color;
    Vector speed;
-   
+	
+   ALLEGRO_TIMER *fireDelay;
+   Sprite *death;
+
+   Vector projSpeed;
    int size;
    int lives;
+   int dAnim;
+   
+   bool dAnim_complete;
    bool dead;
-   
+   bool fire;
+	
   public:
+   // CONSTRUCTOR 1
   Enemy(Point p, ALLEGRO_COLOR c, Vector s) : centre(p), color(c), speed(s)
-   {      
+   {
+      if((fireDelay = al_create_timer(1.0 / 30)) == NULL)
+	 throw std::runtime_error("cannot create fireDelay timer");
+      al_start_timer(fireDelay);
+      
+      load_assets();
+      
+      projSpeed = speed * 1.5;
+      
       lives = 1;
+      size = 10;
+      dAnim = 0;
+      
+      dAnim_complete = false;
       dead = false;
-      size = 20;
+      fire = false;
+      
    }
-
-   int getSize() { return size; }
-   Point getCentre() { return centre; }
+	
+   ~Enemy();
    
-   void hit() {
-      lives = lives - 1;
-      if (lives < 1)
-	 dead = true;
-   }
+   void setFire(bool f);
+	
+   ALLEGRO_COLOR getColor();
+   Vector getProjSpeed(); 
+   Point getCentre();
+   int getSize(); 
    
-   // draw image to display of enemy ship
-   void draw() {
-      al_draw_rectangle(centre.x - size, centre.y - size,
-			centre.x + size, centre.y + size,
-			color, 3);
-   }
-
-   // update position of enemy ships
-   void update(double dt) {
-      centre = centre + speed * dt;      
-   }
-
+   bool getdAnim_complete(); 
+   bool getDead(); 
+   bool getFire(); 
+   
+   void update(double dt);
+   void load_assets();
+   void deathAnim();
+   void hit();
+   void draw();
 };
 
 

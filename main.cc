@@ -6,31 +6,36 @@
  * @bug
  */
 
+
 #include "Display.h"
 #include "Simulator.h"
 #include "engine.h"
-#include "Hotkeys.h"
-#include "Player.h"
-#include "Root.h"
+
+//#include "Hotkeys.h"
+//#include "Player.h"
+//#include "Root.h"
 #include "Point.h"
 #include "Vector.h"
 
-#include <memory>
-#include <list>
+#include <allegro5/allegro.h>
+#include <allegro5/allegro_image.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_ttf.h>
+//#include <memory>
+//#include <list>
 
-int main() {   
+#include <ctime>
+#include <cstdlib>
+
+int main() {
+   srand(time(0));
+   
    Display disp;
    int fps = 30;
-   engine game(disp, fps); 
+   engine game(disp, fps);
 
-   // call either single_player() or multi_player() before run() to select mode
-   // this sets the root to initialize the game with either 1 or 2 players
-   
-   //game.single_player();
-   game.multi_player();
-      
    // start the game, close the display to end
    game.run();
-   
+
 }
 

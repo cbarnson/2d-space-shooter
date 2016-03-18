@@ -2,8 +2,13 @@
 #define __SIMULATOR_H
 
 #include "Display.h"
-#include "Root.h"
-//#include <vector>
+#include "Hotkeys.h"
+#include <allegro5/allegro.h>
+#include <allegro5/allegro_primitives.h>
+#include <stdexcept>
+#include <iostream>
+
+using std::cout;
 
 /// Class responsible for setting up the Allegro library for some basic animation.
 /**
@@ -30,6 +35,8 @@ class Simulator {
    ~Simulator();	
 
    void run();
+   virtual bool is_game_over() = 0;
+   virtual void reset_game() = 0;
    virtual void menuMessage() = 0;
    virtual void single_player() = 0;
    virtual void multi_player() = 0;

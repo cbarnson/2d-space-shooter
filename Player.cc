@@ -7,13 +7,8 @@
 
 // set methods
 void Player::setLives(int l) { lives = l; }
+void Player::setScore(int s) { score += s; }
 void Player::setFire(bool f) { fire = f; }
-//void Player::setDead() { dead = true; }
-void Player::hit() {
-   lives = lives - 1;
-   if (lives < 1)
-      dead = true;
-}
 
 // get methods
 int Player::getLives() { return lives; }
@@ -21,13 +16,37 @@ int Player::getSize() { return size; }
 bool Player::getDead() { return dead; }
 bool Player::getFire() { return fire; }
 Point Player::getCentre() { return centre; }
-Vector Player::getSpeed() { return projSpeed; }
+Vector Player::getProjSpeed() { return projSpeed; }
+Vector Player::getSpeed() { return speed; }
 ALLEGRO_COLOR Player::getColor() { return color; }
 
+Player::~Player() {
+   if (fireDelay != NULL)
+      al_destroy_timer(fireDelay);
+   al_destroy_font(scoreFont);
+   delete ship;
+}
+
+void Player::load_assets() {
+   ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
+   al_append_path_component(path, "resources");
+   al_change_directory(al_path_cstr(path, '/'));
+
+   scoreFont = al_load_font("ipag.ttf", 14, 0);
+   ship = new Sprite("Sprite.png");
+   
+   al_destroy_path(path);
+}
+
+void Player::hit() {
+   lives = lives - 1;
+   if (lives < 1)
+      dead = true;
+}
 
 // called when ALLEGRO_EVENT_KEY_UP
 void Player::set(int code) {
-   for (int i = 0; i < 5; i++) {
+   for (unsigned int i = 0; i < config.keys.size(); i++) {
       if (code == config.control[i])
 	 config.keys[i] = true;
    }   
@@ -36,13 +55,14 @@ void Player::set(int code) {
 
 // called when ALLEGRO_EVENT_KEY_DOWN
 void Player::reset(int code) {
-   for (int i = 0; i < 5; i++) {
+   for (unsigned int i = 0; i < config.keys.size(); i++) {
       if (code == config.control[i])
 	 config.keys[i] = false;
    }
 }   
 
 void Player::draw() {
+<<<<<<< HEAD
    // al_draw_rectangle(centre.x - size, centre.y - size,
 //		     centre.x + size, centre.y + size,
 //		     color, 3);
@@ -61,6 +81,32 @@ void Player::draw() {
    al_draw_textf(scoreFont, color, centre.x, centre.y - 60,
 		 ALLEGRO_ALIGN_CENTRE,
 		 "Score: %i", score);
+=======
+
+   //cout << "about to draw region\n";
+   ship->draw_region(row, col, 47.0, 40.0, centre, 0);
+   //cout << "region has been drawn\n";
+   switch (lives) {
+      case 1:
+	 al_draw_line(centre.x - size*2, centre.y + size*2,
+		      centre.x - size*0.5, centre.y + size*2,
+		      al_map_rgb(255, 0, 0), 4);
+	 break;
+      case 2:
+	 al_draw_line(centre.x - size*2, centre.y + size*2,
+		      centre.x + size*0.5, centre.y + size*2,
+		      al_map_rgb(255, 128, 0), 4);
+	 break;
+      case 3:
+	 al_draw_line(centre.x - size*2, centre.y + size*2,
+		      centre.x + size*2, centre.y + size*2,
+		      al_map_rgb(0, 255, 0), 4);
+	 break;
+   }
+   
+   al_draw_textf(scoreFont, al_map_rgb(255, 255, 255), centre.x, centre.y - 60,
+   		 ALLEGRO_ALIGN_CENTRE, "Score: %i", score);
+>>>>>>> bce9dd668c6fa32b872f3c8ae3f237ff53541e1a
 }
 
 void Player::updatePlayer() {
@@ -88,7 +134,10 @@ void Player::updatePlayer() {
    {
       //animCol = 2;
       speed.xMod(-speed_modifier);
+<<<<<<< HEAD
    }
+=======
+>>>>>>> bce9dd668c6fa32b872f3c8ae3f237ff53541e1a
    // fire
    if (config.keys[4] && (al_get_timer_count(fireDelay) > 5)) {
       fire = true;
@@ -108,6 +157,7 @@ void Player::updatePlayer() {
       currFrame = 0;
       }*/
 void Player::update(double dt) {
+<<<<<<< HEAD
    centre = centre + speed * dt;
    
    //for changing the frame of animation! 
@@ -125,8 +175,24 @@ void Player::update(double dt) {
    else
       animRow = 1;
 
+=======
+   centre = centre + speed * dt;   
+   
+   if (speed.x > 0) {
+      col = 1;
+      if (speed.y > 0) row = 2;
+      else if (speed.y < 0) row = 0;
+      else row = 1;
+   } else {
+      col = 0;
+      if (speed.y > 0) row = 2;
+      else if (speed.y < 0) row = 0;
+      else row = 1;
+   }
+   
+>>>>>>> bce9dd668c6fa32b872f3c8ae3f237ff53541e1a
    speed = Vector(0, 0);
-      
+   
    // check x bound and adjust if out
    if (centre.x > 800 - size)
       centre.x = 800 - size;
@@ -140,115 +206,6 @@ void Player::update(double dt) {
       centre.y = size;
       
 }
-/*      
-   // COLLISION PLAYER 1 SHOTS, CHECKING FOR HITS ON PLAYER 2
-   if (!otherPlayers.empty() && !curProjectiles.empty())  {
-      for (list< shared_ptr<Player> >::iterator i = otherPlayers.begin();
-	   i != otherPlayers.end(); ++i) {
-	       
-	 if ((*i)->getLive()) {
-		  
-	    for (list< shared_ptr<Projectile> >::iterator j = curProjectiles.begin();
-		 j != curProjectiles.end(); ++j) {
-		     
-	       if ((*j)->getLive()) {
-		  Point temp = (*i)->getCurrent();
-		  Point boundTopLeft = Point(temp.x, temp.y - (size * 0.5));
-		  Point boundBotRight = Point(temp.x + size, temp.y + (size * 0.5));
-		  Point shot = (*j)->getCenter();
-			
-		  if ((shot.x > boundTopLeft.x) &&
-		      (shot.x < boundBotRight.x) &&
-		      (shot.y > boundTopLeft.y) &&
-		      (shot.y < boundBotRight.y)) {
-		     // hit
-		     (*i)->setLive(false);
-		     (*j)->setLive(false);
-		     std::cout << "HIT ON ----PLAYER2-----" << std::endl;
-		     break; // continue to the next player or exit the loop if no more
-		  }
-	       }
-	    }
-	 }
-      }
-   }
 
-   // COLLISION PLAYER 2 SHOTS, CHECKING FOR HITS ON PLAYER 1
-   if (!otherPlayers.empty()) {
-
-      for (list< shared_ptr<Player> >::iterator p = otherPlayers.begin();
-	   p != otherPlayers.end(); ++p) {
-	    
-	 if ((*p)->getLive() && !(*p)->curProjectiles.empty()) {
-
-	    list< shared_ptr<Projectile> > proj((*p)->curProjectiles);
-	    for (list< shared_ptr<Projectile> >::iterator i = proj.begin();
-		 i != proj.end(); ++i) {
-		  
-	       if ((*i)->getLive()) {
-		     
-		  Point boundTopLeft = Point(current.x - size, current.y - (size * 0.5));
-		  Point boundBotRight = Point(current.x, current.y + (size * 0.5));
-		  Point shot = (*i)->getCenter();
-		     
-		  if ((shot.x > boundTopLeft.x) &&
-		      (shot.x < boundBotRight.x) &&
-		      (shot.y > boundTopLeft.y) &&
-		      (shot.y < boundBotRight.y)) {
-		     // hit
-		     (*i)->setLive(false);
-		     setLive(false);
-		     std::cout << "HIT ON ----PLAYER1-----" << std::endl;
-		     break; // continue to the next player or exit the loop if no more
-		  }
-	       }		  
-	    }
-	 }
-      }	       
-   }
-*/
-
-/*   
-   // CLEAR PLAYERS AND PROJECTILES FOR WHICH LIVE = FALSE
-   list< shared_ptr<Projectile> > newList;	 
-   for (list< shared_ptr<Projectile> >::iterator it = curProjectiles.begin();
-	it != curProjectiles.end(); ++it) {
-      if ((*it)->getLive()) 
-	 newList.push_back(*it); 	    	    
-   }
-   curProjectiles.clear();	 
-   curProjectiles.assign(newList.begin(), newList.end());       
-
-
-      
-   list< shared_ptr<Player> > newListPlayer;	       
-   for (list< shared_ptr<Player> >::iterator it = otherPlayers.begin();
-	it != otherPlayers.end(); ++it) {
-	 
-      if ((*it)->getLive()) {
-	 newListPlayer.push_back(*it);
-
-	 if (!(*it)->curProjectiles.empty()) {
-
-	    list< shared_ptr<Projectile> > listPlayerProj((*it)->curProjectiles);
-	    list< shared_ptr<Projectile> > newListPlayerProj;
-	    for (list< shared_ptr<Projectile> >::iterator j = listPlayerProj.begin();
-		 j != listPlayerProj.end(); ++j) {
-		  
-	       if ((*j)->getLive()) {
-		  newListPlayerProj.push_back(*j);
-	       }
-	    }
-	    (*it)->curProjectiles.clear();
-	    (*it)->curProjectiles.assign(newListPlayerProj.begin(),
-					 newListPlayerProj.end());
-	 }
-      }
-   }
-   otherPlayers.clear();	 
-   otherPlayers.assign(newListPlayer.begin(), newListPlayer.end());
-      
-*/
-      
     
 
