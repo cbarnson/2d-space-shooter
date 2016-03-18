@@ -1,3 +1,10 @@
+/**
+ * @file Sprite.h
+ * @brief Declaration and implementation of Sprite class- handles loading images for sprites
+ *
+ * @author
+ * @bug
+ */
 #ifndef SPRITE_H
 #define SPRITE_H
 

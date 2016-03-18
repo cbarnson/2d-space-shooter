@@ -1,6 +1,6 @@
 /**
  * @file engine.h
- * @brief
+ * @brief Declaration of Engine class
  *
  * @author
  * @bug

@@ -1,6 +1,6 @@
 /**
  * @file Root.h
- * @brief
+ * @brief Declaration of Root class
  *
  * @author
  * @bug

@@ -1,3 +1,10 @@
+/**
+ * @file Single.h
+ * @brief Declaration of Single class
+ *
+ * @author
+ * @bug
+ */
 #ifndef SINGLE_H
 #define SINGLE_H
 

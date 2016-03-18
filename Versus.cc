@@ -1,6 +1,6 @@
 /**
  * @file Versus.cc
- * @brief
+ * @brief Implementation of Versus class- handles game interactions for versus mode
  *
  * @author
  * @bug

@@ -1,3 +1,10 @@
+/**
+ * @file Controls.h
+ * @brief Declaration of Controls class
+ *
+ * @author
+ * @bug
+ */
 #ifndef CONTROLS_H
 #define CONTROLS_H
 

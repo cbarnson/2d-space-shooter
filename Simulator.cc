@@ -1,6 +1,6 @@
 /**
  * @file Simulator.cc
- * @brief
+ * @brief Implementation for Simulator class- runs main game loop
  *
  * @author
  * @bug

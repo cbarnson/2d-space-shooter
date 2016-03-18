@@ -1,10 +1,10 @@
 /**
  * @file Enemy2.h
- * @brief Definition of Enemy2 class, the second type of enemy
+ * @brief Definition of Enemy2 class, the second type of enemy. 
  *
  * 
  * @author
- * @bug
+ * @bug Not yet fully implemented, don't use
  */
 
 #ifndef ENEMY2_H

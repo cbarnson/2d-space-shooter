@@ -1,6 +1,6 @@
 /**
- * @file Display.h
- * @brief
+ * @file Display.cc
+ * @brief Implementation of Display class- launches display window
  *
  * @author
  * @bug

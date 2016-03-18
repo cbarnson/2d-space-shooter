@@ -1,3 +1,10 @@
+/**
+ * @file Single.cc
+ * @brief Implementation of Single class- handles game interactions for single player
+ *
+ * @author
+ * @bug
+ */
 #include "Single.h"
 
 Single::~Single() {
@@ -147,7 +154,26 @@ void Single::collision() {
 	 }
       }
    }
+   //check collision on enemy bodies vs player
+   if(!enem.empty()){
+      for(list<shared_ptr<Enemy>>:: iterator i=enem.begin(); i!=enem.end(); ++i){
+	 if(!play.empty()){
+	    for(list<shared_ptr<Player>>::iterator p=play.begin();p!=play.end(); ++p){
+	       Point A=(*i)->getCentre();
+	       Point B=(*p)->getCentre(); int b=(*p)->getSize();
+	       if((A.x>B.x-b)&&(A.x<B.x+ b)&&
+		  (A.y>B.y-b)&&(A.y<B.y+b))
+	       {
+		  (*i)->hit();
+		  (*p)->hit();
+	       }
+	    }
+	 }
+      }
+   }
 }
+      
+      
 
 
 
@@ -211,9 +237,13 @@ void Single::reset(int code) {
 }
 
 void Single::spawn() {
+   ALLEGRO_TIMER *spawnDelay;
+   if((spawnDelay=al_create_timer(1.0/30.0))==NULL)
+      throw std::runtime_error("cannot create spawnDelay timer");
+   //al_start_timer(spawnDelay);
    Point pt(0, 0);
    Vector spd(0, 0);
-   int n = rand() % 2 + 1;
+   int n = rand() % 3 + 1;
    //int n = 1;
    switch(n) {
       case 1: // wave of 5
@@ -232,6 +262,17 @@ void Single::spawn() {
 	    enem.push_back(make_shared<Enemy> (pt, al_map_rgb(255, 159, 48), spd));
 	 }
 	 break;
+      case 3:
+      
+	 pt.rollRandom();
+	 enem.push_back(make_shared<Enemy>(Point(800, 300), al_map_rgb(255,159, 48), Vector(-100, 0)));
+	 enem.push_back(make_shared<Enemy>(Point(900, 200), al_map_rgb(255,159, 48), Vector(-100, 0)));
+	 enem.push_back(make_shared<Enemy>(Point(900, 400), al_map_rgb(255,159, 48), Vector(-100, 0)));
+	 enem.push_back(make_shared<Enemy>(Point(1000, 500), al_map_rgb(255,159, 48), Vector(-100, 0)));
+	 enem.push_back(make_shared<Enemy>(Point(1000, 100), al_map_rgb(255,159, 48), Vector(-100, 0)));
+	 enem.push_back(make_shared<Enemy>(Point(1000, 300), al_map_rgb(255,159, 48), Vector(-100, 0)));
+	 break;
+	 
    }
    
 }
