@@ -1,6 +1,6 @@
 /**
  * @file engine.h
- * @brief
+ * @brief Declaration of Engine class
  *
  * @author
  * @bug
@@ -13,6 +13,7 @@
 #include "Single.h"
 #include "Versus.h"
 #include "Sprite.h"
+
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
@@ -30,16 +31,14 @@ using std::cout;
 class engine : public Simulator {
   private:
    list< shared_ptr<Root> > root;
-   //shared_ptr<Root> root;
-   //shared_ptr<Single> single;
-   //shared_ptr<Versus> versus;
+   shared_ptr<Sprite> menu;
    int game_fps;
    int windowWidth;
    int windowHeight;
-   //ALLEGRO_PATH *path;
+
    ALLEGRO_FONT *menuFont;
    ALLEGRO_FONT *modeFont;
-   Sprite *menu;
+   //Sprite *menu;
    
   public:
   engine(const Display& d, int fps) : Simulator(d, fps)

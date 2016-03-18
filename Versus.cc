@@ -1,12 +1,17 @@
 /**
  * @file Versus.cc
- * @brief
+ * @brief Implementation of Versus class- handles game interactions for versus mode
  *
  * @author
  * @bug
  */
 
 #include "Versus.h"
+
+Versus::~Versus() {
+   proj.clear();
+   play.clear();
+}
 
 void Versus::setup() {
    vector<int> h;
@@ -85,8 +90,8 @@ void Versus::updatePlayer() {
       for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) {
 	 (*it)->updatePlayer();	 
 	 if ((*it)->getFire()) {
-	    proj.push_back(make_shared<Projectile> ((*it)->getCentre(), (*it)->getColor(),
-						    (*it)->getProjSpeed()));
+	    proj.push_back(make_shared<Laser> ((*it)->getCentre(), (*it)->getColor(),
+					       (*it)->getProjSpeed()));
 	    (*it)->setFire(false);
 	 }	 
       }
@@ -101,7 +106,7 @@ void Versus::collision() {
 	 // check against players
 	 if (!play.empty()) {
 	    for (list< shared_ptr<Player> >::iterator p = play.begin(); p != play.end(); ++p) {
-	       Point A = (*i)->getCentre();
+	       Point A = (*i)->centre;
 	       Point B = (*p)->getCentre(); int b = (*p)->getSize();
 	       if ((A.x > B.x - b) &&
 		   (A.x < B.x + b) &&
@@ -109,10 +114,10 @@ void Versus::collision() {
 		   (A.y < B.y + b)) {
 		  // is a hit on Player
 		  std::cout << "hit on PLAYER\n";
-		  (*i)->setDead();
+		  (*i)->live = false;
 		  (*p)->hit();
 		  if ((*p)->getDead())
-		     updateScore((*i)->getColor());
+		     updateScore((*i)->color);
 	       }       	  
 	    }
 	 }
@@ -158,7 +163,7 @@ void Versus::clean() {
    list< shared_ptr<Projectile> > newProj;
    if (!proj.empty()) {
       for (list< shared_ptr<Projectile> >::iterator it = proj.begin(); it != proj.end(); ++it) {
-	 if ((*it)->getLive() && (*it)->inBound()) // if live
+	 if ((*it)->live) // if live
 	    newProj.push_back(*it);
       }
       proj.clear();

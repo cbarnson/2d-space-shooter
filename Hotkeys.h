@@ -1,6 +1,6 @@
 /**
  * @file Hotkeys.h
- * @brief
+ * @brief Declaration of Hotkeys class
  * @author Cody Barnson
  * @bug
  */

@@ -1,3 +1,10 @@
+/**
+ * @file Single.cc
+ * @brief Implementation of Single class- handles game interactions for single player
+ *
+ * @author
+ * @bug
+ */
 #include "Single.h"
 
 Single::~Single() {
@@ -24,10 +31,11 @@ void Single::load_assets() {
    ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
    al_append_path_component(path, "resources");
    al_change_directory(al_path_cstr(path, '/'));
-   //cout << "about to load map\n";
+   cout << "about to load map\n";
    //map1 = new Sprite("green-space.png");
-   //cout << "map has been loaded\n";
    
+   map1 = make_shared<Sprite> ("stars.png");
+   cout << "map has been loaded\n";
    al_destroy_path(path);   
 }
 
@@ -39,30 +47,35 @@ bool Single::is_game_over() {
 
 
 void Single::update(double dt) {
-   if (!play.empty())
-      for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) 
+   if (!play.empty()) {
+      for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) {
 	 (*it)->update(dt);
-   if (!proj.empty())
-      for (list< shared_ptr<Projectile> >::iterator it = proj.begin(); it != proj.end(); ++it) 
-	 (*it)->update(dt);          
-   if (!enem.empty())
+      }
+   }
+   if (!proj.empty()) {
+      for (list< shared_ptr<Projectile> >::iterator it = proj.begin(); it != proj.end(); ++it) {
+	 (*it)->update(dt);
+      }
+   }
+   if (!enem.empty()) {
       for (list< shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end(); ++it) {
 	 (*it)->update(dt);
 	 if((*it)->getFire()){
-	    proj.push_back(make_shared<Projectile> ((*it)->getCentre(), (*it)->getColor(),
-						    (*it)->getProjSpeed()));
+	    proj.push_back(make_shared<Laser> ((*it)->getCentre(), (*it)->getColor(),
+					       (*it)->getProjSpeed()));
 	    (*it)->setFire(false);	    
 	 }	 	 
       }
+   }
    else
       spawn();
 }
 
 void Single::draw() {
    //cout << "inside single draw beginning\n";
-   al_clear_to_color(al_map_rgb(0, 0, 0));
+   //al_clear_to_color(al_map_rgb(0, 0, 0));
    //map1->set_as_display();
-   //map1->drawToOrigin();
+   map1->drawToOrigin();
    
    //cout << "after clear to color\n";
    if (!play.empty()) {
@@ -94,8 +107,8 @@ void Single::updatePlayer() {
       for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) {
 	 (*it)->updatePlayer();	 
 	 if ((*it)->getFire()) {
-	    proj.push_back(make_shared<Projectile> ((*it)->getCentre(), (*it)->getColor(),
-						    (*it)->getProjSpeed()));
+	    proj.push_back(make_shared<Laser> ((*it)->getCentre(), (*it)->getColor(),
+					       (*it)->getProjSpeed()));
 	    (*it)->setFire(false);
 	 }	 
       }
@@ -105,24 +118,18 @@ void Single::updatePlayer() {
 
 void Single::collision() {
    if (!proj.empty()) {
-      // projectiles exist
       for (list< shared_ptr<Projectile> >::iterator i = proj.begin(); i != proj.end(); ++i) {
-	 // check against players
-	 //if (play) {
-	 
 	 if (!play.empty()) {
 	    for (list< shared_ptr<Player> >::iterator p = play.begin(); p != play.end(); ++p) {
-	       Point A = (*i)->getCentre();
+	       Point A = (*i)->centre;
 	       Point B = (*p)->getCentre(); int b = (*p)->getSize();
 	       if ((A.x > B.x - b) && (A.x < B.x + b) &&
 		   (A.y > B.y - b) && (A.y < B.y + b)) {
 		  // is a hit on Player
-		  
 		  std::cout << "hit on PLAYER\n";
-		  (*i)->setDead();
+		  (*i)->live = false;
 		  (*p)->hit(); // reduce player life
-		  //if ((*p)->getDead()) // true if player is dead
-		  //updateScore((*i)->getColor());
+		  
 	       }	    
 	    }
 	 }
@@ -130,7 +137,7 @@ void Single::collision() {
 	 // check against enemies
 	 if (!enem.empty()) {
 	    for (list< shared_ptr<Enemy> >::iterator e = enem.begin(); e != enem.end(); ++e) {
-	       Point A = (*i)->getCentre();
+	       Point A = (*i)->centre;
 	       Point B = (*e)->getCentre(); int b = (*e)->getSize();
 	       if ((A.x > B.x - b) &&
 		   (A.x < B.x + b) &&
@@ -138,16 +145,35 @@ void Single::collision() {
 		   (A.y < B.y + b)) {
 		  // is a hit on Enemy
 		  std::cout << "hit on ENEMY\n";
-		  (*i)->setDead();
+		  (*i)->live = false;
 		  (*e)->hit();
 		  if ((*e)->getDead())
-		     updateScore((*i)->getColor());
+		     updateScore((*i)->color);
+	       }
+	    }
+	 }
+      }
+   }
+   //check collision on enemy bodies vs player
+   if(!enem.empty()){
+      for(list<shared_ptr<Enemy>>:: iterator i=enem.begin(); i!=enem.end(); ++i){
+	 if(!play.empty()){
+	    for(list<shared_ptr<Player>>::iterator p=play.begin();p!=play.end(); ++p){
+	       Point A=(*i)->getCentre();
+	       Point B=(*p)->getCentre(); int b=(*p)->getSize();
+	       if((A.x>B.x-b)&&(A.x<B.x+ b)&&
+		  (A.y>B.y-b)&&(A.y<B.y+b))
+	       {
+		  (*i)->hit();
+		  (*p)->hit();
 	       }
 	    }
 	 }
       }
    }
 }
+      
+      
 
 
 
@@ -168,7 +194,7 @@ void Single::clean() {
    list< shared_ptr<Projectile> > newProj;
    if (!proj.empty()) {
       for (list< shared_ptr<Projectile> >::iterator it = proj.begin(); it != proj.end(); ++it) {
-	 if ((*it)->getLive() && (*it)->inBound()) // if live
+	 if ((*it)->live) // if live
 	    newProj.push_back(*it);
       }
       proj.clear();
@@ -211,9 +237,13 @@ void Single::reset(int code) {
 }
 
 void Single::spawn() {
+   ALLEGRO_TIMER *spawnDelay;
+   if((spawnDelay=al_create_timer(1.0/30.0))==NULL)
+      throw std::runtime_error("cannot create spawnDelay timer");
+   //al_start_timer(spawnDelay);
    Point pt(0, 0);
    Vector spd(0, 0);
-   int n = rand() % 2 + 1;
+   int n = rand() % 3 + 1;
    //int n = 1;
    switch(n) {
       case 1: // wave of 5
@@ -232,6 +262,17 @@ void Single::spawn() {
 	    enem.push_back(make_shared<Enemy> (pt, al_map_rgb(255, 159, 48), spd));
 	 }
 	 break;
+      case 3:
+      
+	 pt.rollRandom();
+	 enem.push_back(make_shared<Enemy>(Point(800, 300), al_map_rgb(255,159, 48), Vector(-100, 0)));
+	 enem.push_back(make_shared<Enemy>(Point(900, 200), al_map_rgb(255,159, 48), Vector(-100, 0)));
+	 enem.push_back(make_shared<Enemy>(Point(900, 400), al_map_rgb(255,159, 48), Vector(-100, 0)));
+	 enem.push_back(make_shared<Enemy>(Point(1000, 500), al_map_rgb(255,159, 48), Vector(-100, 0)));
+	 enem.push_back(make_shared<Enemy>(Point(1000, 100), al_map_rgb(255,159, 48), Vector(-100, 0)));
+	 enem.push_back(make_shared<Enemy>(Point(1000, 300), al_map_rgb(255,159, 48), Vector(-100, 0)));
+	 break;
+	 
    }
    
 }

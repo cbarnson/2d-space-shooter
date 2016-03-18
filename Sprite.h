@@ -1,3 +1,10 @@
+/**
+ * @file Sprite.h
+ * @brief Declaration and implementation of Sprite class- handles loading images for sprites
+ *
+ * @author
+ * @bug
+ */
 #ifndef SPRITE_H
 #define SPRITE_H
 
@@ -31,6 +38,7 @@ class Sprite {
    void drawToOrigin() {
       al_draw_bitmap(image, 0, 0, 0);
    }
+
 
    //void convert() {
    // al_convert_mask_to_alpha(image, al_get_pixel(image, 0, 0));

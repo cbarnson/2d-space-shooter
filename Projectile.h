@@ -1,6 +1,6 @@
 /**
  * @file Projectile.h
- * @brief
+ * @brief Declaration of Projectile interface
  *
  * @author
  * @bug
@@ -8,14 +8,41 @@
 #ifndef PROJECTILE_H
 #define PROJECTILE_H
 
-#include <allegro5/allegro.h> // for color
-#include <allegro5/allegro_primitives.h>
 #include "Drawable.h"
 #include "Updateable.h"
 #include "Point.h"
 #include "Vector.h"
 
+#include <allegro5/allegro.h> // for color
+#include <allegro5/allegro_primitives.h>
+#include <iostream>
+
+using std::cout;
+
 class Projectile : public Drawable, public Updateable {
+  public:
+   Point centre;
+   ALLEGRO_COLOR color;
+   Vector speed;
+   bool live;
+   
+   Projectile (Point p, ALLEGRO_COLOR c, Vector s)
+      : centre(p), color(c), speed(s)
+   {
+      live = true;
+      centre = centre + speed * 0.1;
+   }
+
+   virtual ~Projectile() { }
+   
+   void draw() { cout << "draw in proj\n"; }
+   void update(double dt) { cout << "update in proj\n"; }
+   
+};
+
+#endif
+
+   /*
   private:
    Point centre; // origin point
    ALLEGRO_COLOR color;
@@ -57,8 +84,6 @@ class Projectile : public Drawable, public Updateable {
 	 return false; // out of bound
       }
       return true;
-   }
+      }
+   */
 
-};
-
-#endif

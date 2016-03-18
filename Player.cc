@@ -1,7 +1,10 @@
 /**
  * @file Player.cc
+ * @brief Implementation of Player class- handles drawing and updating of player
+ *
+ * @author
+ * @bug
  */
-
 #include "Player.h"
 #include <iostream>
 
@@ -24,7 +27,7 @@ Player::~Player() {
    if (fireDelay != NULL)
       al_destroy_timer(fireDelay);
    al_destroy_font(scoreFont);
-   delete ship;
+   //delete ship;
 }
 
 void Player::load_assets() {
@@ -33,8 +36,10 @@ void Player::load_assets() {
    al_change_directory(al_path_cstr(path, '/'));
 
    scoreFont = al_load_font("ipag.ttf", 14, 0);
-   ship = new Sprite("Sprite.png");
-   
+   //ship = new Sprite("Sprite.png");
+   cout << "player loading sprite\n";
+   ship = make_shared<Sprite> ("Sprite.png");
+   cout << "player loaded sprite\n";
    al_destroy_path(path);
 }
 
@@ -63,6 +68,7 @@ void Player::reset(int code) {
 
 void Player::draw() {
 <<<<<<< HEAD
+<<<<<<< HEAD
    // al_draw_rectangle(centre.x - size, centre.y - size,
 //		     centre.x + size, centre.y + size,
 //		     color, 3);
@@ -84,8 +90,12 @@ void Player::draw() {
 =======
 
    //cout << "about to draw region\n";
+=======
+   
+   cout << "player about to draw region\n";
+>>>>>>> 2player
    ship->draw_region(row, col, 47.0, 40.0, centre, 0);
-   //cout << "region has been drawn\n";
+   cout << "player region has been drawn\n";
    switch (lives) {
       case 1:
 	 al_draw_line(centre.x - size*2, centre.y + size*2,
