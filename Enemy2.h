@@ -18,7 +18,7 @@
 #include "Vector.h"
 #include "Enemy.h"
 #include <memory>
-#include<stdexcept>
+#include <stdexcept>
 
 
 class Enemy2: public Enemy{

@@ -21,7 +21,8 @@ void Single::setup() {
    h.push_back(ALLEGRO_KEY_S);
    h.push_back(ALLEGRO_KEY_D);
    h.push_back(ALLEGRO_KEY_A);
-   h.push_back(ALLEGRO_KEY_PAD_0);
+   //h.push_back(ALLEGRO_KEY_PAD_0);
+   //h.push_back(
    play.push_back(make_shared<Player> (Point(600, 300),
 				       al_map_rgb(0,200,0), h,
 				       false, fps ));
@@ -110,6 +111,12 @@ void Single::updatePlayer() {
 	    proj.push_back(make_shared<Laser> ((*it)->getCentre(), (*it)->getColor(),
 					       (*it)->getProjSpeed()));
 	    (*it)->setFire(false);
+	 }
+	 
+	 if ((*it)->getmFire()) {
+	    proj.push_back(make_shared<Missile> ((*it)->getCentre(), (*it)->getColor(),
+						 (*it)->getProjSpeed()));
+	    (*it)->setmFire(false);
 	 }	 
       }
    }
@@ -234,6 +241,18 @@ void Single::reset(int code) {
    if (!play.empty())
       for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) 
 	 (*it)->reset(code);        
+}
+
+void Single::primary() {
+   if (!play.empty()) 
+      for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) 
+	 (*it)->primary();
+}
+
+void Single::secondary() {
+   if (!play.empty()) 
+      for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) 
+	 (*it)->secondary();
 }
 
 void Single::spawn() {

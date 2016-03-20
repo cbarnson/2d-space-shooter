@@ -15,6 +15,8 @@ class Controls {
    virtual void updatePlayer() = 0;
    virtual void set(int) = 0;
    virtual void reset(int) = 0;
+   virtual void primary() = 0;
+   virtual void secondary() = 0;
 };
 
 #endif

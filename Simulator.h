@@ -53,6 +53,8 @@ class Simulator {
    virtual void drawRoot() = 0;
    virtual void setRoot(int c) = 0;
    virtual void resetRoot(int c) = 0;
+   virtual void firePrimary() = 0;
+   virtual void fireSecondary() = 0;
    virtual void collisionRoot() = 0;
 };
 

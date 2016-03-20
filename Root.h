@@ -48,11 +48,15 @@ class Root : public Drawable, public Updateable, public Controls {
    void updatePlayer() { };
    void set(int code) { };
    void reset(int code) { };
+   void primary() { };
+   void secondary() { };
    //virtual void draw() = 0;
    //virtual void update(double) = 0;
    //virtual void updatePlayer() = 0;
    //virtual void set(int) = 0;
    //virtual void reset(int) = 0;
+
+   
    
    virtual bool is_game_over() = 0;
    virtual void collision() = 0;

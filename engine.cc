@@ -67,7 +67,7 @@ void engine::single_player() {
 
    
 void engine::multi_player() {
-   root.push_back(make_shared<Versus> (game_fps));
+   //root.push_back(make_shared<Versus> (game_fps));
 }
 
    
@@ -78,7 +78,6 @@ void engine::setRoot(int code) {
    }
 }
 
-
 void engine::resetRoot(int code) {
    for (list< shared_ptr<Root> >::iterator it = root.begin(); it != root.end();
 	++it) {
@@ -86,6 +85,19 @@ void engine::resetRoot(int code) {
    }
 }
 
+void engine::firePrimary() {
+   for (list< shared_ptr<Root> >::iterator it = root.begin(); it != root.end();
+	++it) {
+      (*it)->primary();
+   }
+}
+
+void engine::fireSecondary() {
+   for (list< shared_ptr<Root> >::iterator it = root.begin(); it != root.end();
+	++it) {
+      (*it)->secondary();
+   }
+}
 
 void engine::collisionRoot() {
    for (list< shared_ptr<Root> >::iterator it = root.begin(); it != root.end();

@@ -1,14 +1,5 @@
-
-/**
- * @file Laser.h
- * @brief derived class of Projectile
- *
- * @author
- * @bug
- */
-
-#ifndef LASER_H
-#define LASER_H
+#ifndef MISSILE_H
+#define MISSILE_H
 
 #include "Projectile.h"
 #include "Point.h"
@@ -20,27 +11,39 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 #include <memory>
+#include <vector>
 
 using std::shared_ptr;
 using std::make_shared;
+using std::vector;
 
-class Laser : public Projectile {
+class Missile : public Projectile {
   private:
-   shared_ptr<Sprite> laser;
+   vector< shared_ptr<Sprite> > mvec;
+   int mAnim;
+   //bool mAnim_complete;
 
   public:
-   Laser (Point p, ALLEGRO_COLOR c, Vector s)
+   Missile (Point p, ALLEGRO_COLOR c, Vector s)
       : Projectile(p, c, s)
-   { 
-      load_assets();      
+   {      
+      load_assets();
+      mAnim = 0;
+      //mAnim_complete = false;
    }
 
-   void load_assets();   
+   void load_assets();
    void draw();
+   //void draw_anim();
    void update(double dt);
    
    bool in_bound();
+
+
+
    
+
 };
+
 
 #endif

@@ -46,12 +46,14 @@ class Player : public Controls, public Drawable, public Updateable {
    int fps;             // for our timer
 
    ALLEGRO_TIMER *fireDelay;
+   ALLEGRO_TIMER *missileDelay;
    ALLEGRO_FONT *scoreFont;
    shared_ptr<Sprite> ship;
    //Sprite *ship;
    
    bool dead;           // signals Player object has been killed
    bool fire;           // signals fire-key has been hit
+   bool mfire;
    Vector projSpeed;    // speed of projectiles from Player object
    int lives;           // lives remaining of Player object before destroyed
    int speed_modifier;  // affects speed of Player object
@@ -69,6 +71,10 @@ class Player : public Controls, public Drawable, public Updateable {
       if ((fireDelay = al_create_timer(1.0 / fps)) == NULL)
 	 throw std::runtime_error("Cannot create fireDelay timer");
       al_start_timer(fireDelay);
+      
+      if ((missileDelay = al_create_timer(1.0 / fps)) == NULL)
+	 throw std::runtime_error("Cannot create missileDelay timer");
+      al_start_timer(missileDelay);
 
       cout << "pre player load assets\n";
       load_assets();
@@ -84,6 +90,7 @@ class Player : public Controls, public Drawable, public Updateable {
       
       dead = false;
       fire = false;
+      mfire = false;
    }
 
    ~Player();
@@ -92,12 +99,14 @@ class Player : public Controls, public Drawable, public Updateable {
    void setLives(int);
    void setScore(int); // increments score by param value
    void setFire(bool);
+   void setmFire(bool);
 
    // get methods
    int getLives();
    int getSize();
    bool getDead();
    bool getFire();
+   bool getmFire();
    Point getCentre();
    Vector getProjSpeed();
    Vector getSpeed();
@@ -108,8 +117,11 @@ class Player : public Controls, public Drawable, public Updateable {
    
    void set(int);
    void reset(int);
-   void draw();
    void updatePlayer();
+   void primary();
+   void secondary();
+   
+   void draw();
    void update(double);      
    
 };

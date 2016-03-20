@@ -21,7 +21,7 @@ class Hotkeys {
    
   Hotkeys(const vector<int>& v) : control(v)
    {
-      for (int i = 0; i < 5; i++) {
+      for (int i = 0; i < 4; i++) {
 	 keys.push_back(false);
       }
    }

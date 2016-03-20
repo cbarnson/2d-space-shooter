@@ -11,7 +11,7 @@
 #include "Simulator.h"
 #include "Root.h"
 #include "Single.h"
-#include "Versus.h"
+//#include "Versus.h"
 #include "Sprite.h"
 
 
@@ -56,8 +56,12 @@ class engine : public Simulator {
    void menuMessage();
    void single_player();
    void multi_player();
+   
    void setRoot(int code);
    void resetRoot(int code);
+   void firePrimary();
+   void fireSecondary();
+   
    void collisionRoot();
    void controlRoot();
    void updateRoot(double dt);
