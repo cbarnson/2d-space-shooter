@@ -48,9 +48,9 @@ class Sprite {
       al_draw_bitmap(image, p.x - width/2, p.y - height/2, f);
    }
 
-   void draw_rotated(Point p, ALLEGRO_COLOR c, int f) {
-      al_draw_tinted_rotated_bitmap(image, c, p.x - width / 2, p.y - height / 2,
-				    p.x - width / 2, p.y - height / 2, 3.14159265 / 2, f);
+   void draw_rotated(Point p, int f) {
+      al_draw_rotated_bitmap(image, width / 2, height / 2,
+				    p.x, p.y, 3.14159265 / 2, f);
    }
    
    void draw_tinted(Point p, ALLEGRO_COLOR c, int f) {

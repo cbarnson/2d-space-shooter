@@ -9,7 +9,6 @@
 #include "Sprite.h"
 
 #include <allegro5/allegro.h>
-#include <allegro5/allegro_primitives.h>
 #include <memory>
 #include <vector>
 
@@ -21,7 +20,6 @@ class Missile : public Projectile {
   private:
    vector< shared_ptr<Sprite> > mvec;
    int mAnim;
-   //bool mAnim_complete;
 
   public:
    Missile (Point p, ALLEGRO_COLOR c, Vector s)
@@ -29,12 +27,10 @@ class Missile : public Projectile {
    {      
       load_assets();
       mAnim = 0;
-      //mAnim_complete = false;
    }
 
    void load_assets();
    void draw();
-   //void draw_anim();
    void update(double dt);
    
    bool in_bound();

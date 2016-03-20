@@ -104,12 +104,12 @@ void Simulator::run() {
 	 
 	 // INPUT	 
 	 al_get_mouse_state(&state);
-	 if (state.buttons & 1) {
+	 if (state.buttons &1) {
 	    // fire primary
 	    firePrimary();
 	    //fireSecondary();
 	 }
-	 if (state.buttons & 2) {
+	 if (state.buttons &2) {
 	    // fire secondary
 	    fireSecondary();
 	 }

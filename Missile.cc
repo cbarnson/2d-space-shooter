@@ -26,7 +26,8 @@ void Missile::update(double dt) {
 }
 
 void Missile::draw() {
-   mvec[mAnim++]->draw_rotated(centre, color, 0);
+   mvec[mAnim]->draw_rotated(centre, 0);
+   mAnim++;
    if (mAnim > 7)
       mAnim = 0; // go through vector again
 }

@@ -43,13 +43,13 @@ class Root : public Drawable, public Updateable, public Controls {
    // occur from root
 
    // virtuals
-   void draw() { };
-   void update(double dt) { };
-   void updatePlayer() { };
-   void set(int code) { };
-   void reset(int code) { };
-   void primary() { };
-   void secondary() { };
+   void draw() { }
+   void update(double dt) { }
+   void updatePlayer() { }
+   void set(int code) { }
+   void reset(int code) { }
+   void primary() { }
+   void secondary() { }
    //virtual void draw() = 0;
    //virtual void update(double) = 0;
    //virtual void updatePlayer() = 0;

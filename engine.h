@@ -38,7 +38,6 @@ class engine : public Simulator {
 
    ALLEGRO_FONT *menuFont;
    ALLEGRO_FONT *modeFont;
-   //Sprite *menu;
    
   public:
   engine(const Display& d, int fps) : Simulator(d, fps)

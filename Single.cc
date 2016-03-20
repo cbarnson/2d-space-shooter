@@ -117,7 +117,8 @@ void Single::updatePlayer() {
 	    proj.push_back(make_shared<Missile> ((*it)->getCentre(), (*it)->getColor(),
 						 (*it)->getProjSpeed()));
 	    (*it)->setmFire(false);
-	 }	 
+	 }
+	 
       }
    }
 }

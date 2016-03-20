@@ -102,7 +102,7 @@ void Player::primary() {
 }
 
 void Player::secondary() {
-   if (al_get_timer_count(missileDelay) > 80) {
+   if (al_get_timer_count(missileDelay) > 10) {
       mfire = true;
       al_stop_timer(missileDelay);
       al_set_timer_count(missileDelay, 0);

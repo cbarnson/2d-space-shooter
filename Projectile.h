@@ -35,8 +35,8 @@ class Projectile : public Drawable, public Updateable {
 
    virtual ~Projectile() { }
    
-   void draw() { };
-   void update(double dt) { };
+   void draw() { }
+   void update(double dt) { }
    
 };
 
