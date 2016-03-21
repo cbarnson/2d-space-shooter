@@ -32,7 +32,7 @@ void Laser::draw() {
    //al_draw_line(centre.x, centre.y, tracer.x, tracer.y, color, 3);
    //laser->draw_tinted_scaled(centre, color, 0);
    laser->draw_tinted(centre, color, 0);
-	cout << "draw in laser\n";
+//	cout << "draw in laser\n";
 }
 
 bool Laser::in_bound() {

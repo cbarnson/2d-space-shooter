@@ -23,8 +23,6 @@
 #include <memory>
 #include <iostream>
 #include <string>
-//#include <ctime>
-//#include <cstdlib>
 
 using std::cout;
 using std::list;
@@ -32,47 +30,51 @@ using std::shared_ptr;
 using std::make_shared;
 
 class Single : public Root {
+  public:   
+  Single(int frames) : Root(frames) {
+      load_assets();
+   }
+   
+   ~Single();
 
+   // game setup
+   void load_assets();
+   
+   // virtuals from root
+   void update(double);
+   void draw();   
+   void input(const ALLEGRO_EVENT&);
+   
+   bool is_game_over();
+   void updateScore(ALLEGRO_COLOR);
+   void spawn();
+
+   
   private:
    list< shared_ptr<Projectile> > proj;
    list< shared_ptr<Enemy> > enem;
    list< shared_ptr<Player> > play;
-   list< shared_ptr<Background> > bg;
-   //Sprite *map1;
-   shared_ptr<Sprite> map1;
-   
-   
-  public:
-   
-  Single(int frames) : Root(frames) {
-      //cout << "setting up single\n";      
-      setup();
-      load_assets();
-      //cout << "setup completed in single\n";
-   }
-   ~Single();
-   
-   
-   
-   void setup(); // has its own setup
-   void load_assets();
-   
-   // virtuals from others
-   void update(double);
-   void draw();
-   void updatePlayer();
-   void set(int);
-   void reset(int);
-   void primary();
-   void secondary();
-   
-   // virtuals from Root
-   bool is_game_over();
+   //list< shared_ptr<Background> > bg;
+   shared_ptr<Background> bg;
+
+   // helper functions - simplicity & readability
+   void drawPlayer();
+   void drawProjectiles();
+   void drawEnemies();
+   void drawBackground();
+   void updatePlayerPosition(double);
+   void updateProjectilePosition(double);
+   void updateEnemyPosition(double);
+   void updateBackgroundPosition(double);
+   void setupPlayer();
+   void setupBackground();
+   void cullPlayer();
+   void cullProjectiles();
+   void cullEnemies();
+   void updatePlayerAction();
    void collision();
    void clean();
-   void updateScore(ALLEGRO_COLOR);
-
-   void spawn();
+   
 
 };
 

@@ -28,18 +28,23 @@ Player::~Player() {
    if (fireDelay != NULL)
       al_destroy_timer(fireDelay);
    al_destroy_font(scoreFont);
-   //delete ship;
 }
 
 void Player::load_assets() {
+   if ((fireDelay = al_create_timer(1.0 / fps)) == NULL)
+      throw std::runtime_error("Cannot create fireDelay timer");
+   al_start_timer(fireDelay);
+      
+   if ((missileDelay = al_create_timer(1.0 / fps)) == NULL)
+      throw std::runtime_error("Cannot create missileDelay timer");
+   al_start_timer(missileDelay);
+   
    ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
    al_append_path_component(path, "resources");
    al_change_directory(al_path_cstr(path, '/'));
 
    scoreFont = al_load_font("ipag.ttf", 14, 0);
-   cout << "player loading sprite\n";
    ship = make_shared<Sprite> ("Sprite.png");
-   cout << "player loaded sprite\n";
    al_destroy_path(path);
 }
 
@@ -49,27 +54,45 @@ void Player::hit() {
       dead = true;
 }
 
-// called when ALLEGRO_EVENT_KEY_UP
-void Player::set(int code) {
-   for (unsigned int i = 0; i < config.keys.size(); i++) {
-      if (code == config.control[i])
-	 config.keys[i] = true;
-   }   
+void Player::input(const ALLEGRO_EVENT& inputEvent) {
+   switch (inputEvent.type) {
+      
+      case ALLEGRO_EVENT_KEY_DOWN:	 
+	 for (unsigned int i = 0; i < config.keys.size(); i++) 
+	    if (inputEvent.keyboard.keycode == config.control[i])
+	       config.keys[i] = true;	   	 
+	 break;
+	 
+      case ALLEGRO_EVENT_KEY_UP:
+	 for (unsigned int i = 0; i < config.keys.size(); i++) 
+	    if (inputEvent.keyboard.keycode == config.control[i])
+	       config.keys[i] = false;	 	 
+	 break;
+	 
+      case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+	 // fire primary
+	 if (inputEvent.mouse.button == 1) 
+	    if (al_get_timer_count(fireDelay) > 5) {
+	       fire = true;
+	       al_stop_timer(fireDelay);
+	       al_set_timer_count(fireDelay, 0);
+	       al_start_timer(fireDelay);
+	    }
+	 
+	 // fire secondary
+	 if (inputEvent.mouse.button == 2) 
+	    if (al_get_timer_count(missileDelay) > 10) {
+	       mfire = true;
+	       al_stop_timer(missileDelay);
+	       al_set_timer_count(missileDelay, 0);
+	       al_start_timer(missileDelay);
+	    }	    	 
+	 break;
+   }
 }
 
-
-// called when ALLEGRO_EVENT_KEY_DOWN
-void Player::reset(int code) {
-   for (unsigned int i = 0; i < config.keys.size(); i++) {
-      if (code == config.control[i])
-	 config.keys[i] = false;
-   }
-}   
-
 void Player::draw() {   
-   //cout << "player about to draw region\n";
    ship->draw_region(row, col, 47.0, 40.0, centre, 0);
-   // cout << "player region has been drawn\n";
    switch (lives) {
       case 1:
 	 al_draw_line(centre.x - size*2, centre.y + size*2,
@@ -92,25 +115,8 @@ void Player::draw() {
    		 ALLEGRO_ALIGN_CENTRE, "Score: %i", score);
 }
 
-void Player::primary() {
-   if (al_get_timer_count(fireDelay) > 5) {
-      fire = true;
-      al_stop_timer(fireDelay);
-      al_set_timer_count(fireDelay, 0);
-      al_start_timer(fireDelay);
-   }
-}
 
-void Player::secondary() {
-   if (al_get_timer_count(missileDelay) > 10) {
-      mfire = true;
-      al_stop_timer(missileDelay);
-      al_set_timer_count(missileDelay, 0);
-      al_start_timer(missileDelay);
-   }
-}
-
-void Player::updatePlayer() {
+void Player::updatePlayerSpeed() {
    // up
    if (config.keys[0])
       speed.yMod(-speed_modifier);
@@ -127,7 +133,6 @@ void Player::updatePlayer() {
 
 void Player::update(double dt) {
    centre = centre + speed * dt;   
-   
    if (speed.x > 0) {
       col = 1;
       if (speed.y > 0) row = 2;
@@ -139,7 +144,6 @@ void Player::update(double dt) {
       else if (speed.y < 0) row = 0;
       else row = 1;
    }
-   
    speed = Vector(0, 0);
    
    // check x bound and adjust if out
@@ -153,7 +157,6 @@ void Player::update(double dt) {
       centre.y = 600 - size;
    else if (centre.y < size)
       centre.y = size;
-      
 }
 
     

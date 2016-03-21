@@ -40,6 +40,13 @@ class Sprite {
    }
 
 
+   void lockBitmap(int f) {
+      al_lock_bitmap(image, al_get_bitmap_format(image), f);
+   }
+   void unlockBitmap() {
+      al_unlock_bitmap(image);
+   }
+   
    // draw image centred at parameter position
    // flags can be
    // ALLEGRO_FLIP_HORIZONTAL
@@ -68,11 +75,11 @@ class Sprite {
       
    }
 
-   /*
-   void set_as_display() {
+   
+   void setTarget() {
       al_set_target_bitmap(image);
    }
-   */
+   
    
    void draw_death_anim(int c, Point p, int f) {
       al_draw_bitmap_region(image,

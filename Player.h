@@ -36,7 +36,7 @@ using std::shared_ptr;
 using std::make_shared;
 using std::vector;
 
-class Player : public Controls, public Drawable, public Updateable {
+class Player : public Drawable, public Updateable {
   private:
    Point centre;        // ship position
    ALLEGRO_COLOR color; // ship color
@@ -49,7 +49,6 @@ class Player : public Controls, public Drawable, public Updateable {
    ALLEGRO_TIMER *missileDelay;
    ALLEGRO_FONT *scoreFont;
    shared_ptr<Sprite> ship;
-   //Sprite *ship;
    
    bool dead;           // signals Player object has been killed
    bool fire;           // signals fire-key has been hit
@@ -68,15 +67,6 @@ class Player : public Controls, public Drawable, public Updateable {
   Player(Point p, ALLEGRO_COLOR c, vector<int> h, bool f, int frames)
      : centre(p), color(c), config(h), flipped(f), fps(frames)
    {      
-      if ((fireDelay = al_create_timer(1.0 / fps)) == NULL)
-	 throw std::runtime_error("Cannot create fireDelay timer");
-      al_start_timer(fireDelay);
-      
-      if ((missileDelay = al_create_timer(1.0 / fps)) == NULL)
-	 throw std::runtime_error("Cannot create missileDelay timer");
-      al_start_timer(missileDelay);
-
-      cout << "pre player load assets\n";
       load_assets();
       
       projSpeed = (flipped) ? Vector(-400,0) : Vector(400,0);
@@ -114,15 +104,12 @@ class Player : public Controls, public Drawable, public Updateable {
 
    void load_assets();
    void hit();
-   
-   void set(int);
-   void reset(int);
-   void updatePlayer();
-   void primary();
-   void secondary();
-   
+
+   void input(const ALLEGRO_EVENT&);
+   void updatePlayerSpeed();
    void draw();
-   void update(double);      
+   void update(double);
+
    
 };
 

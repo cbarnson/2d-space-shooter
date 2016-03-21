@@ -15,25 +15,29 @@
 
 #include <allegro5/allegro.h>
 #include <memory>
+
 using std::shared_ptr;
 using std::make_shared;
 
 class Background : public Drawable, public Updateable {
   private:
-   Point origin;
-   Point centre;
-   Vector speed;
-   const char* filename;
+   Point origin;   
+   Point bgCentre;
+   Point fgCentre;
+   
+   Vector bgSpeed;
+   Vector fgSpeed;
    shared_ptr<Sprite> bg;
+   shared_ptr<Sprite> fg;
+   
   public:
-  Background(Vector s, const char* f): speed(s), filename(f)
+  Background(Vector bgs, Vector fgs): bgSpeed(bgs), fgSpeed(fgs)
    {
-      origin.x=800;
-      origin.y=300;
-      centre=origin;
       load_assets();
    }
+   
    void load_assets();
+   
    void draw();
    void update(double dt);
 };

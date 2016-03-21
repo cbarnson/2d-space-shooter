@@ -54,14 +54,16 @@ class engine : public Simulator {
    void menuMessage();
    void single_player();
    void multi_player();
+
+   void getInput(const ALLEGRO_EVENT&);
    
-   void setRoot(int code);
-   void resetRoot(int code);
-   void firePrimary();
-   void fireSecondary();
+   //void setRoot(int code);
+   //void resetRoot(int code);
+   //void firePrimary();
+   //void fireSecondary();
    
-   void collisionRoot();
-   void controlRoot();
+   //void collisionRoot();
+   //void controlRoot();
    void updateRoot(double dt);
    void drawRoot();
 
