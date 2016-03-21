@@ -38,6 +38,7 @@ class Enemy : public Drawable, public Updateable {
    int size;
    int lives;
    int dAnim;
+   int fireSpeed;
    
    bool dAnim_complete;
    bool dead;
@@ -53,7 +54,8 @@ class Enemy : public Drawable, public Updateable {
       
       load_assets();
       
-      projSpeed = speed * 1.5;
+      projSpeed.x=-300;
+      projSpeed.y=0;
       
       lives = 1;
       size = 10;
@@ -61,10 +63,9 @@ class Enemy : public Drawable, public Updateable {
       
       dAnim_complete = false;
       dead = false;
-      fire = false;
-      
+      fire = true;
+      fireSpeed=(rand()%20)+80;  
    }
-	
    ~Enemy();
    
    void setFire(bool f);

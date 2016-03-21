@@ -84,7 +84,7 @@ void Enemy::update(double dt) {
    //speed.x = -speed.x;
 
 		
-   if(al_get_timer_count(fireDelay) > 80){
+   if(al_get_timer_count(fireDelay) > fireSpeed){
       fire = true;
       al_stop_timer(fireDelay);
       al_set_timer_count(fireDelay, 0);
