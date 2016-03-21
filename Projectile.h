@@ -30,13 +30,13 @@ class Projectile : public Drawable, public Updateable {
       : centre(p), color(c), speed(s)
    {
       live = true;
-      centre = centre + speed * 0.1;
+      //centre = centre + speed * 0.1;
    }
 
    virtual ~Projectile() { }
    
-   void draw() { cout << "draw in proj\n"; }
-   void update(double dt) { cout << "update in proj\n"; }
+   void draw() { }
+   void update(double dt) { }
    
 };
 

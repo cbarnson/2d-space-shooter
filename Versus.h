@@ -11,6 +11,7 @@
 #include "Root.h"
 #include "Projectile.h"
 #include "Laser.h"
+#include "Missile.h"
 #include "Player.h"
 //#include "Enemy.h"
 
@@ -43,6 +44,8 @@ class Versus : public Root {
    void updatePlayer();
    void set(int);
    void reset(int);
+   void primary();
+   void secondary();
    
    bool is_game_over();
    void collision();

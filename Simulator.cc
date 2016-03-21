@@ -38,7 +38,9 @@ void Simulator::run() {
    bool redraw = true;
    double crtTime, prevTime = 0;
    al_install_keyboard();
+   al_install_mouse();
    al_register_event_source(eventQueue, al_get_keyboard_event_source());
+   al_register_event_source(eventQueue, al_get_mouse_event_source());
 
   
    while(1) {
@@ -96,9 +98,29 @@ void Simulator::run() {
       // GAME LOOP //////////////////////////////////////////////
       while(1) {	 
 	 ALLEGRO_EVENT ev;
+	 //ALLEGRO_MOUSE_STATE state;
 	 al_wait_for_event(eventQueue, &ev);
 	 //cout << "waiting for input\n";
+	 
 	 // INPUT
+
+
+
+	 getInput(ev);
+	 /*
+	 al_get_mouse_state(&state);
+	 if (state.buttons &1) {
+	    // fire primary
+	    firePrimary();
+	    //fireSecondary();
+	 }
+	 if (state.buttons &2) {
+	    // fire secondary
+	    fireSecondary();
+	 }
+
+	 //cout << "type of ev.type is: " << typeid(ev.type).name() << std::endl;
+	 
 	 if(ev.type == ALLEGRO_EVENT_KEY_DOWN) {	    
 	    if (ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
 	    	return;
@@ -107,15 +129,16 @@ void Simulator::run() {
 	 }
 	 else if (ev.type == ALLEGRO_EVENT_KEY_UP) 
 	    resetRoot(ev.keyboard.keycode);
-	 
+
+	 */
 	 //cout << "I am past input set/reset section\n";
 	 
 	 // DO EVERYTHING FOR GAME
 	 if(ev.type == ALLEGRO_EVENT_TIMER) {	 
 	    crtTime = al_current_time();
-	    controlRoot();
+	    //controlRoot();
 	    updateRoot(crtTime - prevTime);
-	    collisionRoot();
+	    //collisionRoot();
 	    prevTime = crtTime;		    
 	    redraw = true;
 	 }

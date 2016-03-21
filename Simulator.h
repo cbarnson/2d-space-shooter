@@ -9,11 +9,12 @@
 #define __SIMULATOR_H
 
 #include "Display.h"
-#include "Hotkeys.h"
+//#include "Hotkeys.h"
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 #include <stdexcept>
 #include <iostream>
+#include <typeinfo>
 
 using std::cout;
 
@@ -48,12 +49,18 @@ class Simulator {
    virtual void single_player() = 0;
    virtual void multi_player() = 0;
 
-   virtual void controlRoot() = 0;
+   //virtual void controlRoot() = 0;
    virtual void updateRoot(double dt) = 0;
+   //virtual void collisionRoot() = 0;
    virtual void drawRoot() = 0;
+
+   virtual void getInput(const ALLEGRO_EVENT&) = 0;
+   /*
    virtual void setRoot(int c) = 0;
    virtual void resetRoot(int c) = 0;
-   virtual void collisionRoot() = 0;
+   virtual void firePrimary() = 0;
+   virtual void fireSecondary() = 0;
+   */
 };
 
 #endif

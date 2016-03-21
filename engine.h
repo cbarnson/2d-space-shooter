@@ -7,11 +7,10 @@
  */
 #ifndef ENGINE_H
 #define ENGINE_H
-
 #include "Simulator.h"
 #include "Root.h"
 #include "Single.h"
-#include "Versus.h"
+//#include "Versus.h"
 #include "Sprite.h"
 
 
@@ -38,7 +37,6 @@ class engine : public Simulator {
 
    ALLEGRO_FONT *menuFont;
    ALLEGRO_FONT *modeFont;
-   //Sprite *menu;
    
   public:
   engine(const Display& d, int fps) : Simulator(d, fps)
@@ -56,10 +54,16 @@ class engine : public Simulator {
    void menuMessage();
    void single_player();
    void multi_player();
-   void setRoot(int code);
-   void resetRoot(int code);
-   void collisionRoot();
-   void controlRoot();
+
+   void getInput(const ALLEGRO_EVENT&);
+   
+   //void setRoot(int code);
+   //void resetRoot(int code);
+   //void firePrimary();
+   //void fireSecondary();
+   
+   //void collisionRoot();
+   //void controlRoot();
    void updateRoot(double dt);
    void drawRoot();
 

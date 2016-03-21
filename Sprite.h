@@ -40,9 +40,12 @@ class Sprite {
    }
 
 
-   //void convert() {
-   // al_convert_mask_to_alpha(image, al_get_pixel(image, 0, 0));
-   //}
+   void lockBitmap(int f) {
+      al_lock_bitmap(image, al_get_bitmap_format(image), f);
+   }
+   void unlockBitmap() {
+      al_unlock_bitmap(image);
+   }
    
    // draw image centred at parameter position
    // flags can be
@@ -52,9 +55,31 @@ class Sprite {
       al_draw_bitmap(image, p.x - width/2, p.y - height/2, f);
    }
 
-   void set_as_display() {
+   void draw_rotated(Point p, int f) {
+      al_draw_rotated_bitmap(image, width / 2, height / 2,
+				    p.x, p.y, 3.14159265 / 2, f);
+   }
+   
+   void draw_tinted(Point p, ALLEGRO_COLOR c, int f) {
+      al_draw_tinted_bitmap(image, c, p.x, p.y - height / 2, f);
+   }
+   
+   void draw_tinted_scaled(Point p, ALLEGRO_COLOR c, int f) {
+      // al_draw_tinted_scaled_bitmap( bitmap, color, sourcex, sourcey, source width,
+      // source height, destination x, destination y, destination width, destination height,
+      // flags);
+      al_draw_tinted_scaled_bitmap(image, c, 0, 0, 290, 74, 
+				   p.x, p.y - height / 2,
+				   width / 5,
+				   height / 5, f);
+      
+   }
+
+   
+   void setTarget() {
       al_set_target_bitmap(image);
    }
+   
    
    void draw_death_anim(int c, Point p, int f) {
       al_draw_bitmap_region(image,

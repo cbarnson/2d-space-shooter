@@ -12,9 +12,7 @@
 
 class Controls {
   public:
-   virtual void updatePlayer() = 0;
-   virtual void set(int) = 0;
-   virtual void reset(int) = 0;
+   //virtual void updatePlayer() = 0;
 };
 
 #endif
