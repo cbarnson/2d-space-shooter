@@ -8,25 +8,43 @@
 #include "Single.h"
 
 Single::~Single() {
+   al_destroy_font(gameOverFont);
+   al_destroy_timer(gameOverTimer);
    proj.clear();
    enem.clear();
    play.clear();
-   //bg.clear();
+   bg = NULL;
 }
 
 void Single::load_assets() {
+   gameOverTimer = al_create_timer( 1.0 / 30.0 );
+   
    setupPlayer();   
    ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
    al_append_path_component(path, "resources");
-   al_change_directory(al_path_cstr(path, '/'));   
-   setupBackground();   
+   al_change_directory(al_path_cstr(path, '/'));
+   
+   setupBackground();
+   gameOverFont = al_load_font("DavidCLM-BoldItalic.ttf", 64, 0);
+   
    al_destroy_path(path);
 }
 
 bool Single::is_game_over() {
-   if (play.empty())
-      return true;
+   if (al_get_timer_count(gameOverTimer) >= 80)
+      return true;      
    return false;
+}
+
+void Single::showGameOverMessage() {
+   if (!al_get_timer_started(gameOverTimer))
+      al_start_timer(gameOverTimer);
+   if (al_get_timer_count(gameOverTimer) < 80) 
+      al_draw_text(gameOverFont, al_map_rgb(255, 0, 0), 400, 300, ALLEGRO_ALIGN_CENTRE,
+		   "GAME OVER - YOU SUCK");   
+   else 
+      al_stop_timer(gameOverTimer);
+   
 }
 
 void Single::update(double dt) {
@@ -34,8 +52,7 @@ void Single::update(double dt) {
    updateBackgroundPosition(dt);
    updatePlayerPosition(dt);
    updateProjectilePosition(dt);
-   updateEnemyPosition(dt);
-   
+   updateEnemyPosition(dt);   
    collision();
    clean();      
 }
@@ -45,7 +62,9 @@ void Single::draw() {
    drawBackground();
    drawPlayer();
    drawProjectiles();
-   drawEnemies();   
+   drawEnemies();
+   if (play.empty()) 
+      showGameOverMessage();   
    al_flip_display();
 }
 
@@ -265,11 +284,6 @@ void Single::updateEnemyPosition(double dt) {
 }
 
 void Single::updateBackgroundPosition(double dt) {
-   //if (!bg.empty()) {
-   //for (list< shared_ptr<Background> >::iterator it = bg.begin(); it != bg.end(); ++it) {
-//	 (*it)->update(dt);
-   //  }
-   //}
    bg->update(dt);
 }
 
@@ -298,11 +312,6 @@ void Single::drawEnemies() {
 }
 
 void Single::drawBackground() {
-   //if (!bg.empty()) {
-   // for (list< shared_ptr<Background> >::iterator it = bg.begin(); it != bg.end(); ++it){ 
-//	 (*it)->draw();
-	 // }
-   // }   
    bg->draw();
 }
 void Single::setupPlayer() {
@@ -318,7 +327,6 @@ void Single::setupPlayer() {
 
 void Single::setupBackground() {
    //initializes background images, vectors decide 'parallax' speed
-   //bg.push_back(make_shared<Background> (Vector(-50, 0), Vector(-90, 0)));
    bg = make_shared<Background> (Vector(-50, 0), Vector(-90, 0));
 }
 

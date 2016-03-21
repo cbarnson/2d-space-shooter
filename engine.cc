@@ -13,17 +13,14 @@ engine::~engine() {
 
 
 void engine::load_assets() {
-   //cout << "loading assets\n";
    ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
    al_append_path_component(path, "resources");
    al_change_directory(al_path_cstr(path, '/'));
    menuFont = al_load_font("DavidCLM-Medium.ttf", 48, 0);
    modeFont = al_load_font("ipag.ttf", 32, 0);   
 
-   //menu = new Sprite("space.png");
    menu = make_shared<Sprite> ("space.png");
 
-   //cout << "assets loaded\n";
    al_destroy_path(path);
 }
 
@@ -37,7 +34,6 @@ void engine::reset_game() {
 bool engine::is_game_over() {
    for (list< shared_ptr<Root> >::iterator it = root.begin(); it != root.end();
 	++it) {
-      //return ((*it)->is_game_over()) ? true : false;
       if ((*it)->is_game_over())
 	 return true;      
    }
@@ -56,7 +52,6 @@ void engine::menuMessage() {
    al_flip_display();
 }
 
-   
 
 void engine::single_player() {
    //cout << "creating single from engine\n";
