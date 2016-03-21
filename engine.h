@@ -34,9 +34,11 @@ class engine : public Simulator {
    int game_fps;
    int windowWidth;
    int windowHeight;
+   int mAnim;
 
    ALLEGRO_FONT *menuFont;
    ALLEGRO_FONT *modeFont;
+   ALLEGRO_FONT *subMenuFont;
    
   public:
   engine(const Display& d, int fps) : Simulator(d, fps)
@@ -44,6 +46,7 @@ class engine : public Simulator {
       game_fps = fps;
       windowWidth = d.getW();
       windowHeight = d.getH();
+      mAnim=0;
       load_assets();
    }
 
@@ -54,6 +57,7 @@ class engine : public Simulator {
    void menuMessage();
    void single_player();
    void multi_player();
+   void menuAnim();
 
    void getInput(const ALLEGRO_EVENT&);
    

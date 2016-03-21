@@ -15,7 +15,6 @@ void Background::load_assets() {
    ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
    al_append_path_component(path, "resources");
    al_change_directory(al_path_cstr(path, '/'));
-   
    bg = make_shared<Sprite> ("BGstars.png");
    fg = make_shared<Sprite> ("FGstars.png");
    

@@ -87,6 +87,7 @@ void Single::collision() {
 	       if ((A.x > B.x - b) && (A.x < B.x + b) &&
 		   (A.y > B.y - b) && (A.y < B.y + b)) {
 		  // is a hit on Player
+		  std::cout << "hit on PLAYER\n";
 		  (*i)->live = false;
 		  (*p)->hit(); // reduce player life
 		  
@@ -104,6 +105,7 @@ void Single::collision() {
 		   (A.y > B.y - b) &&
 		   (A.y < B.y + b)) {
 		  // is a hit on Enemy
+		  std::cout << "hit on ENEMY\n";
 		  (*i)->live = false;
 		  (*e)->hit();
 		  if ((*e)->getDead())
@@ -160,7 +162,7 @@ void Single::spawn() {
       throw std::runtime_error("cannot create spawnDelay timer");
    //al_start_timer(spawnDelay);
    Point pt(0, 0);
-   Point pt1, pt2, pt3, playerloc;
+   Point pt1, pt2, playerloc;
    Vector spd(0, 0);
    if(!play.empty())
       for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) 
@@ -168,7 +170,7 @@ void Single::spawn() {
    if(play.empty())
       playerloc=Point (200, 300);
    
-   int n = rand() % 5 + 1;
+   int n = rand() % 4 + 1;
    switch(n) {
       case 1: // wave of 5
 	 //spd.x = 0;
@@ -189,19 +191,19 @@ void Single::spawn() {
 	 
       case 3:
       	 enem.push_back(make_shared<Enemy> (Point(800, 300), al_map_rgb(246, 64, 234),
-					    Vector(-150, 0)));
+					    Vector(-130, 0)));
 	 enem.push_back(make_shared<Enemy> (Point(900, 350), al_map_rgb(246, 64, 234),
-					    Vector(-150, 0)));
+					    Vector(-130, 0)));
 	 enem.push_back(make_shared<Enemy> (Point(900, 250), al_map_rgb(246, 64, 234),
-					    Vector(-150, 0)));
+					    Vector(-130, 0)));
 	 enem.push_back(make_shared<Enemy> (Point(1000, 400), al_map_rgb(246, 64, 234),
-					    Vector(-150, 0)));
+					    Vector(-130, 0)));
 	 enem.push_back(make_shared<Enemy> (Point(1000, 200), al_map_rgb(246, 64, 234),
-					    Vector(-150, 0)));
+					    Vector(-130, 0)));
 	 enem.push_back(make_shared<Enemy> (Point(1100, 100), al_map_rgb(246, 64, 234),
-					    Vector(-150, 0)));
+					    Vector(-130, 0)));
 	 enem.push_back(make_shared<Enemy> (Point(1100, 500), al_map_rgb(246, 64, 234),
-					    Vector(-150, 0)));
+					    Vector(-130, 0)));
 	 break;
 	 
       case 4:
@@ -209,24 +211,16 @@ void Single::spawn() {
 	 
 	 pt1.x=800; pt1.y=590;
 	 pt2.x=800; pt2.y=10;
-	 pt3.x=900; pt3.y=300;
 	 //std::cout<<"velocity is "<<spd.x<<" "<<spd.y<<std::endl;
 	 enem.push_back(
 	    make_shared<Enemy>
-	    (pt1, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt1.x)/1.4),
-						   ((playerloc.y-pt1.y)/1.4))));
+	    (pt1, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt1.x)/1.5),
+						   ((playerloc.y-pt1.y)/1.5))));
 	 enem.push_back(
 	    make_shared<Enemy>
-	    (pt2, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt2.x)/1.4),
-						   ((playerloc.y-pt2.y)/1.4))));
-	 enem.push_back(
-	    make_shared<Enemy>
-	    (pt3, al_map_rgb(255, 255, 255), Vector(((playerloc.x-pt3.x)/1.4),
-						   ((playerloc.y-pt3.y)/1.4))));
+	    (pt2, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt2.x)/1.5),
+						   ((playerloc.y-pt2.y)/1.5))));
 	 break;
-      case 5:
-	 spawn();
-	 spawn();
 	 
    }
    
