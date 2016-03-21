@@ -67,9 +67,9 @@ void Player::reset(int code) {
 }   
 
 void Player::draw() {   
-   cout << "player about to draw region\n";
+   //cout << "player about to draw region\n";
    ship->draw_region(row, col, 47.0, 40.0, centre, 0);
-   cout << "player region has been drawn\n";
+   // cout << "player region has been drawn\n";
    switch (lives) {
       case 1:
 	 al_draw_line(centre.x - size*2, centre.y + size*2,

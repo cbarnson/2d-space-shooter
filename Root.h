@@ -9,7 +9,6 @@
 #ifndef ROOT_H
 #define ROOT_H
 
-
 #include "Drawable.h"
 #include "Updateable.h"
 #include "Controls.h"

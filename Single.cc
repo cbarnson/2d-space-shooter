@@ -12,6 +12,7 @@ Single::~Single() {
    proj.clear();
    enem.clear();
    play.clear();
+   // bg.clear();
    cout << "destructor\n";
 }
 
@@ -23,12 +24,18 @@ void Single::setup() {
    h.push_back(ALLEGRO_KEY_A);
    //h.push_back(ALLEGRO_KEY_PAD_0);
    //h.push_back(
-   play.push_back(make_shared<Player> (Point(600, 300),
+   play.push_back(make_shared<Player> (Point(200, 300),
 				       al_map_rgb(0,200,0), h,
 				       false, fps ));
+   //initializes background images, vectors decide 'parralax' speed
+   bg.push_back(make_shared<Background>(Vector(-50, 0), "BGstars.png"));
+   bg.push_back(make_shared<Background>(Vector(-90, 0), "FGstars.png"));
 }
 
 void Single::load_assets() {
+   //not sure if this function still needs to exist at all after moving implementation of background
+   //
+   /*
    ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
    al_append_path_component(path, "resources");
    al_change_directory(al_path_cstr(path, '/'));
@@ -37,7 +44,7 @@ void Single::load_assets() {
    
    map1 = make_shared<Sprite> ("stars.png");
    cout << "map has been loaded\n";
-   al_destroy_path(path);   
+   al_destroy_path(path);*/   
 }
 
 bool Single::is_game_over() {
@@ -48,6 +55,11 @@ bool Single::is_game_over() {
 
 
 void Single::update(double dt) {
+   if (!bg.empty()) {
+      for (list< shared_ptr<Background> >::iterator it = bg.begin(); it != bg.end(); ++it) {
+	 (*it)->update(dt);
+      }
+   }
    if (!play.empty()) {
       for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) {
 	 (*it)->update(dt);
@@ -68,16 +80,20 @@ void Single::update(double dt) {
 	 }	 	 
       }
    }
-   else
+   if(enem.size()<=2)
       spawn();
 }
 
 void Single::draw() {
    //cout << "inside single draw beginning\n";
-   //al_clear_to_color(al_map_rgb(0, 0, 0));
+   al_clear_to_color(al_map_rgb(0, 0, 0));
    //map1->set_as_display();
-   map1->drawToOrigin();
-   
+   // map1->drawToOrigin();
+   if (!bg.empty()) {
+      for (list< shared_ptr<Background> >::iterator it = bg.begin(); it != bg.end(); ++it){ 
+	 (*it)->draw();
+      }
+   }
    //cout << "after clear to color\n";
    if (!play.empty()) {
       //cout << "inside if .empty()\n";
@@ -262,9 +278,15 @@ void Single::spawn() {
       throw std::runtime_error("cannot create spawnDelay timer");
    //al_start_timer(spawnDelay);
    Point pt(0, 0);
+   Point pt1, pt2, playerloc;
    Vector spd(0, 0);
-   int n = rand() % 3 + 1;
-   //int n = 1;
+   if(!play.empty())
+      for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) 
+	 playerloc= (*it)->getCentre();
+   if(play.empty())
+      playerloc=Point (200, 300);
+   
+   int n = rand() % 4 + 1;
    switch(n) {
       case 1: // wave of 5
 	 //spd.x = 0;
@@ -283,14 +305,26 @@ void Single::spawn() {
 	 }
 	 break;
       case 3:
-      
-	 pt.rollRandom();
-	 enem.push_back(make_shared<Enemy>(Point(800, 300), al_map_rgb(255,159, 48), Vector(-100, 0)));
-	 enem.push_back(make_shared<Enemy>(Point(900, 200), al_map_rgb(255,159, 48), Vector(-100, 0)));
-	 enem.push_back(make_shared<Enemy>(Point(900, 400), al_map_rgb(255,159, 48), Vector(-100, 0)));
-	 enem.push_back(make_shared<Enemy>(Point(1000, 500), al_map_rgb(255,159, 48), Vector(-100, 0)));
-	 enem.push_back(make_shared<Enemy>(Point(1000, 100), al_map_rgb(255,159, 48), Vector(-100, 0)));
-	 enem.push_back(make_shared<Enemy>(Point(1000, 300), al_map_rgb(255,159, 48), Vector(-100, 0)));
+      	 enem.push_back(make_shared<Enemy> (Point(800, 300), al_map_rgb(246, 64, 234), Vector(-130, 0)));
+	 enem.push_back(make_shared<Enemy> (Point(900, 350), al_map_rgb(246, 64, 234), Vector(-130, 0)));
+	 enem.push_back(make_shared<Enemy> (Point(900, 250), al_map_rgb(246, 64, 234), Vector(-130, 0)));
+	 enem.push_back(make_shared<Enemy> (Point(1000, 400), al_map_rgb(246, 64, 234), Vector(-130, 0)));
+	 enem.push_back(make_shared<Enemy> (Point(1000, 200), al_map_rgb(246, 64, 234), Vector(-130, 0)));
+	 enem.push_back(make_shared<Enemy> (Point(1100, 100), al_map_rgb(246, 64, 234), Vector(-130, 0)));
+	 enem.push_back(make_shared<Enemy> (Point(1100, 500), al_map_rgb(246, 64, 234), Vector(-130, 0)));
+	 break;
+      case 4:
+	 std::cout<<"play loc is "<<playerloc.x<<" "<<playerloc.y<<std::endl;
+	 
+	 pt1.x=800; pt1.y=590;
+	 pt2.x=800; pt2.y=10;
+	 std::cout<<"velocity is "<<spd.x<<" "<<spd.y<<std::endl;
+	 enem.push_back(
+	    make_shared<Enemy>
+	    (pt1, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt1.x)/1.5), ((playerloc.y-pt1.y)/1.5))));
+	 enem.push_back(
+	    make_shared<Enemy>
+	    (pt2, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt2.x)/1.5), ((playerloc.y-pt2.y)/1.5))));
 	 break;
 	 
    }

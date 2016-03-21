@@ -4,7 +4,7 @@ LIBDIR = /home/lib2720/allegro/lib
 LNFLAGS = -lallegro -lallegro_primitives -lallegro_image -lallegro_font \
 -lallegro_ttf
 OBJECTS =  main.o Display.o Simulator.o engine.o Player.o Enemy.o Single.o \
-Laser.o Missile.o
+Laser.o Missile.o Background.o
 
 #Versus.o
 
@@ -32,6 +32,7 @@ Enemy.o : Enemy.h
 Laser.o : Laser.h
 Missile.o : Missile.h
 Single.o : Single.h Root.h
+Background.o : Background.h
 #Versus.o : Versus.h Root.h
 
 clean :

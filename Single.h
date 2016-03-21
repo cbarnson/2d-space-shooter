@@ -9,19 +9,20 @@
 #define SINGLE_H
 
 #include "Root.h"
+#include "Background.h"
 #include "Projectile.h"
 #include "Laser.h"
 #include "Missile.h"
 #include "Player.h"
 #include "Enemy.h"
 #include "Sprite.h"
-
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_image.h>
 #include <list>
 #include <memory>
 #include <iostream>
+#include <string>
 //#include <ctime>
 //#include <cstdlib>
 
@@ -36,6 +37,7 @@ class Single : public Root {
    list< shared_ptr<Projectile> > proj;
    list< shared_ptr<Enemy> > enem;
    list< shared_ptr<Player> > play;
+   list< shared_ptr<Background> > bg;
    //Sprite *map1;
    shared_ptr<Sprite> map1;
    
