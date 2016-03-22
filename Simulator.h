@@ -52,6 +52,7 @@ class Simulator {
    virtual void updateRoot(double dt) = 0;
    virtual void drawRoot() = 0;
    virtual void getInput(const ALLEGRO_EVENT&) = 0;
+   virtual bool gameReady()=0;
 };
 
 #endif

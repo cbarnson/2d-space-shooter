@@ -68,7 +68,6 @@ void engine::menuMessage() {
 }
 
 bool engine::gameReady(){
-   std::cout<<mAnim<<std::endl;
    if(mAnim>6)
       return true; 
    return false;

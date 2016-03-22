@@ -88,6 +88,9 @@ class Sprite {
 			    p.x - 118.0 / 2,
 			    p.y - 118.0 / 2, f);
    }
+   void draw_menu_anim(int c, int f){
+      al_draw_bitmap_region(image, 0.0, c*233.0, 592.0, 233.0, 104.0, 183.5, f);
+   }
    
    void draw_region(int r, int c, float bw, float bh, Point destination, int f) {
       al_draw_bitmap_region(image,
