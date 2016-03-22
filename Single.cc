@@ -178,7 +178,6 @@ void Single::spawn() {
    Point pt1, pt2, playerloc, pt3;
    Vector spd(0, 0);
    ALLEGRO_COLOR color = al_map_rgb(255,255,255);
-
    if(!play.empty())
       for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) 
 	 playerloc = (*it)->centre;
@@ -226,7 +225,6 @@ void Single::spawn() {
 	 pt1.x=800; pt1.y=580;
 	 pt2.x=800; pt2.y=20;
 	 pt3.x=850; pt3.y=300;
-
 	 //std::cout<<"velocity is "<<spd.x<<" "<<spd.y<<std::endl;
 	 enem.push_back(
 	    make_shared<Enemy>
