@@ -240,7 +240,6 @@ void Single::spawn() {
 	    make_shared<Enemy>
 	    (pt3, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt3.x)/1.5),
 						   ((playerloc.y-pt3.y)/1.5))));
-	 
 	 break;
       case 5:
 	 spawn();
@@ -253,6 +252,7 @@ void Single::spawn() {
 	    spd.rollReallyRandom();
 	    enem.push_back(make_shared<Enemy>(Point(800, 300), color, spd));
 	 }
+	 break;
    }
    
 }
@@ -368,6 +368,6 @@ void Single::cullEnemies() {
 	    newEnem.push_back(*it);
       }
       enem.clear();
-      enem.assign(newEnem.begin(), newEnem.end());      
+      enem.assign(newEnem.begin(), newEnem.end());
    }
 }

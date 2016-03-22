@@ -89,7 +89,6 @@ void Simulator::run() {
 	    if(gameReady())
 	    {
 	       mode_selected = false;
-	       std::cout<<"game should have started";
 	       break;}
 	 }
 
