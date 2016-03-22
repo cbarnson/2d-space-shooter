@@ -32,7 +32,9 @@ class Enemy : public Drawable, public Updateable {
 	
    ALLEGRO_TIMER *fireDelay;
    shared_ptr<Sprite> death;
+   shared_ptr<Sprite> enemySprite;
 
+   
    Vector projSpeed;
    int size;
    int lives;
@@ -56,7 +58,7 @@ class Enemy : public Drawable, public Updateable {
       projSpeed = Vector(-300, 0);
       fireSpeed = (rand() % 20) + 80;  
       lives = 1;
-      size = 10;
+      size = 16;
       
       dAnim = 0;      
       dAnim_complete = false;

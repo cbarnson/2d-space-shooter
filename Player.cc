@@ -30,8 +30,8 @@ Player::~Player() {
    al_destroy_font(scoreFont);
 }
 
-void Player::hit() {
-   lives = lives - 1;
+void Player::hit(int damage) {
+   lives = lives - damage;
    if (lives < 1)
       dead = true;
 }
@@ -78,7 +78,6 @@ void Player::updatePlayerSpeed() {
 }
 
 
-
 void Player::load_assets() {
    // initialize some timers
    if ((fireDelay = al_create_timer(1.0 / fps)) == NULL)
@@ -88,6 +87,8 @@ void Player::load_assets() {
    if ((missileDelay = al_create_timer(1.0 / fps)) == NULL)
       throw std::runtime_error("Cannot create missileDelay timer");
    al_start_timer(missileDelay);
+
+   
 
    // set some initial variable values
    projSpeed = (flipped) ? Vector(-400,0) : Vector(400,0);

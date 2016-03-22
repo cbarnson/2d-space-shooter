@@ -107,7 +107,7 @@ void Single::collision() {
 		   (A.y > B.y - b) && (A.y < B.y + b)) {
 		  // is a hit on Player
 		  (*i)->live = false;
-		  (*p)->hit(); // reduce player life
+		  (*p)->hit(1); // reduce player life
 		  
 	       }	    
 	    }
@@ -143,7 +143,7 @@ void Single::collision() {
 		  (A.y>B.y-b)&&(A.y<B.y+b))
 	       {
 		  (*i)->hit();
-		  (*p)->hit();
+		  (*p)->hit(1);
 	       }
 	    }
 	 }

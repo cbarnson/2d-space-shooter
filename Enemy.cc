@@ -10,8 +10,7 @@
 	
 Enemy::~Enemy() {
    if(fireDelay != NULL)
-      al_destroy_timer(fireDelay);
-   //delete death;
+      al_destroy_timer(fireDelay);   
 }
 	
 void Enemy::setFire(bool f) { fire = f; }
@@ -29,6 +28,7 @@ void Enemy::load_assets() {
    al_change_directory(al_path_cstr(path, '/'));
 
    death = make_shared<Sprite> ("explode.png");
+   enemySprite = make_shared<Sprite> ("EnemyBasic.png");
    //death = new Sprite("explode.png");
 
    al_destroy_path(path);
@@ -54,9 +54,11 @@ void Enemy::hit() {
 void Enemy::draw() {
    if (!dead) {
       // draw primitive representing the enemy hitbox
+      /*
       al_draw_rectangle(centre.x - size, centre.y - size,
 			centre.x + size, centre.y + size,
-			color, 3);
+			color, 3);*/
+      enemySprite->draw_tinted(centre, color, 0);
    }
    else {
       // enemy has been hit and killed, proceed through death animation sequence

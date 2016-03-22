@@ -50,7 +50,7 @@ class Player : public Drawable, public Updateable {
    // set methods
    void setLives(int);
    void setScore(int); // increments score by param value
-   void setFire(bool);
+   void setFire(bool); 
    void setmFire(bool);
 
    // get methods
@@ -64,7 +64,7 @@ class Player : public Drawable, public Updateable {
    Vector getSpeed();
    ALLEGRO_COLOR getColor();
 
-   void hit();
+   void hit(int);
 
    void input(const ALLEGRO_EVENT&);
    void updatePlayerSpeed();
