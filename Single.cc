@@ -40,7 +40,8 @@ void Single::showGameOverMessage() {
    if (!al_get_timer_started(gameOverTimer))
       al_start_timer(gameOverTimer);
    if (al_get_timer_count(gameOverTimer) < 80) 
-      al_draw_text(gameOverFont, al_map_rgb(255, 0, 0), 400, 300, ALLEGRO_ALIGN_CENTRE,
+      al_draw_text(gameOverFont, al_map_rgb(255, 0, 0), 400, 300,
+		   ALLEGRO_ALIGN_CENTRE,
 		   "GAME OVER - YOU SUCK");   
    else 
       al_stop_timer(gameOverTimer);
