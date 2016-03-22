@@ -174,6 +174,7 @@ void Single::input(const ALLEGRO_EVENT& inputEvent) {
 }
 
 void Single::spawn() {
+   //al_start_timer(spawnDelay);
    Point pt(0, 0);
    Point pt1, pt2, playerloc, pt3;
    Vector spd(0, 0);
@@ -228,23 +229,21 @@ void Single::spawn() {
 	 //std::cout<<"velocity is "<<spd.x<<" "<<spd.y<<std::endl;
 	 enem.push_back(
 	    make_shared<Enemy>
-	    (pt1, al_map_rgb(255, 255, 255),Vector(((playerloc.x - pt1.x) / 1.5),
-						   ((playerloc.y - pt1.y) / 1.5))));
+	    (pt1, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt1.x)/1.5),
+						   ((playerloc.y-pt1.y)/1.5))));
 	 enem.push_back(
 	    make_shared<Enemy>	    
-	    (pt2, al_map_rgb(255, 255, 255),Vector(((playerloc.x - pt2.x) / 1.5),
-						   ((playerloc.y - pt2.y) / 1.5))));
+	    (pt2, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt2.x)/1.5),
+						   ((playerloc.y-pt2.y)/1.5))));
 	 enem.push_back(
 	    make_shared<Enemy>
 	    (pt3, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt3.x)/1.5),
 						   ((playerloc.y-pt3.y)/1.5))));
 	 break;
-	 
       case 5:
 	 spawn();
 	 spawn();
 	 break;
-	 
       case 6:
 	 color=al_map_rgb(255,153,255);
 	 for(int i=0; i<5; i++)
@@ -325,8 +324,7 @@ void Single::setupPlayer() {
    h.push_back(ALLEGRO_KEY_S);
    h.push_back(ALLEGRO_KEY_D);
    h.push_back(ALLEGRO_KEY_A);
-
-   play.push_back(make_shared<Player> (Point(215, 245),
+   play.push_back(make_shared<Player> (Point(220, 240),
 				       al_map_rgb(0,200,0), h,
 				       fps ));
 }
