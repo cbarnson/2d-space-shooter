@@ -17,7 +17,7 @@ Single::~Single() {
 }
 
 void Single::load_assets() {
-   gameOverTimer = al_create_timer( 1.0 / 30.0 );
+   gameOverTimer = al_create_timer( 1.0 / fps );
    
    setupPlayer();   
    ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
@@ -80,16 +80,16 @@ void Single::updatePlayerAction() {
    if (!play.empty()) {
       for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) {
 	 (*it)->updatePlayerSpeed();	 
-	 if ((*it)->getFire()) {
-	    proj.push_back(make_shared<Laser> ((*it)->getCentre(), (*it)->getColor(),
-					       (*it)->getProjSpeed()));
-	    (*it)->setFire(false);
+	 if ((*it)->fire) {
+	    proj.push_back(make_shared<Laser> ((*it)->centre, (*it)->color,
+					       (*it)->projSpeed));
+	    (*it)->fire = false;
 	 }
 	 
-	 if ((*it)->getmFire()) {
-	    proj.push_back(make_shared<Missile> ((*it)->getCentre(), (*it)->getColor(),
-						 (*it)->getProjSpeed()));
-	    (*it)->setmFire(false);
+	 if ((*it)->mfire) {
+	    proj.push_back(make_shared<Missile> ((*it)->centre, (*it)->color,
+						 (*it)->projSpeed));
+	    (*it)->mfire = false;
 	 }
 	 
       }
@@ -103,13 +103,13 @@ void Single::collision() {
 	 if (!play.empty()) {
 	    for (list< shared_ptr<Player> >::iterator p = play.begin(); p != play.end(); ++p) {
 	       Point A = (*i)->centre;
-	       Point B = (*p)->getCentre(); int b = (*p)->getSize();
+	       Point B = (*p)->centre; int b = (*p)->size;
 	       if ((A.x > B.x - b) && (A.x < B.x + b) &&
 		   (A.y > B.y - b) && (A.y < B.y + b)) {
 		  // is a hit on Player
 		  std::cout << "hit on PLAYER\n";
 		  (*i)->live = false;
-		  (*p)->hit(1); // reduce player life
+		  (*p)->lives -= 1; // reduce player life
 		  
 	       }	    
 	    }
@@ -137,16 +137,15 @@ void Single::collision() {
    }
    //check collision on enemy bodies vs player
    if(!enem.empty()){
-      for(list<shared_ptr<Enemy>>:: iterator i=enem.begin(); i!=enem.end(); ++i){
-	 if(!play.empty()){
-	    for(list<shared_ptr<Player>>::iterator p=play.begin();p!=play.end(); ++p){
-	       Point A=(*i)->getCentre();
-	       Point B=(*p)->getCentre(); int b=(*p)->getSize();
-	       if((A.x>B.x-b)&&(A.x<B.x+ b)&&
-		  (A.y>B.y-b)&&(A.y<B.y+b))
-	       {
+      for(list< shared_ptr<Enemy> >:: iterator i=enem.begin(); i!=enem.end(); ++i){
+	 if(!play.empty()) {
+	    for(list< shared_ptr<Player> >::iterator p = play.begin();p != play.end(); ++p){
+	       Point A = (*i)->getCentre();
+	       Point B = (*p)->centre; int b = (*p)->size;
+	       if((A.x > B.x - b) && (A.x < B.x + b) &&
+		  (A.y > B.y - b) && (A.y < B.y + b)) {
 		  (*i)->hit();
-		  (*p)->hit(1);
+		  (*p)->lives -= 1;
 	       }
 	    }
 	 }
@@ -159,9 +158,9 @@ void Single::collision() {
 void Single::updateScore(ALLEGRO_COLOR c) {
    if (!play.empty()) {
       for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) {
-	 ALLEGRO_COLOR tmp = (*it)->getColor();
+	 ALLEGRO_COLOR tmp = (*it)->color;
 	 if (tmp.r == c.r && tmp.g == c.g && tmp.b == c.b) {
-	    (*it)->setScore(1);
+	    (*it)->score += 1;
 	    break;
 	 }
       }
@@ -178,19 +177,23 @@ void Single::input(const ALLEGRO_EVENT& inputEvent) {
 
 void Single::spawn() {
    ALLEGRO_TIMER *spawnDelay;
-   if((spawnDelay=al_create_timer(1.0/30.0))==NULL)
+   if((spawnDelay=al_create_timer(1.0 / fps)) == NULL)
       throw std::runtime_error("cannot create spawnDelay timer");
    //al_start_timer(spawnDelay);
    Point pt(0, 0);
    Point pt1, pt2, playerloc;
    Vector spd(0, 0);
+
+   
    if(!play.empty())
       for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) 
-	 playerloc= (*it)->getCentre();
+	 playerloc = (*it)->centre;
    if(play.empty())
-      playerloc=Point (200, 300);
+      playerloc = Point (200, 300);
    
    int n = rand() % 4 + 1;
+
+   
    switch(n) {
       case 1: // wave of 5
 	 //spd.x = 0;
@@ -229,17 +232,17 @@ void Single::spawn() {
       case 4:
 	 //std::cout<<"play loc is "<<playerloc.x<<" "<<playerloc.y<<std::endl;
 	 
-	 pt1.x=800; pt1.y=590;
-	 pt2.x=800; pt2.y=10;
+	 pt1.x = 800; pt1.y = 590;
+	 pt2.x = 800; pt2.y = 10;
 	 //std::cout<<"velocity is "<<spd.x<<" "<<spd.y<<std::endl;
 	 enem.push_back(
 	    make_shared<Enemy>
-	    (pt1, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt1.x)/1.5),
-						   ((playerloc.y-pt1.y)/1.5))));
+	    (pt1, al_map_rgb(255, 255, 255),Vector(((playerloc.x - pt1.x) / 1.5),
+						   ((playerloc.y - pt1.y) / 1.5))));
 	 enem.push_back(
 	    make_shared<Enemy>
-	    (pt2, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt2.x)/1.5),
-						   ((playerloc.y-pt2.y)/1.5))));
+	    (pt2, al_map_rgb(255, 255, 255),Vector(((playerloc.x - pt2.x) / 1.5),
+						   ((playerloc.y - pt2.y) / 1.5))));
 	 break;
 	 
    }
@@ -315,13 +318,12 @@ void Single::setupPlayer() {
    h.push_back(ALLEGRO_KEY_S);
    h.push_back(ALLEGRO_KEY_D);
    h.push_back(ALLEGRO_KEY_A);
-   play.push_back(make_shared<Player> (Point(200, 300),
+   play.push_back(make_shared<Player> (Point(215, 245),
 				       al_map_rgb(0,200,0), h,
-				       false, fps ));
+				       fps ));
 }
 
 void Single::setupBackground() {
-   //initializes background images, vectors decide 'parallax' speed
    bg = make_shared<Background> (Vector(-50, 0), Vector(-90, 0));
 }
 
@@ -329,7 +331,7 @@ void Single::cullPlayer() {
    list< shared_ptr<Player> > newPlay;
    if (!play.empty()) {
       for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) {
-	 if (!(*it)->getDead()) // if not dead
+	 if (!(*it)->dead) // if not dead
 	    newPlay.push_back(*it);
       }
       play.clear();

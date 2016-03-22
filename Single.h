@@ -62,6 +62,7 @@ class Single : public Root {
    list< shared_ptr<Player> > play;
    shared_ptr<Background> bg;
 
+   
    // HELPER FUNCTIONS - simplicity & readability
    void drawPlayer();
    void drawProjectiles();

@@ -15,7 +15,7 @@
 #include "Vector.h"
 #include "Drawable.h"
 #include "Updateable.h"
-#include "Sprite.h"
+//#include "Sprite.h"
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
@@ -26,7 +26,9 @@ using std::make_shared;
 
 class Laser : public Projectile {
   private:
-   shared_ptr<Sprite> laser;
+   bool in_bound();
+   //int speedModifier;
+   //shared_ptr<Sprite> laser;
 
   public:
    Laser (Point p, ALLEGRO_COLOR c, Vector s)
@@ -34,12 +36,14 @@ class Laser : public Projectile {
    { 
       load_assets();      
    }
+   
+   ~Laser();
 
+   
    void load_assets();   
    void draw();
    void update(double dt);
    
-   bool in_bound();
    
 };
 

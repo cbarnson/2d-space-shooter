@@ -47,7 +47,7 @@ class engine : public Simulator {
       game_fps = fps;
       windowWidth = d.getW();
       windowHeight = d.getH();
-      mAnim=0;
+      mAnim = 0;
       load_assets();
    }
 

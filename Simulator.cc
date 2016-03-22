@@ -74,9 +74,8 @@ void Simulator::run() {
 	       }
 	       
 	    case ALLEGRO_EVENT_TIMER:
-	       menuMessage();
-	    
-		  break;
+	       menuMessage();	    
+	       break;
 	       
 	    case ALLEGRO_EVENT_DISPLAY_CLOSE:
 	       return;
@@ -86,11 +85,11 @@ void Simulator::run() {
 	 // ENTER GAME LOOP
 	 if (mode_selected && al_is_event_queue_empty(eventQueue)) {
 	 
-	    if(gameReady())
-	    {
+	    if(gameReady()) {
 	       mode_selected = false;
-	       std::cout<<"game should have started";
-	       break;}
+	       //std::cout<<"game should have started";
+	       break;
+	    }
 	 }
 
       } 

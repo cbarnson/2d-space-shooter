@@ -6,7 +6,7 @@
  * @bug
  */
 #include "Player.h"
-
+/*
 // set methods
 void Player::setLives(int l) { lives = l; }
 void Player::setScore(int s) { score += s; }
@@ -23,10 +23,12 @@ Point Player::getCentre() { return centre; }
 Vector Player::getProjSpeed() { return projSpeed; }
 Vector Player::getSpeed() { return speed; }
 ALLEGRO_COLOR Player::getColor() { return color; }
-
+*/
 Player::~Player() {
    if (fireDelay != NULL)
       al_destroy_timer(fireDelay);
+   if (missileDelay != NULL)
+      al_destroy_timer(missileDelay);
    al_destroy_font(scoreFont);
 }
 
@@ -50,8 +52,12 @@ void Player::input(const ALLEGRO_EVENT& inputEvent) {
 void Player::draw() {   
    ship->draw_region(row, col, 47.0, 40.0, centre, 0);
    drawRemainingLife();
+   drawScore();
+}
+
+void Player::drawScore() {
    al_draw_textf(scoreFont, al_map_rgb(255, 255, 255), centre.x, centre.y - 60,
-   		 ALLEGRO_ALIGN_CENTRE, "Score: %i", score);
+   		 ALLEGRO_ALIGN_CENTRE, "Score: %i", score);   
 }
 
 void Player::update(double dt) {
@@ -91,7 +97,8 @@ void Player::load_assets() {
    
 
    // set some initial variable values
-   projSpeed = (flipped) ? Vector(-400,0) : Vector(400,0);
+   //projSpeed = (flipped) ? Vector(-400,0) : Vector(400,0);
+   projSpeed = Vector(400, 0);
    speed_modifier = 200;
    speed = Vector(0,0);
    lives = 3;
@@ -187,11 +194,11 @@ void Player::handleKeyDown(const ALLEGRO_EVENT& inputEvent) {
       if (inputEvent.keyboard.keycode == config.control[i])
 	 config.keys[i] = true;
 	 
-   if (inputEvent.keyboard.keycode == ALLEGRO_KEY_SPACE) {
+   if (inputEvent.keyboard.keycode == ALLEGRO_KEY_PAD_0) {
       firePrimaryWeapon();
    }
 	 
-   if (inputEvent.keyboard.keycode == ALLEGRO_KEY_M) {
+   if (inputEvent.keyboard.keycode == ALLEGRO_KEY_PAD_DELETE) {
       fireSecondaryWeapon();
    }	    
 }

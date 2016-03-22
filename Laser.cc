@@ -7,13 +7,20 @@
 
 #include "Laser.h"
 
+Laser::~Laser() {
+   
+}
+
 void Laser::load_assets() {
    centre = centre + speed * 0.1; // so it doesn't hit its own projectile
-   ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
-   al_append_path_component(path, "resources");
-   al_change_directory(al_path_cstr(path, '/'));
-   laser = make_shared<Sprite> ("Laser2.png");
-   al_destroy_path(path);
+   
+   //ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
+   //al_append_path_component(path, "resources");
+   //al_change_directory(al_path_cstr(path, '/'));
+   
+   //laser = make_shared<Sprite> ("Laser2.png");
+   
+   //al_destroy_path(path);
 }
 
 void Laser::update(double dt) {
@@ -23,7 +30,11 @@ void Laser::update(double dt) {
 }
 
 void Laser::draw() {
-   laser->draw_tinted(centre, color, 0);
+   //laser->draw_tinted(centre, color, 0);
+   al_draw_line(centre.x, centre.y,
+		centre.x + speed.x * (-0.1),
+		centre.y + speed.y * (-0.1),
+		color, 3);		
 }
 
 bool Laser::in_bound() {
