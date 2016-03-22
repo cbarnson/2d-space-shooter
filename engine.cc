@@ -7,9 +7,6 @@
 #include "engine.h"
 
 engine::~engine() {
-   // al_destroy_font(menuFont);
-   // al_destroy_font(modeFont);
-   // al_destroy_font(subMenuFont);
    al_destroy_timer(menuTimer);
 }
 
@@ -22,15 +19,6 @@ void engine::load_assets() {
    al_change_directory(al_path_cstr(path, '/'));
    
    menuPng = make_shared<Sprite>("Titlescreen.png"); 
-   /*
-   menuFont = al_load_font("DavidCLM-Medium.ttf", 52, 0);
-   subMenuFont = al_load_font("DavidCLM-Medium.ttf", 48, 0);
-   modeFont = al_load_font("ipag.ttf", 32, 0);   
-
-   menu = make_shared<Sprite> ("space.png");
-   */
-   //cout << "assets loaded\n";
-
    al_destroy_path(path);
 }
 
@@ -51,32 +39,18 @@ bool engine::is_game_over() {
 
    
 void engine::menuMessage() {
-   menuAnim();
- 
-   // menuAnim->drawMenuAnim(dAnim, 0);
-   /*
-     al_draw_text(menuFont, al_map_rgb(0, 102, 204), 0.5 * windowWidth,
-     0.5 * windowHeight, ALLEGRO_ALIGN_CENTRE,
-     "Call of Shooty:");
-     al_draw_text(subMenuFont, al_map_rgb(0, 204, 204), 0.5 * windowWidth,
-     0.58 * windowHeight, ALLEGRO_ALIGN_CENTRE,
-     "Worlds at War");
-     al_draw_text(modeFont, al_map_rgb(0, 204, 102), 0.5 * windowWidth,
-     0.7 * windowHeight, ALLEGRO_ALIGN_CENTRE,
-     "[ 1 ] SINGLE PLAYER   [ 2 ] MULTI PLAYER");
-   */
+   menuAnim(); 
    al_flip_display();
 }
 
-bool engine::gameReady(){
-   std::cout<<mAnim<<std::endl;
+bool engine::gameReady() {
    if(mAnim > 6) {
       mAnim = 0;
       return true;
    }
    return false;
 }
-void engine::menuAnim(){
+void engine::menuAnim() {
    if(!root.empty()) {
       
       if(!al_get_timer_started(menuTimer))
