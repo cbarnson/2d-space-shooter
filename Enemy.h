@@ -32,7 +32,6 @@ class Enemy : public Drawable, public Updateable {
 	
    ALLEGRO_TIMER *fireDelay;
    shared_ptr<Sprite> death;
-   //Sprite *death;
 
    Vector projSpeed;
    int size;
@@ -53,32 +52,27 @@ class Enemy : public Drawable, public Updateable {
       al_start_timer(fireDelay);
       
       load_assets();
-      
-      projSpeed.x=-300;
-      projSpeed.y=0;
-      
+
+      projSpeed = Vector(-300, 0);
+      fireSpeed = (rand() % 20) + 80;  
       lives = 1;
       size = 10;
-      dAnim = 0;
       
+      dAnim = 0;      
       dAnim_complete = false;
       dead = false;
       fire = true;
-      fireSpeed=(rand()%20)+80;  
    }
    ~Enemy();
    
-   void setFire(bool f);
-	
+   void setFire(bool f);	
    ALLEGRO_COLOR getColor();
    Vector getProjSpeed(); 
    Point getCentre();
-   int getSize(); 
-   
+   int getSize();    
    bool getdAnim_complete(); 
    bool getDead(); 
-   bool getFire(); 
-   
+   bool getFire();    
    void update(double dt);
    void load_assets();
    void deathAnim();

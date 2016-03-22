@@ -37,6 +37,41 @@ using std::make_shared;
 using std::vector;
 
 class Player : public Drawable, public Updateable {
+  public:
+
+  Player(Point p, ALLEGRO_COLOR c, vector<int> h, bool f, int frames)
+     : centre(p), color(c), config(h), flipped(f), fps(frames)
+   {      
+      load_assets();      
+   }
+
+   ~Player();
+
+   // set methods
+   void setLives(int);
+   void setScore(int); // increments score by param value
+   void setFire(bool);
+   void setmFire(bool);
+
+   // get methods
+   int getLives();
+   int getSize();
+   bool getDead();
+   bool getFire();
+   bool getmFire();
+   Point getCentre();
+   Vector getProjSpeed();
+   Vector getSpeed();
+   ALLEGRO_COLOR getColor();
+
+   void hit();
+
+   void input(const ALLEGRO_EVENT&);
+   void updatePlayerSpeed();
+   void draw();
+   void update(double);
+
+   
   private:
    Point centre;        // ship position
    ALLEGRO_COLOR color; // ship color
@@ -60,55 +95,17 @@ class Player : public Drawable, public Updateable {
    int score;           // score of Player object
    int row;
    int col;
-   
 
-  public:
-
-  Player(Point p, ALLEGRO_COLOR c, vector<int> h, bool f, int frames)
-     : centre(p), color(c), config(h), flipped(f), fps(frames)
-   {      
-      load_assets();
-      
-      projSpeed = (flipped) ? Vector(-400,0) : Vector(400,0);
-      speed_modifier = 200;
-      speed = Vector(0,0);
-      lives = 3;
-      size = 10;
-      score = 0;
-      row = 0;
-      col = 0;
-      
-      dead = false;
-      fire = false;
-      mfire = false;
-   }
-
-   ~Player();
-
-   // set methods
-   void setLives(int);
-   void setScore(int); // increments score by param value
-   void setFire(bool);
-   void setmFire(bool);
-
-   // get methods
-   int getLives();
-   int getSize();
-   bool getDead();
-   bool getFire();
-   bool getmFire();
-   Point getCentre();
-   Vector getProjSpeed();
-   Vector getSpeed();
-   ALLEGRO_COLOR getColor();
-
+   // HELPER FUNCTIONS - simplicity and readability
    void load_assets();
-   void hit();
+   void selectShipAnimation();
+   void firePrimaryWeapon();
+   void fireSecondaryWeapon();
+   void checkBoundary();
+   void drawRemainingLife();
+   void handleKeyDown(const ALLEGRO_EVENT&);
+   void handleKeyUp(const ALLEGRO_EVENT&);
 
-   void input(const ALLEGRO_EVENT&);
-   void updatePlayerSpeed();
-   void draw();
-   void update(double);
 
    
 };

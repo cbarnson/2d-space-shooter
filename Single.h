@@ -29,6 +29,9 @@ using std::list;
 using std::shared_ptr;
 using std::make_shared;
 
+/**
+ * @class Single
+ */
 class Single : public Root {
   public:   
   Single(int frames) : Root(frames) {
@@ -51,13 +54,15 @@ class Single : public Root {
 
    
   private:
+   ALLEGRO_FONT* gameOverFont;
+   ALLEGRO_TIMER* gameOverTimer;
+   
    list< shared_ptr<Projectile> > proj;
    list< shared_ptr<Enemy> > enem;
    list< shared_ptr<Player> > play;
-   //list< shared_ptr<Background> > bg;
    shared_ptr<Background> bg;
 
-   // helper functions - simplicity & readability
+   // HELPER FUNCTIONS - simplicity & readability
    void drawPlayer();
    void drawProjectiles();
    void drawEnemies();
@@ -74,7 +79,7 @@ class Single : public Root {
    void updatePlayerAction();
    void collision();
    void clean();
-   
+   void showGameOverMessage();
 
 };
 

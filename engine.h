@@ -30,15 +30,16 @@ using std::cout;
 class engine : public Simulator {
   private:
    list< shared_ptr<Root> > root;
-   shared_ptr<Sprite> menu;
+   shared_ptr<Sprite> menuPng;
    int game_fps;
    int windowWidth;
    int windowHeight;
    int mAnim;
 
-   ALLEGRO_FONT *menuFont;
-   ALLEGRO_FONT *modeFont;
-   ALLEGRO_FONT *subMenuFont;
+   // ALLEGRO_FONT *menuFont;
+   //ALLEGRO_FONT *modeFont;
+   // ALLEGRO_FONT *subMenuFont;
+   ALLEGRO_TIMER *menuTimer;
    
   public:
   engine(const Display& d, int fps) : Simulator(d, fps)
@@ -59,17 +60,10 @@ class engine : public Simulator {
    void multi_player();
    void menuAnim();
 
-   void getInput(const ALLEGRO_EVENT&);
-   
-   //void setRoot(int code);
-   //void resetRoot(int code);
-   //void firePrimary();
-   //void fireSecondary();
-   
-   //void collisionRoot();
-   //void controlRoot();
+   void getInput(const ALLEGRO_EVENT&);   
    void updateRoot(double dt);
    void drawRoot();
+   bool gameReady();
 
 
 };
