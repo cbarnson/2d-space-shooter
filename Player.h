@@ -64,6 +64,38 @@ class Player : public Drawable, public Updateable {
 
    ~Player();
 
+   void hit(int);
+
+   void input(const ALLEGRO_EVENT&);
+   void updatePlayerSpeed();
+   void draw();
+   void update(double);
+
+   
+  private:
+   ALLEGRO_TIMER *fireDelay;
+   ALLEGRO_TIMER *missileDelay;
+   ALLEGRO_FONT *scoreFont;
+   shared_ptr<Sprite> ship;
+   
+   // HELPER FUNCTIONS - simplicity and readability
+   void load_assets();
+   void selectShipAnimation();
+   void firePrimaryWeapon();
+   void fireSecondaryWeapon();
+   void checkBoundary();
+   void drawRemainingLife();
+   void drawScore();
+   void handleKeyDown(const ALLEGRO_EVENT&);
+   void handleKeyUp(const ALLEGRO_EVENT&);
+
+
+   
+};
+
+#endif
+
+
    /*
    // set methods
    void setLives(int);
@@ -82,35 +114,3 @@ class Player : public Drawable, public Updateable {
    Vector getSpeed();
    ALLEGRO_COLOR getColor();
    */
-   void hit(int);
-
-   void input(const ALLEGRO_EVENT&);
-   void updatePlayerSpeed();
-   void draw();
-   void update(double);
-
-   
-  private:
-
-   ALLEGRO_TIMER *fireDelay;
-   ALLEGRO_TIMER *missileDelay;
-   ALLEGRO_FONT *scoreFont;
-   shared_ptr<Sprite> ship;
-   
-
-   // HELPER FUNCTIONS - simplicity and readability
-   void load_assets();
-   void selectShipAnimation();
-   void firePrimaryWeapon();
-   void fireSecondaryWeapon();
-   void checkBoundary();
-   void drawRemainingLife();
-   void drawScore();
-   void handleKeyDown(const ALLEGRO_EVENT&);
-   void handleKeyUp(const ALLEGRO_EVENT&);
-
-
-   
-};
-
-#endif

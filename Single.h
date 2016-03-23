@@ -15,6 +15,7 @@
 #include "Missile.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "Point.h"
 #include "Sprite.h"
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
@@ -23,6 +24,7 @@
 #include <memory>
 #include <iostream>
 #include <string>
+#include <cmath>
 
 using std::cout;
 using std::list;
@@ -49,7 +51,7 @@ class Single : public Root {
    void input(const ALLEGRO_EVENT&);
    
    bool is_game_over();
-   void updateScore(ALLEGRO_COLOR);
+   void updateScore(const ALLEGRO_COLOR&);
    void spawn();
 
    
@@ -81,6 +83,13 @@ class Single : public Root {
    void collision();
    void clean();
    void showGameOverMessage();
+   void checkCollisionOnPlayer();
+   void checkCollisionOnEnemies();
+   void checkCollidingEnemyWithPlayer();
+   bool doHitboxesIntersect(const Point&, const int&,
+			    const Point&, const int&);
+   bool doColorsMatch(const ALLEGRO_COLOR&, const ALLEGRO_COLOR&);
+   bool isPointBoxCollision(const Point&, const Point&, const int&);
 
 };
 

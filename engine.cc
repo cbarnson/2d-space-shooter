@@ -12,6 +12,7 @@ engine::~engine() {
 
 
 void engine::load_assets() {
+   mAnim = 0;
    menuTimer = al_create_timer(1.0 / game_fps);
    
    ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
@@ -22,17 +23,17 @@ void engine::load_assets() {
    al_destroy_path(path);
 }
 
-
 void engine::reset_game() {
    root.clear();
 }
 
-
 bool engine::is_game_over() {
-   for (list< shared_ptr<Root> >::iterator it = root.begin(); it != root.end();
-	++it) {
-      if ((*it)->is_game_over())
-	 return true;      
+   if (!root.empty()) {
+      for (list< shared_ptr<Root> >::iterator it = root.begin(); it != root.end();
+	   ++it) {
+	 if ((*it)->is_game_over())
+	    return true;      
+      }
    }
    return false;
 }
@@ -50,6 +51,7 @@ bool engine::gameReady() {
    }
    return false;
 }
+
 void engine::menuAnim() {
    if(!root.empty()) {
       

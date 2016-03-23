@@ -31,9 +31,9 @@ void Laser::update(double dt) {
 
 void Laser::draw() {
    //laser->draw_tinted(centre, color, 0);
+   Point tracer = centre + speed * (-0.05);
    al_draw_line(centre.x, centre.y,
-		centre.x + speed.x * (-0.1),
-		centre.y + speed.y * (-0.1),
+		tracer.x, tracer.y,
 		color, 3);		
 }
 

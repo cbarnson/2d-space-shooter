@@ -55,10 +55,10 @@ class Enemy : public Drawable, public Updateable {
       
       load_assets();
 
-      projSpeed = Vector(-300, 0);
+      projSpeed = Vector(-500, 0);
       fireSpeed = (rand() % 20) + 80;  
       lives = 1;
-      size = 16;
+      size = 20;
       
       dAnim = 0;      
       dAnim_complete = false;

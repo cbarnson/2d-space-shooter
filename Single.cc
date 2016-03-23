@@ -17,32 +17,40 @@ Single::~Single() {
 }
 
 void Single::load_assets() {
+   // initialize gameOverTimer
    gameOverTimer = al_create_timer( 1.0 / fps );
    
-   setupPlayer();   
+   // create Player object
+   setupPlayer();
+
+   // specify path for assets to be loaded
    ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
    al_append_path_component(path, "resources");
    al_change_directory(al_path_cstr(path, '/'));
-   
+
+   // load background
    setupBackground();
+
+   // load font
    gameOverFont = al_load_font("DavidCLM-BoldItalic.ttf", 64, 0);
-   
+
+   // delete path to these assets now that they are loaded
    al_destroy_path(path);
 }
 
 bool Single::is_game_over() {
-   if (al_get_timer_count(gameOverTimer) >= 80)
-      return true;      
-   return false;
+   return (al_get_timer_count(gameOverTimer) >= 80);
 }
 
 void Single::showGameOverMessage() {
    if (!al_get_timer_started(gameOverTimer))
       al_start_timer(gameOverTimer);
-   if (al_get_timer_count(gameOverTimer) < 80) 
+   
+   if (al_get_timer_count(gameOverTimer) < 80) {
       al_draw_text(gameOverFont, al_map_rgb(255, 0, 0), 400, 300,
 		   ALLEGRO_ALIGN_CENTRE,
-		   "GAME OVER - YOU SUCK");   
+		   "GAME OVER");
+   }
    else 
       al_stop_timer(gameOverTimer);
    
@@ -75,6 +83,11 @@ void Single::clean() {
    cullEnemies();
 }
 
+void Single::collision() {
+   checkCollisionOnPlayer();
+   checkCollisionOnEnemies();
+   checkCollidingEnemyWithPlayer();
+}
 
 void Single::updatePlayerAction() {
    if (!play.empty()) {
@@ -96,70 +109,111 @@ void Single::updatePlayerAction() {
    }
 }
 
+// where p1 is the point, p2 is the centre of the 'box' object, with half of its width s2
+bool Single::isPointBoxCollision(const Point& p1, const Point& p2, const int& s2) {
+   return ((p1.x > p2.x - s2) &&
+	   (p1.x < p2.x + s2) &&
+	   (p1.y > p2.y - s2) &&
+	   (p1.y < p2.y + s2));
+}
 
-void Single::collision() {
-   if (!proj.empty()) {
-      for (list< shared_ptr<Projectile> >::iterator i = proj.begin(); i != proj.end(); ++i) {
-	 if (!play.empty()) {
-	    for (list< shared_ptr<Player> >::iterator p = play.begin(); p != play.end(); ++p) {
-	       Point A = (*i)->centre;
-	       Point B = (*p)->centre; int b = (*p)->size;
-	       if ((A.x > B.x - b) && (A.x < B.x + b) &&
-		   (A.y > B.y - b) && (A.y < B.y + b)) {
-		  // is a hit on Player
-		  (*i)->live = false;
-		  (*p)->lives -= 1; // reduce player life
-		  
-	       }	    
-	    }
-	 }
-	 
-	 // check against enemies
-	 if (!enem.empty()) {
-	    for (list< shared_ptr<Enemy> >::iterator e = enem.begin(); e != enem.end(); ++e) {
-	       Point A = (*i)->centre;
-	       Point B = (*e)->getCentre(); int b = (*e)->getSize();
-	       if ((A.x > B.x - b) &&
-		   (A.x < B.x + b) &&
-		   (A.y > B.y - b) &&
-		   (A.y < B.y + b)) {
-		  // is a hit on Enemy
-		  (*i)->live = false;
-		  (*e)->hit();
-		  if ((*e)->getDead())
-		     updateScore((*i)->color);
-	       }
-	    }
-	 }
-      }
-   }
-   //check collision on enemy bodies vs player
-   if(!enem.empty()){
-      for(list< shared_ptr<Enemy> >:: iterator i=enem.begin(); i!=enem.end(); ++i){
-	 if(!play.empty()) {
-	    for(list< shared_ptr<Player> >::iterator p = play.begin();p != play.end(); ++p){
-	       Point A = (*i)->getCentre();
-	       Point B = (*p)->centre; int b = (*p)->size;
-	       if((A.x > B.x - b) && (A.x < B.x + b) &&
-		  (A.y > B.y - b) && (A.y < B.y + b)) {
-		  (*i)->hit();
-		  (*p)->lives -= 1;
+void Single::checkCollisionOnPlayer() {
+   if (!proj.empty() && !play.empty()) {
+      for (list< shared_ptr<Player> >::iterator it_play = play.begin();
+	   it_play != play.end(); ++it_play) {
+	 for (list< shared_ptr<Projectile> >::iterator it_proj = proj.begin();
+	      it_proj != proj.end(); ++it_proj) {	    
+	    // check if projectile color is different from player color
+	    if (!doColorsMatch((*it_proj)->color, (*it_play)->color)) {
+	       if (isPointBoxCollision((*it_proj)->centre,
+				       (*it_play)->centre, (*it_play)->size)) {		  
+		  // register damage on player and flag projectile as dead
+		  (*it_proj)->live = false;
+		  (*it_play)->hit(1);
 	       }
 	    }
 	 }
       }
    }
 }
-      
+
+bool Single::doColorsMatch(const ALLEGRO_COLOR& a, const ALLEGRO_COLOR& b) {
+   return (a.r == b.r && a.g == b.g && a.b == b.b);
+}
+
+void Single::checkCollisionOnEnemies() {
+   if (!proj.empty() && !enem.empty() && !play.empty()) {
+      for (list< shared_ptr<Player> >::iterator it_play = play.begin();
+	   it_play != play.end(); ++it_play) {
+	 
+	 // set player color for which we will be checking for
+	 ALLEGRO_COLOR play_color = (*it_play)->color;
+	 
+	 for (list< shared_ptr<Projectile> >::iterator it_proj = proj.begin();
+	      it_proj != proj.end(); ++it_proj) {
+	    
+	    // check if colors match
+	    if (doColorsMatch(play_color, (*it_proj)->color)) {
+	       for (list< shared_ptr<Enemy> >::iterator it_enem = enem.begin();
+		    it_enem != enem.end(); ++it_enem) {
+		  
+		  // set bounding points
+		  Point pt_proj = (*it_proj)->centre;
+		  Point pt_enem = (*it_enem)->getCentre();
+		  int enem_size = (*it_enem)->getSize();
+		  
+		  // check for collision
+		  if ((pt_proj.x > pt_enem.x - enem_size) &&
+		      (pt_proj.x < pt_enem.x + enem_size) &&
+		      (pt_proj.y > pt_enem.y - enem_size) &&
+		      (pt_proj.y < pt_enem.y + enem_size)) {
+		     
+		     // register damage on enemy and flag projectile as dead
+		     (*it_proj)->live = false;
+		     (*it_enem)->hit();
+		     
+		     // check for enemy death, update score if true
+		     if ((*it_enem)->getDead())
+			updateScore(play_color);
+		  
+		  }
+	       }
+	    }
+	 }
+      }
+   }
+}
+
+void Single::checkCollidingEnemyWithPlayer() {
+   if (!enem.empty() && !play.empty()) {
+      for (list< shared_ptr<Player> >::iterator it_play = play.begin();
+	   it_play != play.end(); ++it_play) {
+	 for (list< shared_ptr<Enemy> >::iterator it_enem = enem.begin();
+	      it_enem != enem.end(); ++it_enem) {
+	    if (doHitboxesIntersect((*it_play)->centre, (*it_play)->size,
+				    (*it_enem)->getCentre(), (*it_enem)->getSize())) {
+	       // collision - register damage
+	       (*it_enem)->hit();
+	       (*it_play)->hit(1);
+		
+	    }	       
+	 }
+      }
+   }
+}
+
+bool Single::doHitboxesIntersect(const Point& centre1, const int& size1,
+				 const Point& centre2, const int& size2) {
+   return (abs(centre1.x - centre2.x) < (size1 + size2) &&
+	   abs(centre1.y - centre2.y) < (size1 + size2));
+}
 
 
-void Single::updateScore(ALLEGRO_COLOR c) {
+void Single::updateScore(const ALLEGRO_COLOR& c) {
    if (!play.empty()) {
       for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) {
-	 ALLEGRO_COLOR tmp = (*it)->color;
-	 if (tmp.r == c.r && tmp.g == c.g && tmp.b == c.b) {
+	 if (doColorsMatch((*it)->color, c)) {
 	    (*it)->score += 1;
-	    break;
 	 }
       }
    }
@@ -283,7 +337,7 @@ void Single::updateEnemyPosition(double dt) {
 	 }	 	 
       }
    }
-   if(enem.size()<=2)
+   if(enem.size() <= 2)
       spawn();
 }
 
@@ -324,7 +378,7 @@ void Single::setupPlayer() {
    h.push_back(ALLEGRO_KEY_S);
    h.push_back(ALLEGRO_KEY_D);
    h.push_back(ALLEGRO_KEY_A);
-   play.push_back(make_shared<Player> (Point(220, 240),
+   play.push_back(make_shared<Player> (Point(215, 245),
 				       al_map_rgb(0,200,0), h,
 				       fps ));
 }

@@ -29,6 +29,7 @@ Player::~Player() {
       al_destroy_timer(fireDelay);
    if (missileDelay != NULL)
       al_destroy_timer(missileDelay);
+   
    al_destroy_font(scoreFont);
 }
 
@@ -42,7 +43,8 @@ void Player::input(const ALLEGRO_EVENT& inputEvent) {
    switch (inputEvent.type) {      
       case ALLEGRO_EVENT_KEY_DOWN:
 	 handleKeyDown(inputEvent);
-	 break;	 
+	 break;
+	 
       case ALLEGRO_EVENT_KEY_UP:
 	 handleKeyUp(inputEvent);
 	 break;	 
@@ -55,10 +57,6 @@ void Player::draw() {
    drawScore();
 }
 
-void Player::drawScore() {
-   al_draw_textf(scoreFont, al_map_rgb(255, 255, 255), centre.x, centre.y - 60,
-   		 ALLEGRO_ALIGN_CENTRE, "Score: %i", score);   
-}
 
 void Player::update(double dt) {
    centre = centre + speed * dt;
@@ -86,6 +84,7 @@ void Player::updatePlayerSpeed() {
 
 void Player::load_assets() {
    // initialize some timers
+   
    if ((fireDelay = al_create_timer(1.0 / fps)) == NULL)
       throw std::runtime_error("Cannot create fireDelay timer");
    al_start_timer(fireDelay);
@@ -94,15 +93,12 @@ void Player::load_assets() {
       throw std::runtime_error("Cannot create missileDelay timer");
    al_start_timer(missileDelay);
 
-   
-
    // set some initial variable values
-   //projSpeed = (flipped) ? Vector(-400,0) : Vector(400,0);
-   projSpeed = Vector(400, 0);
-   speed_modifier = 200;
+   projSpeed = Vector(500, 0);
+   speed_modifier = 250;
    speed = Vector(0,0);
    lives = 3;
-   size = 10;
+   size = 16;
    score = 0;
    row = 0;
    col = 0;      
@@ -123,6 +119,11 @@ void Player::load_assets() {
    al_destroy_path(path);
 }
 
+void Player::drawScore() {
+   al_draw_textf(scoreFont, al_map_rgb(255, 255, 255), 100, 100,
+   		 ALLEGRO_ALIGN_CENTRE, "Score: %i", score);   
+}
+
 void Player::firePrimaryWeapon() {
    if (al_get_timer_count(fireDelay) > 5) {
       fire = true;
@@ -132,15 +133,17 @@ void Player::firePrimaryWeapon() {
    }
 }
 
+
 void Player::fireSecondaryWeapon() {
-   if (al_get_timer_count(missileDelay) > 10) {
+   if (al_get_timer_count(missileDelay) > 20) {
       mfire = true;
       al_stop_timer(missileDelay);
       al_set_timer_count(missileDelay, 0);
       al_start_timer(missileDelay);
    }	    	 
 }
-    
+
+
 void Player::selectShipAnimation() {
    if (speed.x > 0) {
       col = 1;
@@ -155,19 +158,20 @@ void Player::selectShipAnimation() {
    }
 }
 
+
 void Player::checkBoundary() {   
    // check x bound and adjust if out
    if (centre.x > 800 - size)
       centre.x = 800 - size;
    else if (centre.x < size)
-      centre.x = size;
-   
+      centre.x = size;   
    // check y bound and adjust if out
    if (centre.y > 600 - size)
       centre.y = 600 - size;
    else if (centre.y < size)
       centre.y = size;
 }
+
 
 void Player::drawRemainingLife() {
    switch (lives) {

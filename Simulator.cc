@@ -51,43 +51,40 @@ void Simulator::run() {
 	 ALLEGRO_EVENT ev;
 	 al_wait_for_event(eventQueue, &ev);	
 
-	 switch (ev.type) {
-	    
-	    case ALLEGRO_EVENT_KEY_DOWN:
+	 if (!mode_selected) {
+	    if (ev.type == ALLEGRO_EVENT_KEY_DOWN) {
 	       switch (ev.keyboard.keycode) {
-	       
-		  case ALLEGRO_KEY_ESCAPE: // EXIT GAME
+		  case ALLEGRO_KEY_ESCAPE:
 		     return;
-		  
-		  case ALLEGRO_KEY_1: // SINGLE PLAYER
+		  case ALLEGRO_KEY_1:
 		     single_player();
 		     mode_selected = true;
 		     break;
-		  
-		  case ALLEGRO_KEY_2: // MULTI PLAYER
+		  case ALLEGRO_KEY_2:
 		     multi_player();
 		     mode_selected = true;
-		     break;
-		  
-		  default:
-		     break;
+		     break;		     
 	       }
-	       
+	    }
+	 }	
+
+	 switch (ev.type) {
 	    case ALLEGRO_EVENT_TIMER:
 	       menuMessage();	    
 	       break;
 	       
 	    case ALLEGRO_EVENT_DISPLAY_CLOSE:
 	       return;
-	       
 	 }
+	 
 	 
 	 // ENTER GAME LOOP
 	 if (mode_selected && al_is_event_queue_empty(eventQueue)) {
-	 
-	    if(gameReady()) {
+
+	    if (gameReady()) {
 	       mode_selected = false;
-	       break;}
+	       break;
+	    }
 	 }
 
       } 
@@ -101,14 +98,17 @@ void Simulator::run() {
 	 getInput(ev);
 
 	 switch (ev.type) {
+	    
 	    case ALLEGRO_EVENT_TIMER:
 	       crtTime = al_current_time();
 	       updateRoot(crtTime - prevTime);
 	       prevTime = crtTime;		    
 	       redraw = true;
 	       break;
+	       
 	    case ALLEGRO_EVENT_DISPLAY_CLOSE:
-	       return;	       
+	       return;
+	       
 	 }
 
 	 //cout << "about to enter redraw section\n";	 

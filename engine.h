@@ -36,9 +36,6 @@ class engine : public Simulator {
    int windowHeight;
    int mAnim;
 
-   // ALLEGRO_FONT *menuFont;
-   //ALLEGRO_FONT *modeFont;
-   // ALLEGRO_FONT *subMenuFont;
    ALLEGRO_TIMER *menuTimer;
    
   public:
@@ -47,7 +44,6 @@ class engine : public Simulator {
       game_fps = fps;
       windowWidth = d.getW();
       windowHeight = d.getH();
-      mAnim = 0;
       load_assets();
    }
 
