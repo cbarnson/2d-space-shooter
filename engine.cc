@@ -8,8 +8,9 @@
 
 engine::~engine() {
    al_destroy_timer(menuTimer);
+   root.reset();
+   menuPng.reset();
 }
-
 
 void engine::load_assets() {
    mAnim = 0;
@@ -24,17 +25,13 @@ void engine::load_assets() {
 }
 
 void engine::reset_game() {
-   root.clear();
+   root.reset();
 }
 
 bool engine::is_game_over() {
-   if (!root.empty()) {
-      for (list< shared_ptr<Root> >::iterator it = root.begin(); it != root.end();
-	   ++it) {
-	 if ((*it)->is_game_over())
-	    return true;      
-      }
-   }
+   if (root) 
+      if (root->is_game_over())
+	 return true;   
    return false;
 }
 
@@ -53,8 +50,7 @@ bool engine::gameReady() {
 }
 
 void engine::menuAnim() {
-   if(!root.empty()) {
-      
+   if (root) {
       if(!al_get_timer_started(menuTimer))
 	 al_start_timer(menuTimer);
       
@@ -62,7 +58,6 @@ void engine::menuAnim() {
 	 menuPng->draw_menu_anim(mAnim, 0); mAnim++;
 	 al_set_timer_count(menuTimer, 0);
       }
-      
       else 
 	 menuPng->draw_menu_anim(mAnim, 0);
    }
@@ -71,9 +66,7 @@ void engine::menuAnim() {
 }
    
 void engine::single_player() {
-   //cout << "creating single from engine\n";
-   root.push_back(make_shared<Single> (game_fps));
-   //cout << "created single from engine\n";
+   root = make_shared<Single> (game_fps, windowWidth, windowHeight);
 }
 
    
@@ -83,27 +76,17 @@ void engine::multi_player() {
 
 
 void engine::getInput(const ALLEGRO_EVENT& inputEvent) {
-   for (list< shared_ptr<Root> >::iterator it = root.begin(); it != root.end();
-	++it) {
-      //cout << "in engine looking for input\n";
-      (*it)->input(inputEvent);
-   }
+   if (root)
+      root->input(inputEvent);
 }
 
 void engine::updateRoot(double dt) {
-   for (list< shared_ptr<Root> >::iterator it = root.begin(); it != root.end();
-	++it) {
-      (*it)->update(dt);
-   }
-   
+   if (root)
+      root->update(dt);
 }
 
 
 void engine::drawRoot() {
-   //cout << "in engine.cc drawRoot pre-call\n";
-   for (list< shared_ptr<Root> >::iterator it = root.begin(); it != root.end();
-	++it) {
-      (*it)->draw();
-   }
-   //cout << "in engine.cc drawRoot post-call\n";   
+   if (root)
+      root->draw();
 }

@@ -32,8 +32,13 @@ class Root : public Drawable, public Updateable {
    // addPlay takes care of this setup process and assigns a key configuration for each
    // player depending on the mode selected
    int fps;
-   Root(int frames) {
-      fps = frames;
+   int displayWidth;
+   int displayHeight;
+   
+   Root(int f, int w, int h) {
+      fps = f;
+      displayWidth = w;
+      displayHeight = h;
    }
    
    virtual ~Root() { }

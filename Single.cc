@@ -228,27 +228,33 @@ void Single::input(const ALLEGRO_EVENT& inputEvent) {
 }
 
 void Single::spawn() {
-   //al_start_timer(spawnDelay);
+   // some initializations 
    Point pt(0, 0);
    Point pt1, pt2, playerloc, pt3;
    Vector spd(0, 0);
    ALLEGRO_COLOR color = al_map_rgb(255,255,255);
+
+   
    if(!play.empty())
       for (list< shared_ptr<Player> >::iterator it = play.begin(); it != play.end(); ++it) 
 	 playerloc = (*it)->centre;
    if(play.empty())
       playerloc = Point (200, 300);
-   
+
+   // roll for enemy routine
    int n = rand() % 6 + 1;
+
+   // select enemy routine
    switch(n) {
+
       case 1: // wave of 5
-	 //spd.x = 0;
 	 for (int i = 0; i < 5; i++) {
 	    pt.rollRandom();
 	    spd.rollRandom();
 	    enem.push_back(make_shared<Enemy> (pt, al_map_rgb(255, 51, 51), spd));
 	 }	 
 	 break;
+
 	 
       case 2: // wave of 8
 	 for (int i = 0; i < 8; i++) {
@@ -257,6 +263,7 @@ void Single::spawn() {
 	    enem.push_back(make_shared<Enemy> (pt, al_map_rgb(255, 159, 48), spd));
 	 }
 	 break;
+
 	 
       case 3:
       	 enem.push_back(make_shared<Enemy> (Point(800, 300), al_map_rgb(246, 64, 234),
@@ -276,35 +283,34 @@ void Single::spawn() {
 	 break;
 	 
       case 4:
-	 //std::cout<<"play loc is "<<playerloc.x<<" "<<playerloc.y<<std::endl;
 	 pt1.x=800; pt1.y=580;
 	 pt2.x=800; pt2.y=20;
 	 pt3.x=850; pt3.y=300;
-	 //std::cout<<"velocity is "<<spd.x<<" "<<spd.y<<std::endl;
-	 enem.push_back(
-	    make_shared<Enemy>
+	 enem.push_back(make_shared<Enemy>
 	    (pt1, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt1.x)/1.5),
 						   ((playerloc.y-pt1.y)/1.5))));
-	 enem.push_back(
-	    make_shared<Enemy>	    
+	 enem.push_back(make_shared<Enemy>	    
 	    (pt2, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt2.x)/1.5),
 						   ((playerloc.y-pt2.y)/1.5))));
-	 enem.push_back(
-	    make_shared<Enemy>
+	 enem.push_back(make_shared<Enemy>
 	    (pt3, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt3.x)/1.5),
 						   ((playerloc.y-pt3.y)/1.5))));
 	 break;
+
+	 
       case 5:
 	 spawn();
 	 spawn();
 	 break;
+
+	 
       case 6:
-	 color=al_map_rgb(255,153,255);
-	 for(int i=0; i<5; i++)
-	 {
+	 color = al_map_rgb(255, 153, 255);
+	 for(int i=0; i<5; i++) {
 	    spd.rollReallyRandom();
-	    enem.push_back(make_shared<Enemy>(Point(800, 300), color, spd));
+	    enem.push_back(make_shared<Enemy> (Point(800, 300), color, spd));
 	 }
+	 break;
    }
    
 }
@@ -384,7 +390,7 @@ void Single::setupPlayer() {
 }
 
 void Single::setupBackground() {
-   bg = make_shared<Background> (Vector(-50, 0), Vector(-90, 0));
+   bg = make_shared<Background> (Vector(50, 0), Vector(90, 0));
 }
 
 void Single::cullPlayer() {

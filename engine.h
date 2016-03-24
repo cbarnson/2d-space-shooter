@@ -7,12 +7,11 @@
  */
 #ifndef ENGINE_H
 #define ENGINE_H
+
 #include "Simulator.h"
 #include "Root.h"
 #include "Single.h"
-//#include "Versus.h"
 #include "Sprite.h"
-
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
@@ -27,18 +26,18 @@ using std::make_shared;
 using std::list;
 using std::cout;
 
+/**
+ * @class engine
+ * @brief derived Simulator object, manages function calls for game functionality
+ *        
+ */
 class engine : public Simulator {
-  private:
-   list< shared_ptr<Root> > root;
-   shared_ptr<Sprite> menuPng;
-   int game_fps;
-   int windowWidth;
-   int windowHeight;
-   int mAnim;
-
-   ALLEGRO_TIMER *menuTimer;
-   
   public:
+   /**
+    * @fn
+    * @brief
+    * @param
+    */
   engine(const Display& d, int fps) : Simulator(d, fps)
    {
       game_fps = fps;
@@ -47,13 +46,19 @@ class engine : public Simulator {
       load_assets();
    }
 
+   /**
+    * @fn
+    * @brief
+    * @param
+    */
    ~engine();
    void load_assets();
+   
    void reset_game();
    bool is_game_over();
-   void menuMessage();
    void single_player();
    void multi_player();
+   void menuMessage();
    void menuAnim();
 
    void getInput(const ALLEGRO_EVENT&);   
@@ -61,6 +66,16 @@ class engine : public Simulator {
    void drawRoot();
    bool gameReady();
 
+   
+  private:
+   //list< shared_ptr<Root> > root;
+   shared_ptr<Root> root;
+   shared_ptr<Sprite> menuPng;
+   int game_fps;
+   int windowWidth;
+   int windowHeight;
+   int mAnim;
+   ALLEGRO_TIMER *menuTimer;
 
 };
 

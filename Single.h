@@ -35,13 +35,14 @@ using std::make_shared;
  * @class Single
  */
 class Single : public Root {
-  public:   
-  Single(int frames) : Root(frames) {
+  public:
+   // Single has public access to fps, displayWidth, and displayHeight
+  Single(int f, int w, int h) : Root(f, w, h) {
       load_assets();
    }
    
    ~Single();
-
+   
    // game setup
    void load_assets();
    
@@ -86,6 +87,7 @@ class Single : public Root {
    void checkCollisionOnPlayer();
    void checkCollisionOnEnemies();
    void checkCollidingEnemyWithPlayer();
+   
    bool doHitboxesIntersect(const Point&, const int&,
 			    const Point&, const int&);
    bool doColorsMatch(const ALLEGRO_COLOR&, const ALLEGRO_COLOR&);

@@ -8,9 +8,9 @@
 #include "Background.h"
 
 void Background::load_assets() {
-   origin = Point(800, 300);
-   bgCentre = origin;
-   fgCentre = origin;
+   // represents the middle of the image width-wise, and top height-wise
+   bgMid = Point(0, 0);
+   fgMid = Point(0, 0);
    
    ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
    al_append_path_component(path, "resources");
@@ -22,18 +22,21 @@ void Background::load_assets() {
 }
 
 void Background::draw() {
-   bg->draw(bgCentre, 0);
-   fg->draw(fgCentre, 0);
+   bg->draw_parallax_background(bgMid.x, 0);
+   fg->draw_parallax_background(fgMid.x, 0);
 }
 
 void Background::update(double dt) {
-   bgCentre = bgCentre + bgSpeed * dt;
-   fgCentre = fgCentre + fgSpeed * dt;      
-   
-   if (bgCentre.x <= 0) {
-      bgCentre = origin;
+   bgMid = bgMid + bgSpeed * dt;
+   fgMid = fgMid + fgSpeed * dt;
+
+   // background
+   if (bgMid.x >= 800) {
+      bgMid.x = 0;
    }
-   if (fgCentre.x <= 0) {
-      fgCentre = origin;
+   
+   // foreground
+   if (fgMid.x >= 800) {
+      fgMid.x = 0;
    }
 }

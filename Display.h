@@ -37,7 +37,7 @@ public:
 		 \param w the width of the window displayed in pixels
 		 \param h the height of the window displayed in pixels
 	 */
-	Display(int w=800, int h=600);
+	Display(int w = 800, int h = 600);
 
 	/// Frees allegro resources
 	/**

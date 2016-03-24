@@ -32,20 +32,14 @@ Simulator::~Simulator() {
 }
 
 
-void Simulator::run() {
-   
+void Simulator::run() {   
    bool mode_selected = false;
    bool redraw = true;
    double crtTime, prevTime = 0;
    al_install_keyboard();
-   al_install_mouse();
    al_register_event_source(eventQueue, al_get_keyboard_event_source());
-   al_register_event_source(eventQueue, al_get_mouse_event_source());
-
   
    while(1) {
-   //cout << "now entering menu loop\n";
-   
       // MENU LOOP
       while(1) {
 	 ALLEGRO_EVENT ev;
@@ -57,31 +51,29 @@ void Simulator::run() {
 		  case ALLEGRO_KEY_ESCAPE:
 		     return;
 		  case ALLEGRO_KEY_1:
-		     single_player();
+		     single_player(); // run single player mode
 		     mode_selected = true;
 		     break;
 		  case ALLEGRO_KEY_2:
-		     multi_player();
+		     multi_player(); // run multi player mode
 		     mode_selected = true;
 		     break;		     
 	       }
 	    }
 	 }	
-
+	 
 	 switch (ev.type) {
 	    case ALLEGRO_EVENT_TIMER:
-	       menuMessage();	    
+	       menuMessage(); // display menu
 	       break;
 	       
 	    case ALLEGRO_EVENT_DISPLAY_CLOSE:
-	       return;
+	       return; // exit
 	 }
 	 
-	 
-	 // ENTER GAME LOOP
 	 if (mode_selected && al_is_event_queue_empty(eventQueue)) {
 
-	    if (gameReady()) {
+	    if (gameReady()) { // condition to enter game loop
 	       mode_selected = false;
 	       break;
 	    }
@@ -97,88 +89,32 @@ void Simulator::run() {
 	 // INPUT
 	 getInput(ev);
 
-	 switch (ev.type) {
-	    
+	 switch (ev.type) {	    
 	    case ALLEGRO_EVENT_TIMER:
 	       crtTime = al_current_time();
-	       updateRoot(crtTime - prevTime);
+	       updateRoot(crtTime - prevTime); // update game
 	       prevTime = crtTime;		    
 	       redraw = true;
 	       break;
 	       
 	    case ALLEGRO_EVENT_DISPLAY_CLOSE:
-	       return;
+	       return; // exit
 	       
 	 }
 
-	 //cout << "about to enter redraw section\n";	 
 	 // DRAW
 	 if(redraw && al_is_event_queue_empty(eventQueue)) {
 	    drawRoot();
 	    redraw = false;
 	 }
 
-	 //cout << "now checking if game is over\n";	 
 	 // CHECK GAME OVER
 	 if (is_game_over()) {
 	    reset_game();
 	    break;
 	 }
  
-      } // end of game loop //
+      } 
       // RETURN TO MENU SCENE
-      //cout << "end of game loop\n";
    }
-   
-  
 }
-/*	 
-	 // DO EVERYTHING FOR GAME
-	 if(ev.type == ALLEGRO_EVENT_TIMER) {	 
-	    crtTime = al_current_time();
-	    //controlRoot();
-	    updateRoot(crtTime - prevTime);
-	    //collisionRoot();
-	    prevTime = crtTime;		    
-	    redraw = true;
-	 }
-
-	 //cout << "I am past allegro event timer section\n";
-	 
-	 // DISPLAY CLOSES
-	 if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-	    return;
-	 }
-*/
-
-	 /*
-	 // INPUT
-	 if (ev.type == ALLEGRO_EVENT_KEY_DOWN) 	 
-	    switch (ev.keyboard.keycode) {
-	       
-	       case ALLEGRO_KEY_ESCAPE: // EXIT GAME
-		  return;
-		  
-	       case ALLEGRO_KEY_1: // SINGLE PLAYER
-		  single_player();
-		  //cout << "sim - selected single\n";
-		  mode_selected = true;
-		  break;
-		  
-	       case ALLEGRO_KEY_2: // MULTI PLAYER
-		  multi_player();
-		  //cout << "sim - selected multi\n";
-		  mode_selected = true;
-		  break;
-		  
-	       default:
-		  break;
-	    }
-	 
-	 // MENU SCENE
-	 if (ev.type == ALLEGRO_EVENT_TIMER) 
-	    menuMessage();
-	 // DISPLAY CLOSES
-	 else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) 
-	    return;
-*/

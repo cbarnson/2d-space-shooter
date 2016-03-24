@@ -55,6 +55,14 @@ class Sprite {
       al_draw_bitmap(image, p.x - width/2, p.y - height/2, f);
    }
 
+   // unique function to draw background images for parallax scrolling
+   void draw_parallax_background(float x, int f) {
+      al_draw_bitmap_region(image, x, 0,       // source x, y
+			    width / 2, height, // source width, height
+			    0, 0,              // destination x, y
+			    f);                // flags
+   }
+   
    void draw_rotated(Point p, int f) {
       al_draw_rotated_bitmap(image, width / 2, height / 2,
 				    p.x, p.y, 3.14159265 / 2, f);
