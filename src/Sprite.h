@@ -12,8 +12,6 @@
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
-//#include <string>
-//using std::string;
 
 class Sprite {
   private:

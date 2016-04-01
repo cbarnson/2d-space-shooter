@@ -16,27 +16,22 @@
 #include <allegro5/allegro.h>
 #include <memory>
 
-using std::shared_ptr;
-using std::make_shared;
-
 class Background : public Drawable, public Updateable {
-  public:
-  Background(Vector bgs, Vector fgs): bgSpeed(bgs), fgSpeed(fgs)
-   {
-      load_assets();
-   }   
-   void load_assets();   
-   void draw();
-   void update(double dt);
-
-   
-  private:
+   // important members
    Point bgMid;
    Point fgMid;   
    Vector bgSpeed;
    Vector fgSpeed;
-   shared_ptr<Sprite> bg;
-   shared_ptr<Sprite> fg;
+   std::shared_ptr<Sprite> bg;
+   std::shared_ptr<Sprite> fg;
+   
+  public:
+   Background(Vector bg_, Vector fg_);   
+   void draw();
+   void update(double dt);
+   
+  private:
+   void load_assets();
    
 };
 

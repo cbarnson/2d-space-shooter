@@ -10,13 +10,11 @@
 
 #include "Root.h"
 #include "Projectile.h"
-#include "Laser.h"
-#include "Missile.h"
 #include "Player.h"
-//#include "Enemy.h"
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
+#include <memory>
 #include <vector>
 #include <list>
 
@@ -24,33 +22,33 @@ using std::vector;
 using std::list;
 
 class Versus : public Root {
-  private:
    list< shared_ptr<Projectile> > proj;
    list< shared_ptr<Player> > play;
-
+   
   public:
-
-  Versus(int frames) : Root(frames) {
+  Versus(int f, int w, int h) : Root(f, w, h) {
       setup();
    }
    ~Versus();
    
    void setup(); // has its own setup
    
-   // virtuals
-   
+   // virtuals   
    void update(double);
    void draw();
-   void updatePlayer();
-   void set(int);
-   void reset(int);
-   void primary();
-   void secondary();
    
    bool is_game_over();
+   void updateScore(const ALLEGRO_COLOR&);
+   void input(const ALLEGRO_EVENT&);
+
+  private:
+   void updatePlayerAction();
+   void updatePlayerPosition(double dt);
+   void updateProjectilePosition(double dt);
    void collision();
    void clean();
-   void updateScore(ALLEGRO_COLOR);
+   void cullPlayers();
+   void cullProjectiles();
 
 };
 

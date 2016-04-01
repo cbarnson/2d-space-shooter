@@ -6,6 +6,8 @@
  * @bug
  */
 #include "Single.h"
+#include "Laser.h"
+#include "Missile.h"
 
 Single::~Single() {
    al_destroy_font(gameOverFont);

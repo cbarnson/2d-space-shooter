@@ -27,8 +27,6 @@ using std::make_shared;
 class Laser : public Projectile {
   private:
    bool in_bound();
-   //int speedModifier;
-   //shared_ptr<Sprite> laser;
 
   public:
    Laser (Point p, ALLEGRO_COLOR c, Vector s)

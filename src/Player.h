@@ -15,7 +15,6 @@
 #include "Vector.h"
 #include "Updateable.h"
 #include "Drawable.h"
-#include "Controls.h"
 #include "Hotkeys.h"
 #include "Sprite.h"
 #include "Projectile.h"

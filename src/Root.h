@@ -11,9 +11,7 @@
 
 #include "Drawable.h"
 #include "Updateable.h"
-#include "Controls.h"
 #include "Projectile.h"
-#include "Laser.h"
 #include "Enemy.h"
 #include "Player.h"
 #include "Sprite.h"
