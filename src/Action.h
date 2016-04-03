@@ -9,6 +9,8 @@ namespace act {
       MOVE_RIGHT,
       MOVE_DOWN,
       MOVE_LEFT,
+      FIRE_PRIMARY,
+      FIRE_SECONDARY,
       PLAY_SINGLE,
       QUIT_GAME
    };

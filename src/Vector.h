@@ -33,7 +33,6 @@ struct Vector {
    Vector operator * (double scalar) {
       return Vector(x*scalar, y*scalar);
    }
-
    
    void rollRandom() {
       x = rand() % 200 - 400; // range

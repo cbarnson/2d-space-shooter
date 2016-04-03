@@ -20,6 +20,7 @@ class Projectile;
 class Enemy;
 class Player;
 class Background;
+class Sprite;
 
 /**
  * @class Single
@@ -29,9 +30,14 @@ class Single : public Root {
    ALLEGRO_FONT* gameOverFont;
    ALLEGRO_TIMER* gameOverTimer;
    
+   // some player action timers
+   ALLEGRO_TIMER* playerWeapon1;
+   ALLEGRO_TIMER* playerWeapon2;
+
    std::list< std::shared_ptr<Projectile> > proj;
    std::list< std::shared_ptr<Enemy> > enem;
-   std::list< std::shared_ptr<Player> > play;
+   std::shared_ptr<Player> player;
+   std::shared_ptr<Sprite> playerShip;
    std::shared_ptr<Background> bg;
 
   public:
@@ -49,19 +55,18 @@ class Single : public Root {
    void update(double);
    void draw();   
 
-   void input(const ALLEGRO_EVENT&);   
+   //void input(ALLEGRO_EVENT&);   
+   void input(ALLEGRO_KEYBOARD_STATE&);   
    bool is_game_over();
-   void updateScore(const ALLEGRO_COLOR&);
+   void updateScore(ALLEGRO_COLOR&);
    void spawn();
 
    
   private:   
    // HELPER FUNCTIONS - simplicity & readability
-   void drawPlayer();
    void drawProjectiles();
    void drawEnemies();
    void drawBackground();
-   void updatePlayerPosition(double);
    void updateProjectilePosition(double);
    void updateEnemyPosition(double);
    void updateBackgroundPosition(double);
@@ -70,7 +75,6 @@ class Single : public Root {
    void cullPlayer();
    void cullProjectiles();
    void cullEnemies();
-   void updatePlayerAction();
    void collision();
    void clean();
    void showGameOverMessage();

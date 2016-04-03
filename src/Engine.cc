@@ -22,16 +22,16 @@ Engine::Engine(int w, int h, int fps) : displayWidth(w), displayHeight(h),
   init();
 }
 
-Engine::~Engine() {
-  // clean up some allegro objects
-  if (timer != NULL) al_destroy_timer(timer);
-  if (eventQueue != NULL) al_destroy_event_queue(eventQueue);
-  if (display != NULL) al_destroy_display(display);
 
+
+
+Engine::~Engine() {
   // memory issues with this? leak?
   delete gameInput;
   delete gameMenu;
 }
+
+
 
 
 // initialize Allegro, the display window, the addons, the timers, and event 
@@ -73,6 +73,18 @@ void Engine::init() {
 }
 
 
+
+// clean up some allegro resources
+void Engine::shutdown() {
+  // clean up some allegro objects
+  if (timer != NULL) al_destroy_timer(timer);
+  if (eventQueue != NULL) al_destroy_event_queue(eventQueue);
+  if (display != NULL) al_destroy_display(display);  
+}
+
+
+
+
 // repeatedly call the state manager function until the gameState is EXIT
 void Engine::run() {
   float prevTime = 0;
@@ -81,6 +93,8 @@ void Engine::run() {
     processGameLogic(prevTime, gameState);
   }
 }
+
+
 
 
 void Engine::processGameLogic(float& prevTime, gs::state currentState) {
@@ -105,28 +119,15 @@ void Engine::processGameLogic(float& prevTime, gs::state currentState) {
 // returns false if menuLoop should terminate
 void Engine::menuLoop() {
   ALLEGRO_EVENT event;
+  ALLEGRO_KEYBOARD_STATE kb;
   al_wait_for_event(eventQueue, &event);
 
-  if (event.type == ALLEGRO_EVENT_KEY_DOWN) {
-    switch (gameInput->handleKeyDown(event, gameState)) {
-    case action::PLAY_SINGLE:
-      gameState = state::LOAD;
-      if (!root) {
-	root = std::make_shared<Single> 
-	  (displayWidth, displayHeight, framesPerSec);
-      }
-      break;
-    case action::QUIT_GAME:
-      gameState = state::EXIT;
-      return;
-    default:
-      break;
-    }
-  }      
   if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
     gameState = state::EXIT;
+    shutdown();
     return;
   }
+
   if (event.type == ALLEGRO_EVENT_TIMER) {
     if (gameState == state::LOAD) { // triggers load animation
       if (!gameMenu->animation()) { // load animation complete
@@ -140,25 +141,36 @@ void Engine::menuLoop() {
       al_flip_display();
     }
   }
+    
+  al_get_keyboard_state(&kb);
+  if (al_key_down(&kb, ALLEGRO_KEY_1)) {
+    gameState = state::LOAD;
+    if (!root) {
+      root = std::make_shared<Single> (displayWidth, displayHeight, 
+				       framesPerSec);    
+    }
+    return;
+  }
+  if (al_key_down(&kb, ALLEGRO_KEY_ESCAPE)) {
+    gameState = state::EXIT;
+    shutdown();
+    return;
+  }
 }
 
 void Engine::gameLoop(float& prevTime) {
   ALLEGRO_EVENT event;
+  ALLEGRO_KEYBOARD_STATE kb;
   al_wait_for_event(eventQueue, &event);
   bool redraw = true;
   float crtTime;
   // hmmm
-  root->input(event);
-  /*
-  if (ev.type == ALLEGRO_EVENT_KEY_DOWN) {
-    switch (gameInput->handleKeyDown(ev, gameState)) {
-    default:
-      break;
-    }
-  }
-  */
+  al_get_keyboard_state(&kb);
+  root->input(kb);
+  
   if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
     gameState = state::EXIT;
+    shutdown();
     return;
   }
    
@@ -182,11 +194,13 @@ void Engine::gameLoop(float& prevTime) {
   
 }
 
+
 void Engine::update(double dt) {
   if (root) {
     root->update(dt);
   }
 }
+
 
 void Engine::draw() {
   if (root) {

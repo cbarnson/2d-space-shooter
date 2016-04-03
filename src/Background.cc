@@ -11,10 +11,6 @@
 #include "Sprite.h"
 #include <memory>
 
-Background::Background(Vector bg_, Vector fg_) : bgSpeed(bg_), fgSpeed(fg_) {
-   load_assets();
-}
-
 void Background::load_assets() {
    // represents the middle of the image width-wise, and top height-wise
    bgMid = Point(0, 0);

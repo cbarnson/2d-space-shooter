@@ -28,9 +28,10 @@ class Root : public Drawable, public Updateable {
    void draw() { }
    void update(double dt) { }
 
-   virtual void input(const ALLEGRO_EVENT&) = 0;   
+   virtual void input(ALLEGRO_KEYBOARD_STATE&) = 0;   
+   //virtual void input(ALLEGRO_EVENT&) = 0;   
    virtual bool is_game_over() = 0;
-   virtual void updateScore(const ALLEGRO_COLOR&) = 0;
+   virtual void updateScore(ALLEGRO_COLOR&) = 0;
 };
 
 #endif

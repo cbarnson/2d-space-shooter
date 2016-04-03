@@ -9,12 +9,11 @@
 #define BACKGROUND_H
 #include "Drawable.h"
 #include "Updateable.h"
-
+#include "Point.h"
+#include "Vector.h"
 #include <allegro5/allegro.h>
 #include <memory>
 
-struct Point;
-struct Vector;
 class Sprite;
 
 class Background : public Drawable, public Updateable {
@@ -27,7 +26,9 @@ class Background : public Drawable, public Updateable {
    std::shared_ptr<Sprite> fg;
    
   public:
-   Background(Vector bg_, Vector fg_);   
+ Background(Vector bg_, Vector fg_) : bgSpeed(bg_), fgSpeed(fg_) {
+     load_assets();
+   }  
    void draw();
    void update(double dt);
    

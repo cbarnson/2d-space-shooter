@@ -7,6 +7,7 @@
  * @bug
  */
 #include <iostream>
+#include "Vector.h"
 #include "Single.h"
 #include "Projectile.h"
 #include "Background.h"
@@ -15,24 +16,41 @@
 #include "Laser.h"
 #include "Missile.h"
 #include "Sprite.h"
+#include "Action.h"
+using namespace act;
 
 Single::~Single() {
+  // clean up allegro timers
+  if (playerWeapon1 != NULL) al_destroy_timer(playerWeapon1);
+  if (playerWeapon2 != NULL) al_destroy_timer(playerWeapon2);
+  if (gameOverTimer != NULL) al_destroy_timer(gameOverTimer);
   al_destroy_font(gameOverFont);
-  al_destroy_timer(gameOverTimer);
   proj.clear();
   enem.clear();
-  play.clear();
+  player.reset();
   bg = NULL;
 }
 
 void Single::load_assets() {
-  // initialize gameOverTimer
-  
+  // initialize timers  
   if ((gameOverTimer = al_create_timer( 1.0 / framesPerSec )) == NULL) {
     std::cerr << "Cannot initialize game over timer\n";
     exit(2);
   }
+  if ((playerWeapon1 = al_create_timer( 1.0 / framesPerSec )) == NULL) {
+    std::cerr << "Cannot initialize player weapon timer\n";
+    exit(3);
+  }
+  al_start_timer(playerWeapon1);
+
+  if ((playerWeapon2 = al_create_timer( 1.0 / framesPerSec )) == NULL) {
+    std::cerr << "Cannot initialize player weapon timer\n";
+    exit(4);
+  }
+  al_start_timer(playerWeapon2);
   
+
+
   // create Player object
   setupPlayer();
 
@@ -40,15 +58,48 @@ void Single::load_assets() {
   ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
   al_append_path_component(path, "resources");
   al_change_directory(al_path_cstr(path, '/'));
-
-  // load background
+  
+  // load various images
   setupBackground();
+  playerShip = std::make_shared<Sprite> ("Sprite.png");
 
   // load font
   gameOverFont = al_load_font("DavidCLM-BoldItalic.ttf", 64, 0);
 
   // delete path to these assets now that they are loaded
   al_destroy_path(path);
+
+}
+
+
+// INPUT -----------------------------
+void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
+  if (player) {
+    switch (player->input(kb)) {
+    case action::QUIT_GAME:
+      player.reset();
+      return;
+    case action::FIRE_PRIMARY:
+      if (al_get_timer_count(playerWeapon1) > 5) {
+	proj.push_back(std::make_shared<Laser> (player->centre, player->color,
+						player->projSpeed));	
+	al_stop_timer(playerWeapon1);
+	al_set_timer_count(playerWeapon1, 0);
+	al_start_timer(playerWeapon1);
+      }
+      break;
+    case action::FIRE_SECONDARY:
+      if (al_get_timer_count(playerWeapon2) > 20) {
+	proj.push_back(std::make_shared<Missile> (player->centre, player->color,
+						  player->projSpeed));
+	al_stop_timer(playerWeapon2);
+	al_set_timer_count(playerWeapon2, 0);
+	al_start_timer(playerWeapon2);
+      }
+    default:
+      break;
+    }
+  }
 }
 
 bool Single::is_game_over() {
@@ -70,9 +121,8 @@ void Single::showGameOverMessage() {
 }
 
 void Single::update(double dt) {
-  updatePlayerAction();   
   updateBackgroundPosition(dt);
-  updatePlayerPosition(dt);
+  if (player) player->update(dt);
   updateProjectilePosition(dt);
   updateEnemyPosition(dt);   
   collision();
@@ -80,13 +130,12 @@ void Single::update(double dt) {
 }
 
 void Single::draw() {
-  //al_clear_to_color(al_map_rgb(0, 0, 0));
   drawBackground();
-  drawPlayer();
+  if (player) player->draw(playerShip);
+  else showGameOverMessage();
+
   drawProjectiles();
   drawEnemies();
-  if (play.empty()) 
-    showGameOverMessage();   
 }
 
 void Single::clean() {
@@ -101,27 +150,6 @@ void Single::collision() {
   checkCollidingEnemyWithPlayer();
 }
 
-void Single::updatePlayerAction() {
-  if (!play.empty()) {
-    for (std::list< std::shared_ptr<Player> >::iterator it = play.begin(); 
-	 it != play.end(); ++it) {
-      (*it)->updatePlayerSpeed();	 
-      if ((*it)->fire) {
-	proj.push_back(std::make_shared<Laser> ((*it)->centre, (*it)->color,
-						(*it)->projSpeed));
-	(*it)->fire = false;
-      }
-	 
-      if ((*it)->mfire) {
-	proj.push_back(std::make_shared<Missile> ((*it)->centre, (*it)->color,
-						  (*it)->projSpeed));
-	(*it)->mfire = false;
-      }
-	 
-    }
-  }
-}
-
 // where p1 is the point, p2 is the centre of the 'box' object, with half of 
 // its width s2
 bool Single::isPointBoxCollision(const Point& p1, const Point& p2, 
@@ -133,23 +161,20 @@ bool Single::isPointBoxCollision(const Point& p1, const Point& p2,
 }
 
 void Single::checkCollisionOnPlayer() {
-  if (!proj.empty() && !play.empty()) {
-    for (std::list< std::shared_ptr<Player> >::iterator it_play = play.begin();
-	 it_play != play.end(); ++it_play) {
-      for (std::list< std::shared_ptr<Projectile> >::iterator it_proj = proj.begin();
-	   it_proj != proj.end(); ++it_proj) {	    
-	// check if projectile color is different from player color
-	if (!doColorsMatch((*it_proj)->color, (*it_play)->color)) {
-	  if (isPointBoxCollision((*it_proj)->centre,
-				  (*it_play)->centre, (*it_play)->size)) {		  
-	    // register damage on player and flag projectile as dead
-	    (*it_proj)->live = false;
-	    (*it_play)->hit(1);
-	  }
+  if (!proj.empty() && player) {
+    for (std::list< std::shared_ptr<Projectile> >::iterator it_proj = 
+	   proj.begin(); it_proj != proj.end(); ++it_proj) {	    
+      // check if projectile color is different from player color
+      if (!doColorsMatch((*it_proj)->color, player->color)) {
+	if (isPointBoxCollision((*it_proj)->centre,
+				player->centre, player->size)) {	  
+	  // register damage on player and flag projectile as dead
+	  (*it_proj)->live = false;
+	  player->hit(1);
 	}
       }
     }
-  }
+  }  
 }
 
 bool Single::doColorsMatch(const ALLEGRO_COLOR& a, const ALLEGRO_COLOR& b) {
@@ -157,20 +182,15 @@ bool Single::doColorsMatch(const ALLEGRO_COLOR& a, const ALLEGRO_COLOR& b) {
 }
 
 void Single::checkCollisionOnEnemies() {
-  if (!proj.empty() && !enem.empty() && !play.empty()) {
-    for (std::list< std::shared_ptr<Player> >::iterator it_play = play.begin();
-	 it_play != play.end(); ++it_play) {
-	 
+  if (!proj.empty() && !enem.empty() && player) {
       // set player color for which we will be checking for
-      ALLEGRO_COLOR play_color = (*it_play)->color;
-	 
-      for (std::list< std::shared_ptr<Projectile> >::iterator it_proj = proj.begin();
-	   it_proj != proj.end(); ++it_proj) {
+      for (std::list< std::shared_ptr<Projectile> >::iterator it_proj = 
+	     proj.begin(); it_proj != proj.end(); ++it_proj) {
 	    
 	// check if colors match
-	if (doColorsMatch(play_color, (*it_proj)->color)) {
-	  for (std::list< std::shared_ptr<Enemy> >::iterator it_enem = enem.begin();
-	       it_enem != enem.end(); ++it_enem) {
+	if (doColorsMatch(player->color, (*it_proj)->color)) {
+	  for (std::list< std::shared_ptr<Enemy> >::iterator it_enem = 
+		 enem.begin(); it_enem != enem.end(); ++it_enem) {
 		  
 	    // set bounding points
 	    Point pt_proj = (*it_proj)->centre;
@@ -189,33 +209,31 @@ void Single::checkCollisionOnEnemies() {
 		     
 	      // check for enemy death, update score if true
 	      if ((*it_enem)->getDead())
-		updateScore(play_color);
+		updateScore(player->color);
 		  
 	    }
 	  }
 	}
       }
-    }
+    
   }
 }
 
 void Single::checkCollidingEnemyWithPlayer() {
-  if (!enem.empty() && !play.empty()) {
-    for (std::list< std::shared_ptr<Player> >::iterator it_play = play.begin();
-	 it_play != play.end(); ++it_play) {
+  if (!enem.empty() && player) {
       for (std::list< std::shared_ptr<Enemy> >::iterator it_enem = enem.begin();
 	   it_enem != enem.end(); ++it_enem) {
-	if (doHitboxesIntersect((*it_play)->centre, (*it_play)->size,
+	if (doHitboxesIntersect(player->centre, player->size,
 				(*it_enem)->getCentre(), 
 				(*it_enem)->getSize())) {
 	  // collision - register damage
 	  (*it_enem)->hit();
-	  (*it_play)->hit(1);
+	  player->hit(1);
 		
 	}	       
       }
     }
-  }
+  
 }
 
 bool Single::doHitboxesIntersect(const Point& centre1, const int& size1,
@@ -225,25 +243,14 @@ bool Single::doHitboxesIntersect(const Point& centre1, const int& size1,
 }
 
 
-void Single::updateScore(const ALLEGRO_COLOR& c) {
-  if (!play.empty()) {
-    for (std::list< std::shared_ptr<Player> >::iterator it = play.begin(); 
-	 it != play.end(); ++it) {
-      if (doColorsMatch((*it)->color, c)) {
-	(*it)->score += 1;
-      }
-    }
-  }
+void Single::updateScore(ALLEGRO_COLOR& c) {
+  if (player) 
+    if (doColorsMatch(player->color, c))
+      player->score += 1;
 }
 
-void Single::input(const ALLEGRO_EVENT& inputEvent) {
-  if (!play.empty()) {
-    for (std::list< std::shared_ptr<Player> >::iterator it = play.begin(); 
-	 it != play.end(); ++it) {
-      (*it)->input(inputEvent);
-    }
-  }
-}
+
+
 
 void Single::spawn() {
   // some initializations 
@@ -253,11 +260,9 @@ void Single::spawn() {
   ALLEGRO_COLOR color = al_map_rgb(255,255,255);
 
    
-  if (!play.empty())
-    for (std::list< std::shared_ptr<Player> >::iterator it = play.begin(); 
-	 it != play.end(); ++it) 
-      playerloc = (*it)->centre;
-  if (play.empty())
+  if (player)
+    playerloc = player->centre;
+  else
     playerloc = Point (200, 300);
 
   // roll for enemy routine
@@ -344,14 +349,7 @@ void Single::spawn() {
 }
 
 // HELPER FUNCTIONS GO DOWN HERE
-void Single::updatePlayerPosition(double dt) {
-  if (!play.empty()) {
-    for (std::list< std::shared_ptr<Player> >::iterator it = play.begin(); 
-	 it != play.end(); ++it) {
-      (*it)->update(dt);
-    }
-  }
-}
+
 
 void Single::updateProjectilePosition(double dt) {
   if (!proj.empty()) {
@@ -383,14 +381,7 @@ void Single::updateBackgroundPosition(double dt) {
   bg->update(dt);
 }
 
-void Single::drawPlayer() {
-  if (!play.empty()) {
-    for (std::list< std::shared_ptr<Player> >::iterator it = play.begin(); 
-	 it != play.end(); ++it) {
-      (*it)->draw();
-    }
-  }
-}
+
 
 void Single::drawProjectiles() {
   if (!proj.empty()) {
@@ -414,14 +405,9 @@ void Single::drawBackground() {
   bg->draw();
 }
 void Single::setupPlayer() {
-  vector<int> h;
-  h.push_back(ALLEGRO_KEY_W);
-  h.push_back(ALLEGRO_KEY_S);
-  h.push_back(ALLEGRO_KEY_D);
-  h.push_back(ALLEGRO_KEY_A);
-  play.push_back(std::make_shared<Player> (Point(215, 245),
-					   al_map_rgb(0,200,0), h,
-					   framesPerSec ));
+  player = std::make_shared<Player> (Point(215, 245),
+				     al_map_rgb(0,200,0),
+				     framesPerSec );
 }
 
 void Single::setupBackground() {
@@ -429,16 +415,10 @@ void Single::setupBackground() {
 }
 
 void Single::cullPlayer() {
-  std::list< std::shared_ptr<Player> > newPlay;
-  if (!play.empty()) {
-    for (std::list< std::shared_ptr<Player> >::iterator it = play.begin(); 
-	 it != play.end(); ++it) {
-      if (!(*it)->dead) // if not dead
-	newPlay.push_back(*it);
-    }
-    play.clear();
-    play.assign(newPlay.begin(), newPlay.end());      
-  }   
+  if (player) {
+    if (player->dead)
+      player.reset();
+  }
 }
 
 void Single::cullProjectiles() {
@@ -467,3 +447,4 @@ void Single::cullEnemies() {
     enem.assign(newEnem.begin(), newEnem.end());      
   }
 }
+

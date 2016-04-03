@@ -22,7 +22,7 @@ class Engine {
    void run();
    void draw();
    void update(double dt);
-   //void shutdown();
+   void shutdown();
    void processGameLogic(float& prevTime, gs::state currentState);
    void menuLoop();
    void gameLoop(float& prevTime);
