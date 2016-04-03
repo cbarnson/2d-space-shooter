@@ -7,14 +7,15 @@
  */
 #ifndef BACKGROUND_H
 #define BACKGROUND_H
-#include "Point.h"
-#include "Vector.h"
 #include "Drawable.h"
 #include "Updateable.h"
-#include "Sprite.h"
 
 #include <allegro5/allegro.h>
 #include <memory>
+
+struct Point;
+struct Vector;
+class Sprite;
 
 class Background : public Drawable, public Updateable {
    // important members

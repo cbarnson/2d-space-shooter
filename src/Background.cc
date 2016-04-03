@@ -5,7 +5,11 @@
  * @author
  * @bug
  */
+#include "Point.h"
+#include "Vector.h"
 #include "Background.h"
+#include "Sprite.h"
+#include <memory>
 
 Background::Background(Vector bg_, Vector fg_) : bgSpeed(bg_), fgSpeed(fg_) {
    load_assets();

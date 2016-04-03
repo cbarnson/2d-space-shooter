@@ -4,21 +4,25 @@
 # Makefile for allegro game project
 
 # declaration of variables
-CC = g++11
-CCFLAGS = -Wall -g -std=c++11 -I/home/lib2720/allegro/include
+CC = g++
+#CCFLAGS = -Wall -g -std=c++11 -I/home/lib2720/allegro/include
+CCFLAGS = -Wall -g -std=c++11 `pkg-config --cflags allegro-5.0`
 
 # file names
 SOURCES = $(wildcard *.cc)
 OBJECTS = $(SOURCES:.cc=.o)
-LIBDIR = -L/home/lib2720/allegro/lib
-LNFLAGS = -lallegro -lallegro_primitives -lallegro_image -lallegro_font -lallegro_ttf
+#LIBDIR = -L/home/lib2720/allegro/lib
+#LNFLAGS = -lallegro -lallegro_primitives -lallegro_image -lallegro_font -lallegro_ttf
+LNFLAGS = `pkg-config --libs allegro-5.0` -lallegro_primitives \
+-lallegro_font -lallegro_ttf -lallegro_image
+
 
 # main target
 all: main
 
 
 main: $(OBJECTS)
-	$(CC) $(LIBDIR) -o $@ $^ $(LNFLAGS)
+	$(CC) -o $@ $^ $(LNFLAGS)
 #	$(CC) $(OBJECTS) -o main
 
 # pull in dependency info for existing .o files
@@ -28,15 +32,6 @@ main: $(OBJECTS)
 %.o: %.cc
 	$(CC) -c $(CCFLAGS) $< -o $@
 	$(CC) -M $(CCFLAGS) $*.cc > $*.d
-
-#%.d: %.cc
-#	@set -e; rm -f $@; \
-	$(CC) -M $(CCFLAGS) $< > $@.$$$$; \
-	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
-	rm -f $@.$$$$
-
-# after rule to remake the '.d' files, use include directive to read them in
-#include $(SOURCES:.cc=.d)
 
 
 

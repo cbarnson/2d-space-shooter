@@ -7,9 +7,10 @@
  */
 
 
-#include "Display.h"
-#include "Simulator.h"
-#include "engine.h"
+//#include "Display.h"
+//#include "Simulator.h"
+//#include "engine.h"
+#include "Engine.h"
 #include <allegro5/allegro.h>
 #include <ctime>
 #include <cstdlib>
@@ -19,12 +20,16 @@
 int main() {
    srand(time(0));
    
-   Display disp(800, 600);
+   Engine game(800, 600, 60);
+   game.run();
+   //Display disp(800, 600);
    //int fps = 60;
-   engine game(disp, 60);
+   //engine game(disp, 60);
 
    // start the game, close the display to end
-   game.run();
+   // game.run();
+
+   return 0;
 
 }
 

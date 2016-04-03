@@ -1,6 +1,7 @@
 /**
  * @file Versus.cc
- * @brief Implementation of Versus class- handles game interactions for versus mode
+ * @brief Implementation of Versus class- handles game interactions for versus 
+ *        mode
  *
  * @author
  * @bug
@@ -23,7 +24,7 @@ void Versus::setup() {
    h.push_back(ALLEGRO_KEY_LEFT);
    play.push_back(make_shared<Player> (Point(200, 300),
 				       al_map_rgb(255,0,0), h,
-				       fps ));
+				       framesPerSec ));
    h.clear();
    h.push_back(ALLEGRO_KEY_W);
    h.push_back(ALLEGRO_KEY_S);
@@ -31,7 +32,7 @@ void Versus::setup() {
    h.push_back(ALLEGRO_KEY_A);
    play.push_back(make_shared<Player> (Point(600, 300),
 				       al_map_rgb(0,200,0), h,
-				       fps ));	 
+				       framesPerSec ));	 
 }
 
 // if less than 2 players are in the game return true (game is over)
