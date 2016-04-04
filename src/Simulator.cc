@@ -7,6 +7,8 @@
  */
 
 #include "Simulator.h"
+#include <allegro5/allegro_primitives.h>
+#include <stdexcept>
 
 // constructor
 Simulator::Simulator(const Display & d, int fps) :
@@ -19,8 +21,7 @@ Simulator::Simulator(const Display & d, int fps) :
    
    al_register_event_source(eventQueue, al_get_display_event_source(d.getAllegroDisplay()));   
    al_register_event_source(eventQueue, al_get_timer_event_source(timer));
-   al_start_timer(timer);
-   
+   al_start_timer(timer);   
 }
 
 // destructor

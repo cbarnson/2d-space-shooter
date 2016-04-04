@@ -10,12 +10,6 @@
 
 #include "Display.h"
 #include <allegro5/allegro.h>
-#include <allegro5/allegro_primitives.h>
-#include <stdexcept>
-#include <iostream>
-#include <typeinfo>
-
-using std::cout;
 
 /**
  * @class Simulator
@@ -33,8 +27,10 @@ class Simulator {
 
    /**
     * @fn run()
+    * @brief Runs the main game loop
     */
    void run();
+   
    virtual bool is_game_over() = 0;
    virtual void reset_game() = 0;
    virtual void menuMessage() = 0;
