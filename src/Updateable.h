@@ -21,6 +21,7 @@ class Updateable {
     * @brief virtual function declaration of update, updates the position of derived objects
     * @param t the change in time since the last position update
     */
+   virtual ~Updateable() {}
    virtual void update(double t) = 0;
 
 

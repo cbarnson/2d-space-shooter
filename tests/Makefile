@@ -5,26 +5,27 @@
 
 # declaration of variables
 CC = g++11
-CCFLAGS = -Wall -g -std=c++11 -I/home/lib2720/allegro/include -I/home/mohj2720project/src
+CCFLAGS = -Wall -g -std=c++11 -I/home/lib2720/allegro/include
 #CCFLAGS = -Wall -g -std=c++11 `pkg-config --cflags allegro-5.0`
-OBJDIR= ../src
+
 # file names
-SOURCEDIR = ../src
 SOURCES = $(wildcard *.cc)
 OBJECTS = $(SOURCES:.cc=.o)
-LIBDIR = -L/home/lib2720/allegro/lib -lcppunit -ldl 
-LNFLAGS = -lallegro -lallegro_primitives -lallegro_image -lallegro_font -lallegro_ttf
+LIBDIR = -L/home/lib2720/allegro/lib
+LNFLAGS = -lallegro -lallegro_primitives -lallegro_image -lallegro_font \
+-lallegro_ttf -ldl -lcppunit
 #LNFLAGS = `pkg-config --libs allegro-5.0` -lallegro_primitives \
 -lallegro_font -lallegro_ttf -lallegro_image
 
 
 # main target
-all: tests
+all: test
 
 
-tests: $(OBJECTS)
+test: $(OBJECTS)
 	$(CC) $(LIBDIR) -o $@ $^ $(LNFLAGS)
 #	$(CC) $(OBJECTS) -o main
+
 
 # pull in dependency info for existing .o files
 -include $(OBJECTS:.o=.d)
@@ -46,7 +47,7 @@ tests: $(OBJECTS)
 
 # clean out the directory but keep executables with command "clean"
 clean : 
-	rm -f *~ *.o *.d *.gch main
+	rm -f *~ *.o *.d *.gch test
 
 
 
