@@ -7,15 +7,17 @@ class Sprite;
 
 class Menu {
   public:
-   Menu();
+   Menu(int fps);
 
    void init();
-   void menuMessage();
-   void menuAnim();
+   void draw();
+   bool animation();
 
   private:
+   int framesPerSec;
    ALLEGRO_TIMER* timer;
    std::shared_ptr<Sprite> splash;
+   int mAnim;
    
 };
 

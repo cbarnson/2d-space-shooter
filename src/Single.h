@@ -8,25 +8,19 @@
 #ifndef SINGLE_H
 #define SINGLE_H
 
-#include "Root.h"
-#include "Background.h"
-#include "Projectile.h"
-#include "Player.h"
-#include "Enemy.h"
-#include "Point.h"
-
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
 #include <list>
 #include <memory>
-#include <iostream>
-#include <string>
-#include <cmath>
+#include "Root.h"
 
-using std::cout;
-using std::list;
-using std::shared_ptr;
-using std::make_shared;
+// forward declaring classes is preferable to include "....h" in headers
+struct Point;
+class Projectile;
+class Enemy;
+class Player;
+class Background;
+class Sprite;
 
 /**
  * @class Single
@@ -36,14 +30,19 @@ class Single : public Root {
    ALLEGRO_FONT* gameOverFont;
    ALLEGRO_TIMER* gameOverTimer;
    
-   list< shared_ptr<Projectile> > proj;
-   list< shared_ptr<Enemy> > enem;
-   list< shared_ptr<Player> > play;
-   shared_ptr<Background> bg;
+   // some player action timers
+   ALLEGRO_TIMER* playerWeapon1;
+   ALLEGRO_TIMER* playerWeapon2;
+
+   std::list< std::shared_ptr<Projectile> > proj;
+   std::list< std::shared_ptr<Enemy> > enem;
+   std::shared_ptr<Player> player;
+   std::shared_ptr<Sprite> playerShip;
+   std::shared_ptr<Background> bg;
 
   public:
    // Single has public access to fps, displayWidth, and displayHeight
-  Single(int f, int w, int h) : Root(f, w, h) {
+ Single(int w, int h, int f) : Root(w, h, f) {
       load_assets();
    }
    
@@ -55,20 +54,19 @@ class Single : public Root {
    // virtuals from root
    void update(double);
    void draw();   
-   void input(const ALLEGRO_EVENT&);
-   
+
+   //void input(ALLEGRO_EVENT&);   
+   void input(ALLEGRO_KEYBOARD_STATE&);   
    bool is_game_over();
-   void updateScore(const ALLEGRO_COLOR&);
+   void updateScore(ALLEGRO_COLOR&);
    void spawn();
 
    
   private:   
    // HELPER FUNCTIONS - simplicity & readability
-   void drawPlayer();
    void drawProjectiles();
    void drawEnemies();
    void drawBackground();
-   void updatePlayerPosition(double);
    void updateProjectilePosition(double);
    void updateEnemyPosition(double);
    void updateBackgroundPosition(double);
@@ -77,7 +75,6 @@ class Single : public Root {
    void cullPlayer();
    void cullProjectiles();
    void cullEnemies();
-   void updatePlayerAction();
    void collision();
    void clean();
    void showGameOverMessage();

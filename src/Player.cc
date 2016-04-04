@@ -5,32 +5,26 @@
  * @author
  * @bug
  */
-#include "Player.h"
-/*
-// set methods
-void Player::setLives(int l) { lives = l; }
-void Player::setScore(int s) { score += s; }
-void Player::setFire(bool f) { fire = f; }
-void Player::setmFire(bool f) { mfire = f; }
 
-// get methods
-int Player::getLives() { return lives; }
-int Player::getSize() { return size; }
-bool Player::getDead() { return dead; }
-bool Player::getFire() { return fire; }
-bool Player::getmFire() { return mfire; }
-Point Player::getCentre() { return centre; }
-Vector Player::getProjSpeed() { return projSpeed; }
-Vector Player::getSpeed() { return speed; }
-ALLEGRO_COLOR Player::getColor() { return color; }
-*/
+#include "Input.h"
+#include "Point.h"
+#include "Vector.h"
+#include "Sprite.h"
+#include "Player.h"
+#include "Action.h"
+using namespace act;
+
+
+Player::Player(Point p, ALLEGRO_COLOR c, int frames) :
+  centre(p), color(c), fps(frames) 
+{ 
+  load_assets();
+  playerInput = new Input;
+}
+
 Player::~Player() {
-   if (fireDelay != NULL)
-      al_destroy_timer(fireDelay);
-   if (missileDelay != NULL)
-      al_destroy_timer(missileDelay);
-   
    al_destroy_font(scoreFont);
+   delete playerInput;
 }
 
 void Player::hit(int damage) {
@@ -39,60 +33,46 @@ void Player::hit(int damage) {
       dead = true;
 }
 
-void Player::input(const ALLEGRO_EVENT& inputEvent) {
-   switch (inputEvent.type) {      
-      case ALLEGRO_EVENT_KEY_DOWN:
-	 handleKeyDown(inputEvent);
-	 break;
-	 
-      case ALLEGRO_EVENT_KEY_UP:
-	 handleKeyUp(inputEvent);
-	 break;	 
-   }
+act::action Player::input(ALLEGRO_KEYBOARD_STATE& kb) {
+  if (al_key_down(&kb, ALLEGRO_KEY_W)) {
+    speed.y -= speed_modifier;    
+  }
+  if (al_key_down(&kb, ALLEGRO_KEY_D)) {
+    speed.x += speed_modifier;
+  }
+  if (al_key_down(&kb, ALLEGRO_KEY_S)) {
+    speed.y += speed_modifier;
+  }
+  if (al_key_down(&kb, ALLEGRO_KEY_A)) {
+    speed.x -= speed_modifier;
+  }
+  if (al_key_down(&kb, ALLEGRO_KEY_PAD_0)) {
+    return action::FIRE_PRIMARY;
+  }
+  if (al_key_down(&kb, ALLEGRO_KEY_PAD_DELETE)) {
+    return action::FIRE_SECONDARY;
+  }
+  if (al_key_down(&kb, ALLEGRO_KEY_ESCAPE)) {
+    return action::QUIT_GAME;
+  }
+
+  return action::NO_ACTION;
 }
 
-void Player::draw() {   
-   ship->draw_region(row, col, 47.0, 40.0, centre, 0);
+void Player::draw(std::shared_ptr<Sprite> sprite) {   
+   sprite->draw_region(row, col, 47.0, 40.0, centre, 0);
    drawRemainingLife();
    drawScore();
 }
 
-
 void Player::update(double dt) {
    centre = centre + speed * dt;
-   selectShipAnimation();
-   speed = Vector(0, 0);
+   selectShipAnimation(); // must happen before we reset our speed
+   speed = Vector(0, 0); // reset our speed
    checkBoundary();   
 }
 
-
-void Player::updatePlayerSpeed() {
-   // up
-   if (config.keys[0])
-      speed.yMod(-speed_modifier);
-   // down
-   if (config.keys[1])
-      speed.yMod(speed_modifier);
-   // right
-   if (config.keys[2]) 
-      speed.xMod(speed_modifier);   
-   // left
-   if (config.keys[3])
-      speed.xMod(-speed_modifier);
-}
-
-
 void Player::load_assets() {
-   // initialize some timers
-   
-   if ((fireDelay = al_create_timer(1.0 / fps)) == NULL)
-      throw std::runtime_error("Cannot create fireDelay timer");
-   al_start_timer(fireDelay);
-   
-   if ((missileDelay = al_create_timer(1.0 / fps)) == NULL)
-      throw std::runtime_error("Cannot create missileDelay timer");
-   al_start_timer(missileDelay);
-
    // set some initial variable values
    projSpeed = Vector(500, 0);
    speed_modifier = 250;
@@ -103,8 +83,6 @@ void Player::load_assets() {
    row = 0;
    col = 0;      
    dead = false;
-   fire = false;
-   mfire = false;
    
    // get path to assets
    ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
@@ -113,7 +91,6 @@ void Player::load_assets() {
 
    // load in assets
    scoreFont = al_load_font("ipag.ttf", 14, 0);
-   ship = make_shared<Sprite> ("Sprite.png");
 
    // destroy path
    al_destroy_path(path);
@@ -123,26 +100,6 @@ void Player::drawScore() {
    al_draw_textf(scoreFont, al_map_rgb(255, 255, 255), 100, 100,
    		 ALLEGRO_ALIGN_CENTRE, "Score: %i", score);   
 }
-
-void Player::firePrimaryWeapon() {
-   if (al_get_timer_count(fireDelay) > 5) {
-      fire = true;
-      al_stop_timer(fireDelay);
-      al_set_timer_count(fireDelay, 0);
-      al_start_timer(fireDelay);
-   }
-}
-
-
-void Player::fireSecondaryWeapon() {
-   if (al_get_timer_count(missileDelay) > 20) {
-      mfire = true;
-      al_stop_timer(missileDelay);
-      al_set_timer_count(missileDelay, 0);
-      al_start_timer(missileDelay);
-   }	    	 
-}
-
 
 void Player::selectShipAnimation() {
    if (speed.x > 0) {
@@ -191,24 +148,4 @@ void Player::drawRemainingLife() {
 		      al_map_rgb(0, 255, 0), 4);
 	 break;
    }
-}
-
-void Player::handleKeyDown(const ALLEGRO_EVENT& inputEvent) {
-   for (unsigned int i = 0; i < config.keys.size(); i++) 
-      if (inputEvent.keyboard.keycode == config.control[i])
-	 config.keys[i] = true;
-	 
-   if (inputEvent.keyboard.keycode == ALLEGRO_KEY_PAD_0) {
-      firePrimaryWeapon();
-   }
-	 
-   if (inputEvent.keyboard.keycode == ALLEGRO_KEY_PAD_DELETE) {
-      fireSecondaryWeapon();
-   }	    
-}
-
-void Player::handleKeyUp(const ALLEGRO_EVENT& inputEvent) {
-   for (unsigned int i = 0; i < config.keys.size(); i++) 
-      if (inputEvent.keyboard.keycode == config.control[i])
-	 config.keys[i] = false;	 	 
 }

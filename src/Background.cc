@@ -5,11 +5,11 @@
  * @author
  * @bug
  */
+#include "Point.h"
+#include "Vector.h"
 #include "Background.h"
-
-Background::Background(Vector bg_, Vector fg_) : bgSpeed(bg_), fgSpeed(fg_) {
-   load_assets();
-}
+#include "Sprite.h"
+#include <memory>
 
 void Background::load_assets() {
    // represents the middle of the image width-wise, and top height-wise

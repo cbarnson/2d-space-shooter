@@ -31,5 +31,6 @@ Dawson Meyer
 
 Admins
 --------------------
+Dawson Meyer
 Cody Barnson
 Josh Mohan

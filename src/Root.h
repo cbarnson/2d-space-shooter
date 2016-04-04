@@ -11,48 +11,27 @@
 
 #include "Drawable.h"
 #include "Updateable.h"
-#include "Projectile.h"
-#include "Enemy.h"
-#include "Player.h"
-#include "Sprite.h"
-
 #include <allegro5/allegro.h>
-#include <allegro5/allegro_primitives.h>
-#include <allegro5/allegro_image.h>
-#include <memory>
-#include <list>
-#include <iostream>
 
 class Root : public Drawable, public Updateable {
   public:
-   // root is initialized with some integer p (1 or 2), which represents the game mode
-   // ie. 1 - single player; 2 - multi player
-   // addPlay takes care of this setup process and assigns a key configuration for each
-   // player depending on the mode selected
-   int fps;
    int displayWidth;
    int displayHeight;
+   int framesPerSec;
    
-   Root(int f, int w, int h) {
-      fps = f;
-      displayWidth = w;
-      displayHeight = h;
-   }
+ Root(int w, int h, int f) : displayWidth(w), displayHeight(h), framesPerSec(f)
+   { }
    
    virtual ~Root() { }
    
-   // with this new structure we need to make sure that whenever something is added (Player,
-   // Enemy, Projectile, etc.) it is done through the Root class.  This means using some kind
-   // of flag (bool, int, etc. ) inside the object classes to signal that a change needs to
-   // occur from root
-
    // virtuals
    void draw() { }
    void update(double dt) { }
 
-   virtual void input(const ALLEGRO_EVENT&) = 0;   
+   virtual void input(ALLEGRO_KEYBOARD_STATE&) = 0;   
+   //virtual void input(ALLEGRO_EVENT&) = 0;   
    virtual bool is_game_over() = 0;
-   virtual void updateScore(const ALLEGRO_COLOR&) = 0;
+   virtual void updateScore(ALLEGRO_COLOR&) = 0;
 };
 
 #endif

@@ -2,13 +2,17 @@
 #define ENGINE_H
 
 #include <allegro5/allegro.h>
+#include <memory>
 #include "State.h"
 
+// forward declarations
+class Menu;
+class Root;
 class Input;
+using namespace gs;
 
 class Engine {
    std::shared_ptr<Root> root;
-   std::shared_ptr<Sprite> menuPng;
    
   public:
    Engine(int w, int h, int fps);
@@ -18,23 +22,24 @@ class Engine {
    void run();
    void draw();
    void update(double dt);
-   bool menuLoop();
-   void gameLoop();
    void shutdown();
-
-   void menuMessage();
+   void processGameLogic(float& prevTime, gs::state currentState);
+   void menuLoop();
+   void gameLoop(float& prevTime);
 
   private:
-   ALLEGRO_DISPLAY *display;
-   ALLEGRO_TIMER *timer;
-   ALLEGRO_EVENT_QUEUE *eventQueue;
-   int framesPerSec;
    int displayWidth;
    int displayHeight;
+   int framesPerSec;
+   ALLEGRO_TIMER *timer;
+   ALLEGRO_EVENT_QUEUE *eventQueue;
+   ALLEGRO_DISPLAY *display;
+
 
    bool running;
-   state gameState;
-   Input gameInput;
+   gs::state gameState;
+   Input *gameInput;
+   Menu *gameMenu;
    
 };
 

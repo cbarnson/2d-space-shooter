@@ -1,11 +1,17 @@
 #ifndef STATE_H
 #define STATE_H
 
-enum state {
-   MENU,
-   PLAY,
-   EXIT
-};
+// gs for game state
+namespace gs {
 
+  enum state {
+    MENU,
+    LOAD,
+    PLAY,
+    GAME_OVER,
+    EXIT
+  };
+
+}
 
 #endif

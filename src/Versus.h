@@ -9,8 +9,6 @@
 #define VERSUS_H
 
 #include "Root.h"
-#include "Projectile.h"
-#include "Player.h"
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
@@ -18,37 +16,44 @@
 #include <vector>
 #include <list>
 
-using std::vector;
-using std::list;
+class Projectile;
+class Player;
+class Background;
 
 class Versus : public Root {
-   list< shared_ptr<Projectile> > proj;
-   list< shared_ptr<Player> > play;
-   
-  public:
-  Versus(int f, int w, int h) : Root(f, w, h) {
-      setup();
-   }
-   ~Versus();
-   
-   void setup(); // has its own setup
-   
-   // virtuals   
-   void update(double);
-   void draw();
-   
-   bool is_game_over();
-   void updateScore(const ALLEGRO_COLOR&);
-   void input(const ALLEGRO_EVENT&);
+  ALLEGRO_TIMER* gameOverTimer;
+  ALLEGRO_FONT* gameOverFont;
+  std::list< std::shared_ptr<Projectile> > proj;
+  std::shared_ptr<Player> player1;
+  std::shared_ptr<Player> player2;
+  std::shared_ptr<Background> bg;
 
-  private:
-   void updatePlayerAction();
-   void updatePlayerPosition(double dt);
-   void updateProjectilePosition(double dt);
-   void collision();
-   void clean();
-   void cullPlayers();
-   void cullProjectiles();
+ public:
+ Versus(int f, int w, int h) : Root(f, w, h) {
+    load_assets();
+  }
+
+  ~Versus();
+   
+  void load_assets(); // has its own setup
+   
+  // virtuals   
+  void update(double);
+  void draw();
+   
+  bool is_game_over();
+  void updateScore(ALLEGRO_COLOR&);
+  void input(ALLEGRO_EVENT&);
+
+ private:
+  void updatePlayerAction();
+  void updatePlayerPosition(double dt);
+  void updateProjectilePosition(double dt);
+  void collision();
+  void clean();
+  void cullPlayers();
+  void cullProjectiles();
+  void setupBackground();
 
 };
 
