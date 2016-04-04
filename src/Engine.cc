@@ -6,7 +6,6 @@
 #include <allegro5/allegro_image.h>
 #include "Engine.h"
 #include "Menu.h"
-#include "Input.h"
 #include "State.h"
 #include "Action.h"
 #include "Root.h"
@@ -27,7 +26,6 @@ Engine::Engine(int w, int h, int fps) : displayWidth(w), displayHeight(h),
 
 Engine::~Engine() {
   // memory issues with this? leak?
-  delete gameInput;
   delete gameMenu;
 }
 
@@ -68,7 +66,6 @@ void Engine::init() {
   al_register_event_source(eventQueue, al_get_keyboard_event_source());
 
   // set up our menu and input systems
-  gameInput = new Input;
   gameMenu = new Menu(framesPerSec);
 }
 

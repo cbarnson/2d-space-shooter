@@ -6,7 +6,6 @@
  * @bug
  */
 
-#include "Input.h"
 #include "Point.h"
 #include "Vector.h"
 #include "Sprite.h"
@@ -19,12 +18,10 @@ Player::Player(Point p, ALLEGRO_COLOR c, int frames) :
   centre(p), color(c), fps(frames) 
 { 
   load_assets();
-  playerInput = new Input;
 }
 
 Player::~Player() {
    al_destroy_font(scoreFont);
-   delete playerInput;
 }
 
 void Player::hit(int damage) {
