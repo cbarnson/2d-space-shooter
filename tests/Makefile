@@ -12,16 +12,17 @@ CCFLAGS = -Wall -g -std=c++11 -I/home/lib2720/allegro/include
 SOURCES = $(wildcard *.cc)
 OBJECTS = $(SOURCES:.cc=.o)
 LIBDIR = -L/home/lib2720/allegro/lib
-LNFLAGS = -lallegro -lallegro_primitives -lallegro_image -lallegro_font -lallegro_ttf
+LNFLAGS = -lallegro -lallegro_primitives -lallegro_image -lallegro_font \
+-lallegro_ttf -ldl -lcppunit
 #LNFLAGS = `pkg-config --libs allegro-5.0` -lallegro_primitives \
 -lallegro_font -lallegro_ttf -lallegro_image
 
 
 # main target
-all: main
+all: test
 
 
-main: $(OBJECTS)
+test: $(OBJECTS)
 	$(CC) $(LIBDIR) -o $@ $^ $(LNFLAGS)
 #	$(CC) $(OBJECTS) -o main
 
@@ -46,7 +47,7 @@ main: $(OBJECTS)
 
 # clean out the directory but keep executables with command "clean"
 clean : 
-	rm -f *~ *.o *.d *.gch main
+	rm -f *~ *.o *.d *.gch test
 
 
 
