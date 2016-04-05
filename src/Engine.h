@@ -8,7 +8,6 @@
 // forward declarations
 class Menu;
 class Root;
-class Input;
 using namespace gs;
 
 class Engine {
@@ -38,7 +37,6 @@ class Engine {
 
    bool running;
    gs::state gameState;
-   Input *gameInput;
    Menu *gameMenu;
    
 };
