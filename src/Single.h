@@ -28,11 +28,15 @@ class Sprite;
 class Single : public Root {
    // important private members
    ALLEGRO_FONT* gameOverFont;
+   ALLEGRO_FONT* gameScoreFont;
    ALLEGRO_TIMER* gameOverTimer;
    
    // some player action timers
    ALLEGRO_TIMER* playerWeapon1;
    ALLEGRO_TIMER* playerWeapon2;
+
+   // respawn timer
+   ALLEGRO_TIMER* playerRespawn;
 
    std::list< std::shared_ptr<Projectile> > proj;
    std::list< std::shared_ptr<Enemy> > enem;
@@ -40,9 +44,13 @@ class Single : public Root {
    std::shared_ptr<Sprite> playerShip;
    std::shared_ptr<Background> bg;
 
+   bool gameOver;
+   int playerLives;
+   int playerScore;
+
   public:
    // Single has public access to fps, displayWidth, and displayHeight
- Single(int w, int h, int f) : Root(w, h, f) {
+  Single(int w, int h, int f) : Root(w, h, f), gameOver(false), playerLives(3), playerScore(0) {
       load_assets();
    }
    
@@ -61,9 +69,13 @@ class Single : public Root {
    void updateScore(ALLEGRO_COLOR&);
    void spawn();
 
+   void respawnPlayer();
    
   private:   
    // HELPER FUNCTIONS - simplicity & readability
+   void drawLives();
+   void drawScore();
+   
    void drawProjectiles();
    void drawEnemies();
    void drawBackground();
@@ -71,7 +83,6 @@ class Single : public Root {
    void updateEnemyPosition(double);
    void updateBackgroundPosition(double);
    void setupPlayer();
-   void setupBackground();
    void cullPlayer();
    void cullProjectiles();
    void cullEnemies();

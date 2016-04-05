@@ -14,15 +14,28 @@
 using namespace act;
 
 
-Player::Player(Point p, ALLEGRO_COLOR c, int frames) :
-  centre(p), color(c), fps(frames) 
+Player::Player(Point p, ALLEGRO_COLOR c) :
+  centre(p), color(c)
 { 
   load_assets();
 }
 
 Player::~Player() {
-   al_destroy_font(scoreFont);
+   
 }
+
+void Player::load_assets() {
+   // set some initial variable values
+   projSpeed = Vector(500, 0);
+   speed_modifier = 250;
+   speed = Vector(0,0);
+   lives = 3;
+   size = 16;
+   row = 0;
+   col = 0;      
+   dead = false;
+}
+
 
 void Player::hit(int damage) {
    lives = lives - damage;
@@ -59,44 +72,15 @@ act::action Player::input(ALLEGRO_KEYBOARD_STATE& kb) {
 void Player::draw(std::shared_ptr<Sprite> sprite) {   
    sprite->draw_region(row, col, 47.0, 40.0, centre, 0);
    drawRemainingLife();
-   drawScore();
 }
 
 void Player::update(double dt) {
    centre = centre + speed * dt;
    selectShipAnimation(); // must happen before we reset our speed
    speed = Vector(0, 0); // reset our speed
-   checkBoundary();   
+   checkBoundary();
 }
 
-void Player::load_assets() {
-   // set some initial variable values
-   projSpeed = Vector(500, 0);
-   speed_modifier = 250;
-   speed = Vector(0,0);
-   lives = 3;
-   size = 16;
-   score = 0;
-   row = 0;
-   col = 0;      
-   dead = false;
-   
-   // get path to assets
-   ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
-   al_append_path_component(path, "resources");
-   al_change_directory(al_path_cstr(path, '/'));
-
-   // load in assets
-   scoreFont = al_load_font("ipag.ttf", 14, 0);
-
-   // destroy path
-   al_destroy_path(path);
-}
-
-void Player::drawScore() {
-   al_draw_textf(scoreFont, al_map_rgb(255, 255, 255), 100, 100,
-   		 ALLEGRO_ALIGN_CENTRE, "Score: %i", score);   
-}
 
 void Player::selectShipAnimation() {
    if (speed.x > 0) {
