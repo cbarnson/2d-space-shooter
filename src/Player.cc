@@ -27,6 +27,8 @@ Player::~Player() {
 void Player::load_assets() {
    // set some initial variable values
    projSpeed = Vector(500, 0);
+   projSpeedU= Vector(500, -75);
+   projSpeedD= Vector(500, 75);
    speed_modifier = 250;
    speed = Vector(0,0);
    lives = 3;
@@ -56,7 +58,7 @@ act::action Player::input(ALLEGRO_KEYBOARD_STATE& kb) {
   if (al_key_down(&kb, ALLEGRO_KEY_A)) {
     speed.x -= speed_modifier;
   }
-  if (al_key_down(&kb, ALLEGRO_KEY_PAD_0)) {
+  if (al_key_down(&kb, ALLEGRO_KEY_PAD_0)||al_key_down(&kb, ALLEGRO_KEY_SPACE)) {
     return action::FIRE_PRIMARY;
   }
   if (al_key_down(&kb, ALLEGRO_KEY_PAD_DELETE)) {

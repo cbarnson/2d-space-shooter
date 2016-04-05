@@ -56,6 +56,7 @@ Point(double a=0.0, double b=0.0): x(a), y(b) {};
    Point operator + (Vector v) {
       return Point(x+v.x, y+v.y);
    }
+   
 
    void rollRandom() {
       x = rand() % 200 + 800;

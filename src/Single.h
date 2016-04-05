@@ -34,6 +34,7 @@ class Single : public Root {
    // some player action timers
    ALLEGRO_TIMER* playerWeapon1;
    ALLEGRO_TIMER* playerWeapon2;
+   ALLEGRO_TIMER* upgradeText;
 
    // respawn timer
    ALLEGRO_TIMER* playerRespawn;
@@ -79,6 +80,7 @@ class Single : public Root {
    void drawProjectiles();
    void drawEnemies();
    void drawBackground();
+   void drawWeaponUp();
    void updateProjectilePosition(double);
    void updateEnemyPosition(double);
    void updateBackgroundPosition(double);

@@ -34,6 +34,8 @@ class Player : public Updateable {
 
    bool dead;           // signals Player object has been killed
    Vector projSpeed;    // speed of projectiles from Player object
+   Vector projSpeedU;   // speed of diagonal projectile
+   Vector projSpeedD;   // speed of diagonal projectile
    int lives;           // lives remaining of Player object before destroyed
    int speed_modifier;  // affects speed of Player object
    int size;            // ship size in pixels

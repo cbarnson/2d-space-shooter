@@ -39,6 +39,10 @@ void Single::load_assets() {
       std::cerr << "Cannot initialize game over timer\n";
       exit(1);
    }
+    if ((upgradeText = al_create_timer( 1.0 / framesPerSec )) == NULL) {
+      std::cerr << "Cannot initialize upgrade text timer\n";
+      exit(1);
+   }
    if ((playerRespawn = al_create_timer( 1.0 / framesPerSec )) == NULL) {
       std::cerr << "Cannot initialize player respawn timer\n";
       exit(2);
@@ -86,15 +90,42 @@ void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
 	    player.reset();
 	    return;
 	 case action::FIRE_PRIMARY:
-	    if (al_get_timer_count(playerWeapon1) > 5) {
+	    if (al_get_timer_count(playerWeapon1) > 5 && playerScore<30) {
 	       proj.push_back(std::make_shared<Laser> (player->centre, player->color,
 						       player->projSpeed));	
 	       al_stop_timer(playerWeapon1);
 	       al_set_timer_count(playerWeapon1, 0);
 	       al_start_timer(playerWeapon1);
 	    }
-	    break;
-	 case action::FIRE_SECONDARY:
+	    if(al_get_timer_count(playerWeapon1) > 5 && playerScore>=30 && playerScore<100)
+	    {
+	       Point playerloc= player->centre;
+	       playerloc.y=playerloc.y+(player->size/2);
+	       proj.push_back(std::make_shared<Laser> (playerloc, player->color,
+						       player->projSpeed));
+	       playerloc.y=playerloc.y-player->size;
+	       proj.push_back(std::make_shared<Laser> (playerloc, player->color,
+						       player->projSpeed));
+	       al_stop_timer(playerWeapon1);
+	       al_set_timer_count(playerWeapon1, 0);
+	       al_start_timer(playerWeapon1);
+	    }
+	    if(al_get_timer_count(playerWeapon1) > 5 && playerScore>=100)
+	    {
+	       Point playerloc= player->centre;
+	       playerloc.y=playerloc.y+(player->size/2);
+	       proj.push_back(std::make_shared<Laser> (playerloc, player->color,
+						       player->projSpeedD));
+	       playerloc.y=playerloc.y-player->size;
+	       proj.push_back(std::make_shared<Laser> (playerloc, player->color,
+						       player->projSpeedU));
+	       proj.push_back(std::make_shared<Laser> (player->centre, player->color, player->projSpeed));
+	       al_stop_timer(playerWeapon1);
+	       al_set_timer_count(playerWeapon1, 0);
+	       al_start_timer(playerWeapon1);
+	    }
+	       break;
+	       case action::FIRE_SECONDARY:
 	    if (al_get_timer_count(playerWeapon2) > 20) {
 	       proj.push_back(std::make_shared<Missile> (player->centre, player->color,
 							 player->projSpeed));
@@ -128,6 +159,7 @@ void Single::draw() {
    drawBackground();
    drawLives();
    drawScore();
+   drawWeaponUp();
    if (gameOver) showGameOverMessage();
    else if (player) player->draw(playerShip);
    drawProjectiles();
@@ -176,6 +208,20 @@ void Single::drawLives() {
 		    "%i LIVES REMAINING",
 		    playerLives);      
    }
+}
+void Single::drawWeaponUp(){
+   if(playerScore>=30)
+   {
+      if (!al_get_timer_started(upgradeText))
+      { al_start_timer(upgradeText);}
+      if(al_get_timer_count(upgradeText)<100){
+	 al_draw_text(gameScoreFont, al_map_rgb(255, 255, 255), 400, 65,
+		      ALLEGRO_ALIGN_CENTRE, "WEAPON UPGRADED");
+      }
+      //al_stop_timer(upgradeText); 
+   }
+   //al_stop_timer(upgradeText);
+
 }
 
 void Single::drawScore() {
@@ -268,13 +314,14 @@ void Single::checkCollidingEnemyWithPlayer() {
    if (!enem.empty() && player) {
       for (std::list< std::shared_ptr<Enemy> >::iterator it_enem = enem.begin();
 	   it_enem != enem.end(); ++it_enem) {
+	 if (!(*it_enem)->getDead()){
 	 if (doHitboxesIntersect(player->centre, player->size,
 				 (*it_enem)->getCentre(), 
 				 (*it_enem)->getSize())) {
 	    // collision - register damage
 	    (*it_enem)->hit();
 	    player->hit(1);
-		
+	 }
 	 }	       
       }
    }
