@@ -21,26 +21,21 @@ Point Enemy::getCentre() { return centre; }
 bool Enemy::getDead() { return dead; }   
 bool Enemy::getFire() { return fire; }
 bool Enemy::getdAnim_complete() { return dAnim_complete; }
-   
-void Enemy::load_assets() {
-   ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
-   al_append_path_component(path, "resources");
-   al_change_directory(al_path_cstr(path, '/'));
 
-   death = make_shared<Sprite> ("explode.png");
-   enemySprite = make_shared<Sprite> ("EnemyBasic.png");
+
+
+void Enemy::load_assets() {
+   //ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
+   //al_append_path_component(path, "resources");
+   //al_change_directory(al_path_cstr(path, '/'));
+
+   //death = make_shared<Sprite> ("explode.png");
+   //enemySprite = make_shared<Sprite> ("EnemyBasic.png");
    //death = new Sprite("explode.png");
 
-   al_destroy_path(path);
+   //al_destroy_path(path);
 }
 
-void Enemy::deathAnim() {
-   // dAnim specifies the column of the region to draw
-   // there are 5 frames of the death anim
-   // dAnim ranges from 0 to 4   
-   death->draw_death_anim(dAnim, centre, 0);
-   dAnim++; // move forward to the next frame of the animation for the next call
-}
 
 // decrement enemy life by a value of 1
 void Enemy::hit() {
@@ -51,21 +46,23 @@ void Enemy::hit() {
 
 	
 // draw image to display of enemy ship
-void Enemy::draw() {
+void Enemy::draw(std::shared_ptr<Sprite> enemyShip, std::shared_ptr<Sprite> enemyDeath) {
    if (!dead) {
-      // draw primitive representing the enemy hitbox
-      /*
-      al_draw_rectangle(centre.x - size, centre.y - size,
-			centre.x + size, centre.y + size,
-			color, 3);*/
-      enemySprite->draw_tinted(centre, color, 0);
+      enemyShip->draw_tinted(centre, color, 0);
    }
    else {
       // enemy has been hit and killed, proceed through death animation sequence
-      //cout << "in enemy draw pre death anim draw\n";
-      if (dAnim < 5) deathAnim();
+      if (dAnim < 5) deathAnim(enemyDeath);
       else dAnim_complete = true;
    }      
+}
+
+void Enemy::deathAnim(std::shared_ptr<Sprite> enemyDeath) {
+   // dAnim specifies the column of the region to draw
+   // there are 5 frames of the death anim
+   // dAnim ranges from 0 to 4   
+   enemyDeath->draw_death_anim(dAnim, centre, 0);
+   dAnim++; // move forward to the next frame of the animation for the next call
 }
 
 // update position of enemy ships

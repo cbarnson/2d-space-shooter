@@ -23,35 +23,36 @@ class Enemy;
 class Player;
 class Background;
 class Sprite;
+class Font;
 
 /**
  * @class Single
  */
 class Single : public Root {
-   // important private members
-   ALLEGRO_FONT* gameOverFont;
-   ALLEGRO_FONT* gameScoreFont;
-   //ALLEGRO_TIMER* gameOverTimer;
+
+   // fonts
+   std::shared_ptr<Font> gameOverFont;
+   std::shared_ptr<Font> gameScoreFont;
    
-   // some player action timers
-   //ALLEGRO_TIMER* playerWeapon1;
-   //ALLEGRO_TIMER* playerWeapon2;
-   //ALLEGRO_TIMER* upgradeText;
-
-   // respawn timer
-   //ALLEGRO_TIMER* playerRespawn;
-
+   // timers
    std::shared_ptr<Timer> gameOverTimer;
    std::shared_ptr<Timer> playerWeapon1;
    std::shared_ptr<Timer> playerWeapon2;
    std::shared_ptr<Timer> playerRespawn;
    std::shared_ptr<Timer> upgradeText;   
 
+   // base classes
    std::list< std::shared_ptr<Projectile> > proj;
-   std::list< std::shared_ptr<Enemy> > enem;
+   std::list< std::shared_ptr<Enemy> > enem;   
    std::shared_ptr<Player> player;
-   std::shared_ptr<Sprite> playerShip;
+
+   // background
    std::shared_ptr<Background> bg;
+
+   // sprites
+   std::shared_ptr<Sprite> playerShip;
+   std::shared_ptr<Sprite> enemyShip;
+   std::shared_ptr<Sprite> enemyDeath;
 
    bool gameOver;
    int playerLives;
@@ -60,19 +61,9 @@ class Single : public Root {
   public:
    // Single has public access to fps, displayWidth, and displayHeight
    Single(int w, int h, int f);
-   /*
-  Single(int w, int h, int f) : Root(w, h, f),
-      gameOver(false),
-      playerLives(3),
-      playerScore(0)
-      {
-	 load_assets();
-      }
-   */
    ~Single();
 
    void shutdown();
-   // game setup
    void init();
    
    // virtuals from root
@@ -80,41 +71,45 @@ class Single : public Root {
    void draw();
 
    void addLaser(const Point&, const ALLEGRO_COLOR&, const Vector&);
-   void addMissile(Point cen, ALLEGRO_COLOR col, Vector spd);
+   void addMissile(const Point&, const ALLEGRO_COLOR&, const Vector&);
 
    //void input(ALLEGRO_EVENT&);   
    void input(ALLEGRO_KEYBOARD_STATE&);   
-   bool is_game_over();
+   bool is_game_over() const;
    void updateScore(ALLEGRO_COLOR&);
+   
    void spawn();
-
    void respawnPlayer();
    
   private:   
    // HELPER FUNCTIONS - simplicity & readability
    void drawLives();
-   void drawScore();
+   //void drawScore();
    
    void drawProjectiles();
    void drawEnemies();
-   void drawBackground();
-   //void drawWeaponUp();
+   //void drawBackground();
+
    void updateProjectilePosition(double);
    void updateEnemyPosition(double);
-   void updateBackgroundPosition(double);
+   //void updateBackgroundPosition(double);
+   
    void setupPlayer();
+   
    void cullPlayer();
    void cullProjectiles();
    void cullEnemies();
-   void collision();
+   
    void clean();
    void showGameOverMessage();
+   
+   void collision();
    void checkCollisionOnPlayer();
    void checkCollisionOnEnemies();
    void checkCollidingEnemyWithPlayer();
    
    bool doHitboxesIntersect(const Point&, const int&,
-			    const Point&, const int&);
+			    const Point&, const int&);   
    bool doColorsMatch(const ALLEGRO_COLOR&, const ALLEGRO_COLOR&);
    bool isPointBoxCollision(const Point&, const Point&, const int&);
 

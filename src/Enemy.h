@@ -8,7 +8,7 @@
 #ifndef ENEMY_H
 #define ENEMY_H
 
-#include "Drawable.h"
+//#include "Drawable.h"
 #include "Updateable.h"
 #include "Point.h"
 #include "Vector.h"
@@ -24,15 +24,15 @@ using std::shared_ptr;
 using std::make_shared;
 using std::cout;
 
-class Enemy : public Drawable, public Updateable {
+class Enemy : public Updateable {
   private:
    Point centre, end; 
    ALLEGRO_COLOR color;
    Vector speed;
 	
    ALLEGRO_TIMER *fireDelay;
-   shared_ptr<Sprite> death;
-   shared_ptr<Sprite> enemySprite;
+   //shared_ptr<Sprite> death;
+   //shared_ptr<Sprite> enemySprite;
 
    
    Vector projSpeed;
@@ -77,9 +77,9 @@ class Enemy : public Drawable, public Updateable {
    bool getFire();    
    void update(double dt);
    void load_assets();
-   void deathAnim();
+   void deathAnim(std::shared_ptr<Sprite>);
    void hit();
-   void draw();
+   void draw(std::shared_ptr<Sprite> ship, std::shared_ptr<Sprite> death);
 };
 
 

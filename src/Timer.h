@@ -11,8 +11,7 @@ class Timer {
 
    void startTimer();
    void stopTimer();
-   void resetTimer();
-   void resetTimerAndStop();
+   void resetCount();
    
    int getCount() const;
    bool isRunning() const;

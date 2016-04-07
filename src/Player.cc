@@ -17,18 +17,8 @@ using namespace act;
 Player::Player(Point p, ALLEGRO_COLOR c) :
   centre(p), color(c)
 { 
-  load_assets();
-}
-
-Player::~Player() {
-   
-}
-
-void Player::load_assets() {
    // set some initial variable values
    projSpeed = Vector(500, 0);
-   projSpeedU= Vector(500, -75);
-   projSpeedD= Vector(500, 75);
    speed_modifier = 250;
    speed = Vector(0,0);
    lives = 3;
@@ -36,6 +26,11 @@ void Player::load_assets() {
    row = 0;
    col = 0;      
    dead = false;
+}
+
+// destructor
+Player::~Player() {
+   
 }
 
 

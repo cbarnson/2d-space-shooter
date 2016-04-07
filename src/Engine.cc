@@ -10,7 +10,6 @@
 #include "Action.h"
 #include "Root.h"
 #include "Single.h"
-//#include "Timer.h"
 using namespace act;
 using namespace gs;
 
@@ -56,7 +55,6 @@ void Engine::init() {
    if (!al_install_keyboard()) {
       std::cerr << "Could not install keyboard\n";
    }
-   //al_register_keyboard();
    al_register_event_source(eventQueue, al_get_keyboard_event_source());
 
 }

@@ -34,26 +34,55 @@ class Player : public Updateable {
 
    bool dead;           // signals Player object has been killed
    Vector projSpeed;    // speed of projectiles from Player object
-   Vector projSpeedU;   // speed of diagonal projectile
-   Vector projSpeedD;   // speed of diagonal projectile
    int lives;           // lives remaining of Player object before destroyed
    int speed_modifier;  // affects speed of Player object
    int size;            // ship size in pixels
    int row;
    int col;
-   
+
+   /**
+    * @constructor
+    */
    Player(Point p, ALLEGRO_COLOR c);
 
+   /**
+    * @destructor
+    */
    ~Player();
 
+   /**
+    * @fn hit(...)
+    * @brief 
+    * @param 
+    */
    void hit(int);
+
+   
+   /**
+    * @fn draw(...)
+    * @brief
+    * @param
+    */
    void draw(std::shared_ptr<Sprite>);
+
+   
+   /**
+    * @fn update(...)
+    * @brief
+    * @param
+    */
    void update(double);
+
+   
+   /**
+    * @fn input(...)
+    * @brief
+    * @param
+    */
    act::action input(ALLEGRO_KEYBOARD_STATE&);
 
   private:
    // HELPER FUNCTIONS 
-   void load_assets();
    void selectShipAnimation();
    void checkBoundary();
    void drawRemainingLife();

@@ -22,8 +22,10 @@
 #include "Sprite.h"
 #include "Action.h"
 #include "Timer.h"
+#include "Font.h"
 using namespace act;
 
+// constructor
 Single::Single(int w, int h, int f) : Root(w, h, f), gameOver(false), playerLives(3),
 				      playerScore(0)
 {
@@ -39,36 +41,38 @@ Single::Single(int w, int h, int f) : Root(w, h, f), gameOver(false), playerLive
    playerWeapon2->startTimer();
 }
 
-
+// destructor
 Single::~Single() {
-   // clean up allegro timers
-   al_destroy_font(gameOverFont);
-   al_destroy_font(gameScoreFont);
+   
    proj.clear();
    enem.clear();
+   
 }
 
-
+// initialize Single player mode
 void Single::init() {
-
 
    // create Player object
    setupPlayer();
 
-   // specify path for assets to be loaded
+   // go to resources directory
    ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
    al_append_path_component(path, "resources");
    al_change_directory(al_path_cstr(path, '/'));
    
-   // load various images
-   bg = std::make_shared<Background> (Vector(50, 0), Vector(90, 0));
-   playerShip = std::make_shared<Sprite> ("Sprite.png");
+   // fonts
+   gameOverFont = std::make_shared<Font> ("DavidCLM-BoldItalic.ttf", 64);
+   gameScoreFont = std::make_shared<Font> ("ipag.ttf", 18);
 
-   // load font
-   gameOverFont = al_load_font("DavidCLM-BoldItalic.ttf", 64, 0);
-   gameScoreFont = al_load_font("ipag.ttf", 18, 0);
+   // background
+   bg = std::make_shared<Background> (Vector(50, 0), Vector(90, 0));
+
+   // sprites
+   playerShip = std::make_shared<Sprite> ("Sprite.png");
+   enemyShip = std::make_shared<Sprite> ("EnemyBasic.png");
+   enemyDeath = std::make_shared<Sprite> ("explode.png");
    
-   // delete path to these assets now that they are loaded
+   // delete path 
    al_destroy_path(path);
 }
 
@@ -90,7 +94,8 @@ void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
 	       
 	       addLaser(player->centre, player->color, player->projSpeed);
 	       playerWeapon1->stopTimer();
-	       playerWeapon1->resetTimer();
+	       playerWeapon1->resetCount();
+	       playerWeapon1->startTimer();
 	    }
 	    
 	    // double
@@ -101,7 +106,8 @@ void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
 	       addLaser(player->centre + Point(0, -5), player->color, player->projSpeed);
 	       
 	       playerWeapon1->stopTimer();
-	       playerWeapon1->resetTimer();
+	       playerWeapon1->resetCount();
+	       playerWeapon1->startTimer();
 	    }
 	    
 	    // triple
@@ -117,7 +123,8 @@ void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
 			player->projSpeed + Vector(0, -75));
 	       
 	       playerWeapon1->stopTimer();
-	       playerWeapon1->resetTimer();
+	       playerWeapon1->resetCount();
+	       playerWeapon1->startTimer();
 	    }
 	    break;
 	 case action::FIRE_SECONDARY:	    	    
@@ -126,7 +133,8 @@ void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
 	       addMissile(player->centre, player->color, player->projSpeed);
 
 	       playerWeapon2->stopTimer();
-	       playerWeapon2->resetTimer();
+	       playerWeapon2->resetCount();
+	       playerWeapon2->startTimer();
 	    }
 	    break;
 	 default:
@@ -141,19 +149,19 @@ void Single::addLaser(const Point& cen, const ALLEGRO_COLOR& col, const Vector& 
 }
 
 
-void Single::addMissile(Point cen, ALLEGRO_COLOR col, Vector spd) {
+void Single::addMissile(const Point& cen, const ALLEGRO_COLOR& col, const Vector& spd) {
    proj.push_back(std::make_shared<Missile> (cen, col, spd));
 }
 
 
-bool Single::is_game_over() {
+bool Single::is_game_over() const {
    return (gameOverTimer->getCount() >= 80) && gameOver;
 }
 
 
 void Single::update(double dt) {
-   updateBackgroundPosition(dt);
-   
+   //updateBackgroundPosition(dt);
+   bg->update(dt);
    if (player) player->update(dt);
    else if (!player && playerLives <= 0) gameOver = true;
    else respawnPlayer();
@@ -166,45 +174,40 @@ void Single::update(double dt) {
 
 
 void Single::draw() {
-   drawBackground();
+   //drawBackground();
+   bg->draw();
    drawLives();
-   drawScore();
-   //drawWeaponUp();
+   gameScoreFont->drawTextF(al_map_rgb(255, 255, 255), 100, 100,"Score: %i", playerScore);
+   
    if (gameOver) showGameOverMessage();
    else if (player) player->draw(playerShip);
-   drawProjectiles();
-   drawEnemies();
+   
+   drawProjectiles();   
+   drawEnemies(); // calls draw on each enemy, provides Sprite pointer
 }
 
 void Single::showGameOverMessage() {
    if (!gameOverTimer->isRunning())
       gameOverTimer->startTimer();
+   
    if (gameOverTimer->getCount() < 80) {
-      al_draw_text(gameOverFont, al_map_rgb(255, 0, 0), 400, 300,
-		   ALLEGRO_ALIGN_CENTRE,
-		   "GAME OVER");      
+      gameOverFont->drawTextCentered(al_map_rgb(255, 0, 0), "GAME OVER");
    }
-   else
-      gameOverTimer->stopTimer();   
+   
+   else {
+      gameOverTimer->stopTimer();
+   }
 }
 
 void Single::respawnPlayer() {
    if (!playerRespawn->isRunning())
       playerRespawn->startTimer();
+   
    if (playerRespawn->getCount() > 80) {
       setupPlayer();
       playerRespawn->stopTimer();
-      playerRespawn->resetTimerAndStop();
+      playerRespawn->resetCount();
    }
-   /*
-   if (!al_get_timer_started(playerRespawn))
-      al_start_timer(playerRespawn);
-   
-   if (al_get_timer_count(playerRespawn) > 80) {
-      setupPlayer();
-      al_stop_timer(playerRespawn);
-      al_set_timer_count(playerRespawn, 0);
-      }*/
 }
 
 
@@ -218,36 +221,17 @@ void Single::drawLives() {
    if (playerLives > 2)
       al_draw_rectangle(displayWidth - 150, 50, displayWidth - 130, 70,
 			al_map_rgb(0, 255, 0) , 5);
+   
    if (!player && playerLives > 0) {
-      al_draw_textf(gameOverFont, al_map_rgb(255, 0, 0), 400, 300,
-		    ALLEGRO_ALIGN_CENTRE,
-		    "%i LIVES REMAINING",
-		    playerLives);      
+
+      gameOverFont->drawTextCenteredF(al_map_rgb(255, 0, 0), "%i LIVES REMAINING", playerLives);
    }
 }
 /*
-void Single::drawWeaponUp(){
-   
-   
-   if(playerScore>=30)
-   {
-      if (!al_get_timer_started(upgradeText))
-      { al_start_timer(upgradeText);}
-      if(al_get_timer_count(upgradeText)<100){
-	 al_draw_text(gameScoreFont, al_map_rgb(255, 255, 255), 400, 65,
-		      ALLEGRO_ALIGN_CENTRE, "WEAPON UPGRADED");
-      }
-      //al_stop_timer(upgradeText); 
-   }
-   //al_stop_timer(upgradeText);
-
+void Single::drawScore() {
+   gameScoreFont->drawTextF(al_map_rgb(255, 255, 255), 100, 100,"Score: %i", playerScore);
 }
 */
-void Single::drawScore() {
-   al_draw_textf(gameScoreFont, al_map_rgb(255, 255, 255), 100, 100,
-   		 ALLEGRO_ALIGN_CENTRE, "Score: %i", playerScore);   
-}
-
 void Single::clean() {
    cullPlayer();
    cullProjectiles();
@@ -486,11 +470,11 @@ void Single::updateEnemyPosition(double dt) {
    if(enem.size() <= 2)
       spawn();
 }
-
+/*
 void Single::updateBackgroundPosition(double dt) {
    bg->update(dt);
 }
-
+*/
 
 
 void Single::drawProjectiles() {
@@ -506,14 +490,15 @@ void Single::drawEnemies() {
    if (!enem.empty()) {
       for (std::list< std::shared_ptr<Enemy> >::iterator it = enem.begin(); 
 	   it != enem.end(); ++it) {
-	 (*it)->draw();
+	 (*it)->draw(enemyShip, enemyDeath);
       }
    }
 }
-
+/*
 void Single::drawBackground() {
    bg->draw();
 }
+*/
 void Single::setupPlayer() {
    player = std::make_shared<Player> (Point(215, 245),
 				      al_map_rgb(0,200,0));

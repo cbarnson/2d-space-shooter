@@ -19,17 +19,12 @@ Menu::~Menu() {
 
 void Menu::init() {
 
-   //if ((timer = al_create_timer(1.0 / framesPerSec)) == NULL) 
-   //throw std::runtime_error("Cannot create allegro menu timer");
-
    ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
    al_append_path_component(path, "resources");
    al_change_directory(al_path_cstr(path, '/'));
    
    splash = std::make_shared<Sprite> ("Titlescreen.png"); 
    al_destroy_path(path);
-
-
 }
 
 void Menu::draw() {
@@ -44,9 +39,11 @@ bool Menu::animation() {
       splash->draw_menu_anim(mAnim++, 0);
       if (mAnim > 6) {
 	 mAnim = 0;
+	 _timer->stopTimer();
+	 _timer->resetCount();
 	 return false; // animation complete, reset mAnim
       }
-      _timer->resetTimerAndStop();
+      _timer->resetCount();
    }
    else 
       splash->draw_menu_anim(mAnim, 0);
