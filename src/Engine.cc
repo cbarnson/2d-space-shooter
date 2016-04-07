@@ -29,34 +29,30 @@ Engine::~Engine() {
 // sources
 void Engine::init() {
    al_init();
-
    if ((display = al_create_display(displayWidth, displayHeight)) == NULL) {
       std::cerr << "Cannot initialize the display\n";
       exit(1); // non-zero argument means "trouble"
    }
-
    // initialize addons
    al_init_primitives_addon();
    al_init_font_addon();
    al_init_ttf_addon();
    al_init_image_addon();
-
    // initialize our timers
    if ((_timer = al_create_timer(1.0 / framesPerSec)) == NULL)
       throw std::runtime_error("Cannot create allegro timer");
    if ((eventQueue = al_create_event_queue()) == NULL)
       throw std::runtime_error("Cannot create event queue");
-
    // register our allegro eventQueue
    al_register_event_source(eventQueue, al_get_display_event_source(display)); 
    al_register_event_source(eventQueue, al_get_timer_event_source(_timer));
    al_start_timer(_timer);
-
+   // install keyboard
    if (!al_install_keyboard()) {
       std::cerr << "Could not install keyboard\n";
    }
+   // register keyboard
    al_register_event_source(eventQueue, al_get_keyboard_event_source());
-
 }
 
 
@@ -75,7 +71,7 @@ void Engine::shutdown() {
 // repeatedly call the state manager function until the gameState is EXIT
 void Engine::run() {
    float prevTime = 0;
-
+   // main engine loop
    while (gameState != state::EXIT) {
       processGameLogic(prevTime, gameState);
    }
@@ -108,13 +104,13 @@ void Engine::menuLoop() {
    ALLEGRO_EVENT event;
    ALLEGRO_KEYBOARD_STATE kb;
    al_wait_for_event(eventQueue, &event);
-
+   // display closes
    if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
       gameState = state::EXIT;
       shutdown();
       return;
    }
-
+   // timer
    if (event.type == ALLEGRO_EVENT_TIMER) {
       if (gameState == state::LOAD) { // triggers load animation
 	 if (!gameMenu->animation()) { // load animation complete
@@ -128,7 +124,7 @@ void Engine::menuLoop() {
 	 al_flip_display();
       }
    }
-    
+   // input
    al_get_keyboard_state(&kb);
    if (al_key_down(&kb, ALLEGRO_KEY_1)) {
       gameState = state::LOAD;
@@ -138,6 +134,7 @@ void Engine::menuLoop() {
       }
       return;
    }
+   // escape
    if (al_key_down(&kb, ALLEGRO_KEY_ESCAPE)) {
       gameState = state::EXIT;
       shutdown();
@@ -150,32 +147,30 @@ void Engine::gameLoop(float& prevTime) {
    ALLEGRO_KEYBOARD_STATE kb;
    bool redraw = true;
    float crtTime;
-
    al_wait_for_event(eventQueue, &event);
-  
+   // display closes
    if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
       gameState = state::EXIT;
       shutdown();
       return;
    }
-   
+   // timer
    if (event.type == ALLEGRO_EVENT_TIMER) {
       crtTime = al_current_time();
       update(crtTime - prevTime);
       prevTime = crtTime;
       redraw = true;
    }
-
-   
+   // input
    al_get_keyboard_state(&kb);
-   root->input(kb);  
-  
+   root->input(kb);
+   // render
    if (redraw && al_is_event_queue_empty(eventQueue)) {
       redraw = false;      
-      draw(); // render our imagery
+      draw(); 
       al_flip_display();
    }   
-
+   // check if game over
    if (root->is_game_over()) {
       gameState = state::MENU;
       root.reset();
@@ -183,18 +178,17 @@ void Engine::gameLoop(float& prevTime) {
   
 }
 
-
+// update the game mode
 void Engine::update(double dt) {
    if (root) {
       root->update(dt);
    }
 }
 
-
+// draws for the game mode
 void Engine::draw() {
    if (root) {
       root->draw();
-      //al_flip_display();
    }
 }
 

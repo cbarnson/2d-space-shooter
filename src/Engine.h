@@ -1,3 +1,10 @@
+/**
+ * @file Engine.h
+ * @brief
+ *
+ * @author
+ * @bug
+ */
 #ifndef ENGINE_H
 #define ENGINE_H
 
@@ -8,11 +15,10 @@
 // forward declarations
 class Menu;
 class Root;
-//class Timer;
 using namespace gs;
 
 class Engine {
-   std::shared_ptr<Root> root;
+   std::shared_ptr<Root> root; // interface for game modes
    
   public:
    Engine(int w, int h, int fps);

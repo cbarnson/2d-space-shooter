@@ -1,3 +1,11 @@
+/**
+ * @file Timer.cc
+ * @brief
+ *
+ * @author
+ * @bug
+ */
+
 #include "Timer.h"
 #include <iostream>
 #include <stdexcept>

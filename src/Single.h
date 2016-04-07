@@ -12,7 +12,6 @@
 #include <allegro5/allegro_font.h>
 #include <list>
 #include <memory>
-//#include "Root.h"
 
 // forward declaring classes is preferable to include "....h" in headers
 struct Point;
@@ -56,6 +55,7 @@ class Single : public Root {
 
    bool gameOver;
    int playerLives;
+   int playerScoreTotal;
    int playerScore;
 
   public:
@@ -73,7 +73,6 @@ class Single : public Root {
    void addLaser(const Point&, const ALLEGRO_COLOR&, const Vector&);
    void addMissile(const Point&, const ALLEGRO_COLOR&, const Vector&);
 
-   //void input(ALLEGRO_EVENT&);   
    void input(ALLEGRO_KEYBOARD_STATE&);   
    bool is_game_over() const;
    void updateScore(ALLEGRO_COLOR&);
@@ -84,15 +83,12 @@ class Single : public Root {
   private:   
    // HELPER FUNCTIONS - simplicity & readability
    void drawLives();
-   //void drawScore();
    
    void drawProjectiles();
    void drawEnemies();
-   //void drawBackground();
 
    void updateProjectilePosition(double);
    void updateEnemyPosition(double);
-   //void updateBackgroundPosition(double);
    
    void setupPlayer();
    

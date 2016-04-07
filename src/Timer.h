@@ -1,3 +1,10 @@
+/**
+ * @file Timer.h
+ * @brief
+ *
+ * @author
+ * @bug
+ */
 #ifndef TIMER_H
 #define TIMER_H
 

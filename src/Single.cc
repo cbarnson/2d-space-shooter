@@ -27,18 +27,9 @@ using namespace act;
 
 // constructor
 Single::Single(int w, int h, int f) : Root(w, h, f), gameOver(false), playerLives(3),
-				      playerScore(0)
+				      playerScoreTotal(0)
 {
-   init();
-   
-   gameOverTimer = std::make_shared<Timer> (framesPerSec);
-   playerWeapon1 = std::make_shared<Timer> (framesPerSec);
-   playerWeapon2 = std::make_shared<Timer> (framesPerSec);
-   playerRespawn = std::make_shared<Timer> (framesPerSec);
-   upgradeText = std::make_shared<Timer> (framesPerSec);
-
-   playerWeapon1->startTimer();
-   playerWeapon2->startTimer();
+   init();   
 }
 
 // destructor
@@ -51,27 +42,29 @@ Single::~Single() {
 
 // initialize Single player mode
 void Single::init() {
-
+   // timers
+   gameOverTimer = std::make_shared<Timer> (framesPerSec);
+   playerWeapon1 = std::make_shared<Timer> (framesPerSec);
+   playerWeapon2 = std::make_shared<Timer> (framesPerSec);
+   playerRespawn = std::make_shared<Timer> (framesPerSec);
+   upgradeText = std::make_shared<Timer> (framesPerSec);
+   playerWeapon1->startTimer();
+   playerWeapon2->startTimer();
    // create Player object
    setupPlayer();
-
    // go to resources directory
    ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
    al_append_path_component(path, "resources");
-   al_change_directory(al_path_cstr(path, '/'));
-   
+   al_change_directory(al_path_cstr(path, '/'));   
    // fonts
    gameOverFont = std::make_shared<Font> ("DavidCLM-BoldItalic.ttf", 64);
    gameScoreFont = std::make_shared<Font> ("ipag.ttf", 18);
-
    // background
    bg = std::make_shared<Background> (Vector(50, 0), Vector(90, 0));
-
    // sprites
    playerShip = std::make_shared<Sprite> ("Sprite.png");
    enemyShip = std::make_shared<Sprite> ("EnemyBasic.png");
-   enemyDeath = std::make_shared<Sprite> ("explode.png");
-   
+   enemyDeath = std::make_shared<Sprite> ("explode.png");   
    // delete path 
    al_destroy_path(path);
 }
@@ -80,12 +73,10 @@ void Single::init() {
 // INPUT -----------------------------
 void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
    if (player) {
-      switch (player->input(kb)) {
-	 
+      switch (player->input(kb)) {	 
 	 case action::QUIT_GAME: // player indicated they wish to quit the game
 	    player.reset();
-	    return;
-	    
+	    return;	    
 	 case action::FIRE_PRIMARY:
 	    
 	    // single
@@ -160,7 +151,6 @@ bool Single::is_game_over() const {
 
 
 void Single::update(double dt) {
-   //updateBackgroundPosition(dt);
    bg->update(dt);
    if (player) player->update(dt);
    else if (!player && playerLives <= 0) gameOver = true;
@@ -174,10 +164,9 @@ void Single::update(double dt) {
 
 
 void Single::draw() {
-   //drawBackground();
    bg->draw();
    drawLives();
-   gameScoreFont->drawTextF(al_map_rgb(255, 255, 255), 100, 100,"Score: %i", playerScore);
+   gameScoreFont->drawTextF(al_map_rgb(255, 255, 255), 100, 100,"Score: %i", playerScoreTotal);
    
    if (gameOver) showGameOverMessage();
    else if (player) player->draw(playerShip);
@@ -227,11 +216,7 @@ void Single::drawLives() {
       gameOverFont->drawTextCenteredF(al_map_rgb(255, 0, 0), "%i LIVES REMAINING", playerLives);
    }
 }
-/*
-void Single::drawScore() {
-   gameScoreFont->drawTextF(al_map_rgb(255, 255, 255), 100, 100,"Score: %i", playerScore);
-}
-*/
+
 void Single::clean() {
    cullPlayer();
    cullProjectiles();
@@ -340,8 +325,10 @@ bool Single::doHitboxesIntersect(const Point& centre1, const int& size1,
 
 void Single::updateScore(ALLEGRO_COLOR& c) {
    if (player) 
-      if (doColorsMatch(player->color, c))
+      if (doColorsMatch(player->color, c)) {
 	 playerScore += 1;
+	 playerScoreTotal += 1;
+      }
 }
 
 
@@ -494,11 +481,7 @@ void Single::drawEnemies() {
       }
    }
 }
-/*
-void Single::drawBackground() {
-   bg->draw();
-}
-*/
+
 void Single::setupPlayer() {
    player = std::make_shared<Player> (Point(215, 245),
 				      al_map_rgb(0,200,0));
@@ -508,6 +491,7 @@ void Single::cullPlayer() {
    if (player) {
       if (player->dead) {
 	 playerLives -= 1;
+	 playerScore = 0;
 	 player.reset();
       }
    }
