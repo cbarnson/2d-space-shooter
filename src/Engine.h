@@ -8,6 +8,7 @@
 // forward declarations
 class Menu;
 class Root;
+//class Timer;
 using namespace gs;
 
 class Engine {
@@ -30,7 +31,8 @@ class Engine {
    int displayWidth;
    int displayHeight;
    int framesPerSec;
-   ALLEGRO_TIMER *timer;
+   //Timer* _timer;
+   ALLEGRO_TIMER *_timer;
    ALLEGRO_EVENT_QUEUE *eventQueue;
    ALLEGRO_DISPLAY *display;
 
