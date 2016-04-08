@@ -6,9 +6,6 @@
  * @author
  * @bug
  */
-#define WEAPON_DELAY_LASER 6
-#define WEAPON_DELAY_MISSILE 20
-
 #include <iostream>
 #include "Root.h"
 #include "Vector.h"
@@ -24,6 +21,9 @@
 #include "Timer.h"
 #include "Font.h"
 using namespace act;
+
+const int WEAPON_DELAY_LASER = 6;
+const int WEAPON_DELAY_MISSILE = 20;
 
 // constructor
 Single::Single(int w, int h, int f) : Root(w, h, f), gameOver(false), playerLives(3),

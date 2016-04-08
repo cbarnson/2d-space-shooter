@@ -27,6 +27,10 @@ class Font;
 /**
  * @class Single
  */
+
+extern const int WEAPON_DELAY_LASER;
+extern const int WEAPON_DELAY_MISSILE;
+
 class Single : public Root {
 
    // fonts

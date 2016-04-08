@@ -147,6 +147,10 @@ void Engine::gameLoop(float& prevTime) {
    ALLEGRO_KEYBOARD_STATE kb;
    bool redraw = true;
    float crtTime;
+   // input
+   al_get_keyboard_state(&kb);      
+   root->input(kb);
+   // get event
    al_wait_for_event(eventQueue, &event);
    // display closes
    if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
@@ -161,9 +165,6 @@ void Engine::gameLoop(float& prevTime) {
       prevTime = crtTime;
       redraw = true;
    }
-   // input
-   al_get_keyboard_state(&kb);
-   root->input(kb);
    // render
    if (redraw && al_is_event_queue_empty(eventQueue)) {
       redraw = false;      
@@ -175,7 +176,7 @@ void Engine::gameLoop(float& prevTime) {
       gameState = state::MENU;
       root.reset();
    }
-  
+   
 }
 
 // update the game mode

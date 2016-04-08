@@ -13,6 +13,7 @@
 #include "Action.h"
 using namespace act;
 
+const float MAX_LIFE = 3;
 
 Player::Player(Point p, ALLEGRO_COLOR c) :
   centre(p), color(c)
@@ -20,7 +21,7 @@ Player::Player(Point p, ALLEGRO_COLOR c) :
    // set some initial variable values
    projSpeed = Vector(500, 0);
    speed_modifier = 250;
-   speed = Vector(0,0);
+   speed = Vector(0, 0);
    lives = 3;
    size = 16;
    row = 0;
@@ -108,22 +109,11 @@ void Player::checkBoundary() {
 }
 
 
-void Player::drawRemainingLife() {
-   switch (lives) {
-      case 1:
-	 al_draw_line(centre.x - size*2, centre.y + size*2,
-		      centre.x - size*0.5, centre.y + size*2,
-		      al_map_rgb(255, 0, 0), 4);
-	 break;
-      case 2:
-	 al_draw_line(centre.x - size*2, centre.y + size*2,
-		      centre.x + size*0.5, centre.y + size*2,
-		      al_map_rgb(255, 128, 0), 4);
-	 break;
-      case 3:
-	 al_draw_line(centre.x - size*2, centre.y + size*2,
-		      centre.x + size*2, centre.y + size*2,
-		      al_map_rgb(0, 255, 0), 4);
-	 break;
-   }
+void Player::drawRemainingLife() {   
+   al_draw_line(centre.x - size*2, centre.y + size*2,
+		(centre.x - size*2) + (lives / MAX_LIFE) * (size*4),
+		centre.y + size*2,
+		al_map_rgb(255 * (1.0 - lives / MAX_LIFE),
+			   200 * (lives / MAX_LIFE),
+			   0), 5);
 }

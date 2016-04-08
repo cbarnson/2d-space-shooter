@@ -26,6 +26,8 @@ struct Vector;
 class Sprite;
 class Input;
 
+extern const float MAX_LIFE;
+
 class Player : public Updateable {
   public:
    Point centre;        // ship position
@@ -34,7 +36,7 @@ class Player : public Updateable {
 
    bool dead;           // signals Player object has been killed
    Vector projSpeed;    // speed of projectiles from Player object
-   int lives;           // lives remaining of Player object before destroyed
+   float lives;           // lives remaining of Player object before destroyed
    int speed_modifier;  // affects speed of Player object
    int size;            // ship size in pixels
    int row;
