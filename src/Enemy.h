@@ -4,6 +4,8 @@
  *
  * @author
  * @bug
+
+ Note: being changed to an interface
  */
 #ifndef ENEMY_H
 #define ENEMY_H
@@ -25,7 +27,61 @@ using std::make_shared;
 using std::cout;
 
 class Enemy : public Updateable {
-  private:
+
+   public:
+   Point centre, end;
+   ALLEGRO_COLOR color;
+   Vector speed;
+   ALLEGRO_TIMER *fireDelay;
+   //im thinking they need
+   bool dead;
+   //bool dAnim_complete;
+   
+      
+   Enemy (Point p, ALLEGRO_COLOR c, Vector s)
+      : centre(p), color(c), speed(s)
+   {
+      //if((fireDelay = al_create_timer(1.0 / 30)) == NULL)
+      // throw std::runtime_error("cannot create fireDelay timer");
+      //al_start_timer(fireDelay);
+      //projSpeed = Vector(-500, 0);
+      //fireSpeed = (rand() % 20) + 80;  
+      //lives = 1;
+      //size = 20;
+      dead = false;
+      //bool dAnim_complete = false;
+   }
+
+   virtual ~Enemy() { }
+
+   //void draw() { }
+   virtual void update(double dt) = 0;
+
+   virtual void setFire(bool f) = 0;
+   virtual ALLEGRO_COLOR getColor() = 0;
+   virtual Vector getProjSpeed() = 0; 
+   virtual Point getCentre() = 0;
+   virtual int getSize() = 0;    
+   virtual bool getdAnim_complete() = 0; 
+   virtual bool getDead() = 0;
+   virtual bool getFire() = 0;
+   virtual void hit() = 0;
+   virtual void draw(std::shared_ptr<Sprite> ship, std::shared_ptr<Sprite> death) = 0;
+
+   //virtual void setFire(bool f) { fire = f; }
+   //virtual ALLEGRO_COLOR getColor() { return color; }
+   //virtual Vector getProjSpeed() { return projSpeed; }
+   //virtual int getSize() { return size; }
+   //virtual Point getCentre() { return centre; }
+   //virtual bool getDead() { return dead; }   
+   //virtual bool getFire() { return fire; }
+   //virtual bool getdAnim_complete() { return dAnim_complete; }
+
+};
+
+#endif
+   
+   /*private:
    Point centre, end; 
    ALLEGRO_COLOR color;
    Vector speed;
@@ -80,7 +136,6 @@ class Enemy : public Updateable {
    void deathAnim(std::shared_ptr<Sprite>);
    void hit();
    void draw(std::shared_ptr<Sprite> ship, std::shared_ptr<Sprite> death);
-};
+   */
+//};
 
-
-#endif
