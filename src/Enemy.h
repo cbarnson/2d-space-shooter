@@ -112,7 +112,7 @@ class Enemy : public Updateable {
       load_assets();
 
       projSpeed = Vector(-500, 0);
-      fireSpeed = (rand() % 20) + 80;  
+      fireSpeed = 20+ rand()%50;  
       lives = 1;
       size = 20;
       
