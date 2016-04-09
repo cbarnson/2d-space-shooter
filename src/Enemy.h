@@ -55,7 +55,7 @@ class Enemy : public Updateable {
    virtual ~Enemy() { }
 
    //void draw() { }
-   virtual void update(double dt) = 0;
+   //virtual void update(double dt) = 0;
 
    virtual void setFire(bool f) = 0;
    virtual ALLEGRO_COLOR getColor() = 0;

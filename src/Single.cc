@@ -20,6 +20,7 @@
 #include "Action.h"
 #include "Timer.h"
 #include "Font.h"
+#include "Creep.h"
 using namespace act;
 
 const int WEAPON_DELAY_LASER = 6;
@@ -340,7 +341,7 @@ void Single::spawn() {
    Vector spd(0, 0);
    ALLEGRO_COLOR color = al_map_rgb(255,255,255);
 
-   
+ 
    if (player)
       playerloc = player->centre;
    else
@@ -348,85 +349,72 @@ void Single::spawn() {
 
    // roll for enemy routine
    int n = rand() % 6 + 1;
-
+   
    // select enemy routine
    switch(n) {
-
+      
       case 1: // wave of 5
 	 for (int i = 0; i < 5; i++) {
 	    pt.rollRandom();
 	    spd.rollRandom();
-	    enem.push_back(std::make_shared<Enemy> (pt, al_map_rgb(255, 51, 51), 
-						    spd));
+	    addCreep(pt, al_map_rgb(255, 51, 51), spd);//
 	 }	 
 	 break;
-
+	 
 	 
       case 2: // wave of 8
 	 for (int i = 0; i < 8; i++) {
 	    pt.rollRandom();
 	    spd.rollRandom();
-	    enem.push_back(std::make_shared<Enemy> (pt, al_map_rgb(255, 159, 48), 
-						    spd));
-	 }
-	 break;
-
-	 
-      case 3: // V shaped spawn, shoots 3 shots
-	 enem.push_back(std::make_shared<Enemy> (Point(800, 300), 
-						 al_map_rgb(246, 64, 234),
-						 Vector(-180, 0)));
-	 enem.push_back(std::make_shared<Enemy> (Point(900, 350), 
-						 al_map_rgb(246, 64, 234),
-						 Vector(-180, 0)));
-	 enem.push_back(std::make_shared<Enemy> (Point(900, 250), 
-						 al_map_rgb(246, 64, 234),
-						 Vector(-180, 0)));
-	 enem.push_back(std::make_shared<Enemy> (Point(1000, 400), 
-						 al_map_rgb(246, 64, 234),
-						 Vector(-180, 0)));
-	 enem.push_back(std::make_shared<Enemy> (Point(1000, 200), 
-						 al_map_rgb(246, 64, 234),
-						 Vector(-180, 0)));
-	 enem.push_back(std::make_shared<Enemy> (Point(1100, 100), 
-						 al_map_rgb(246, 64, 234),
-						 Vector(-180, 0)));
-	 enem.push_back(std::make_shared<Enemy> (Point(1100, 500), 
-						 al_map_rgb(246, 64, 234),
-						 Vector(-180, 0)));
-	 break;
-	 
-      case 4: // 3 enemies that track to initial position of player
-	 pt1.x=800; pt1.y=580;
-	 pt2.x=800; pt2.y=20;
-	 pt3.x=850; pt3.y=300;
-	 enem.push_back(std::make_shared<Enemy>
-			(pt1, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt1.x)/1.5),
-							       ((playerloc.y-pt1.y)/1.5))));
-	 enem.push_back(std::make_shared<Enemy>	    
-			(pt2, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt2.x)/1.5),
-							       ((playerloc.y-pt2.y)/1.5))));
-	 enem.push_back(std::make_shared<Enemy>
-			(pt3, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt3.x)/1.5),
-							       ((playerloc.y-pt3.y)/1.5))));
-	 break;
-
-	 
-      case 5:
-	 spawn();
-	 spawn();
-	 break;
-
-	 
-      case 6: 
-	 color = al_map_rgb(255, 153, 255);
-	 for(int i=0; i<5; i++) {
-	    spd.rollReallyRandom();
-	    enem.push_back(std::make_shared<Enemy> (Point(800, 300), color, spd));
-	 }
-	 break;
+	    addCreep(pt, al_map_rgb(255, 159, 48), spd);
+   }
+   break;
+   
+   
+   case 3: // V shaped spawn, shoots 3 shots
+      addCreep(Point(800, 300), al_map_rgb(246, 64, 234),Vector(-180, 0));
+      
+      addCreep(Point(900, 350), al_map_rgb(246, 64, 234), Vector(-180, 0));
+      addCreep(Point(900, 250), al_map_rgb(246, 64, 234), Vector(-180, 0));
+      addCreep(Point(1000, 400), al_map_rgb(246, 64, 234), Vector(-180, 0));
+      addCreep(Point(1000, 200), al_map_rgb(246, 64, 234), Vector(-180, 0));
+      addCreep(Point(1100, 100), al_map_rgb(246, 64, 234), Vector(-180, 0));
+      addCreep(Point(1100, 500), al_map_rgb(246, 64, 234), Vector(-180, 0));
+      break;
+      
+   case 4: // 3 enemies that track to initial position of player
+      pt1.x=800; pt1.y=580;
+      pt2.x=800; pt2.y=20;
+      pt3.x=850; pt3.y=300;
+      addCreep(pt1, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt1.x)/1.5),
+						     ((playerloc.y-pt1.y)/1.5)));
+      addCreep(pt2, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt2.x)/1.5),
+						     ((playerloc.y-pt2.y)/1.5)));
+      addCreep(pt3, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt3.x)/1.5),
+						     ((playerloc.y-pt3.y)/1.5)));
+      break;
+      
+      
+   case 5:
+      spawn();
+      spawn();
+      break;
+      
+      
+   case 6: 
+      color = al_map_rgb(255, 153, 255);
+      for(int i=0; i<5; i++) {
+	 spd.rollReallyRandom();
+	 addCreep(Point(800, 300), color, spd);
+      }
+      break;
    }
    
+}
+
+void Single::addCreep(const Point& cen, const ALLEGRO_COLOR& col, const Vector& spd)
+{
+   enem.push_back(std::make_shared<Creep> (cen, col, spd));
 }
 
 // HELPER FUNCTIONS GO DOWN HERE

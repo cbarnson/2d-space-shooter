@@ -25,7 +25,7 @@
 using std::shared_ptr;
 using std::make_shared;
 
-class Creep : public Enemy {
+class Creep : public virtual Enemy {
   private:
    Point centre, end; 
    ALLEGRO_COLOR color;
@@ -49,7 +49,7 @@ class Creep : public Enemy {
   public:
    // CONSTRUCTOR 1
   Creep(Point p, ALLEGRO_COLOR c, Vector s)
-     : Enemy(p, c, s)
+     : Enemy(p, c, s), centre(p), color(c), speed(s)
    {
       if((fireDelay = al_create_timer(1.0 / 30)) == NULL)
 	 throw std::runtime_error("cannot create fireDelay timer");
@@ -83,5 +83,6 @@ class Creep : public Enemy {
    void deathAnim(std::shared_ptr<Sprite>);
    void hit();
    void draw(std::shared_ptr<Sprite> ship, std::shared_ptr<Sprite> death);
+   
 };
 #endif
