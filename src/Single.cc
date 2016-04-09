@@ -83,7 +83,7 @@ void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
 	    if (playerWeapon1->getCount() > WEAPON_DELAY_LASER &&
 		playerScore < 30) {
 	       
-	       addLaser(player->centre, player->color, player->projSpeed);
+	       addLaser(player->centre+Point(-20, 0), player->color, player->projSpeed);
 	       playerWeapon1->stopTimer();
 	       playerWeapon1->resetCount();
 	       playerWeapon1->startTimer();
@@ -93,8 +93,8 @@ void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
 	    else if (playerWeapon1->getCount() > WEAPON_DELAY_LASER &&
 		playerScore >= 30 && playerScore < 100) {
 
-	       addLaser(player->centre + Point(0, 5), player->color, player->projSpeed);
-	       addLaser(player->centre + Point(0, -5), player->color, player->projSpeed);
+	       addLaser(player->centre + Point(-25, 10), player->color, player->projSpeed);
+	       addLaser(player->centre + Point(-25, -10), player->color, player->projSpeed);
 	       
 	       playerWeapon1->stopTimer();
 	       playerWeapon1->resetCount();
@@ -372,7 +372,7 @@ void Single::spawn() {
 	 break;
 
 	 
-      case 3:
+      case 3: // V shaped spawn, shoots 3 shots
 	 enem.push_back(std::make_shared<Enemy> (Point(800, 300), 
 						 al_map_rgb(246, 64, 234),
 						 Vector(-180, 0)));
@@ -396,7 +396,7 @@ void Single::spawn() {
 						 Vector(-180, 0)));
 	 break;
 	 
-      case 4:
+      case 4: // 3 enemies that track to initial position of player
 	 pt1.x=800; pt1.y=580;
 	 pt2.x=800; pt2.y=20;
 	 pt3.x=850; pt3.y=300;
@@ -418,7 +418,7 @@ void Single::spawn() {
 	 break;
 
 	 
-      case 6:
+      case 6: 
 	 color = al_map_rgb(255, 153, 255);
 	 for(int i=0; i<5; i++) {
 	    spd.rollReallyRandom();
@@ -447,15 +447,26 @@ void Single::updateEnemyPosition(double dt) {
 	   it != enem.end(); ++it) {
 	 (*it)->update(dt);
 	 if((*it)->getFire()){
-	    proj.push_back(std::make_shared<Laser> ((*it)->getCentre(), 
-						    (*it)->getColor(),
-						    (*it)->getProjSpeed()));
-	    (*it)->setFire(false);	    
-	 }	 	 
+	    //Purple enemies will spawn two extra projectiles
+	    if(doColorsMatch((*it)->getColor(), al_map_rgb(246, 64, 234)))
+	       {
+		  proj.push_back(std::make_shared<Laser>((*it)->getCentre(),
+							 (*it)->getColor(),
+							 (*it)->getProjSpeed()+Vector(0,40)));
+		  proj.push_back(std::make_shared<Laser>((*it)->getCentre(),
+							 (*it)->getColor(),
+							 (*it)->getProjSpeed()+Vector(0,-40)));
+	       }
+	    //regular enemies spawn one straight projectile
+	       proj.push_back(std::make_shared<Laser> ((*it)->getCentre(), 
+						       (*it)->getColor(),
+						       (*it)->getProjSpeed()));
+	       (*it)->setFire(false);	    
+	       }	 	 
+	 }
       }
-   }
-   if(enem.size() <= 2)
-      spawn();
+      if(enem.size() <= 3)
+	 spawn();
 }
 /*
 void Single::updateBackgroundPosition(double dt) {
