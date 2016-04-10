@@ -61,6 +61,7 @@ Point(double a=0.0, double b=0.0): x(a), y(b) {};
       return Point(x + p.x, y + p.y);
    }
 
+
    double distance (Point p) {
       return sqrt( pow( ( p.x - x ), 2 ) + pow( ( p.y - y ), 2 ) );
    }

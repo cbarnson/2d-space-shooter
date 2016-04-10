@@ -76,7 +76,7 @@ class Single : public Root {
 
    void addLaser(const Point&, const ALLEGRO_COLOR&, const Vector&);
    void addMissile(const Point&, const ALLEGRO_COLOR&, const Vector&);
-
+   void addCreepB(const Point&, const ALLEGRO_COLOR&, const Vector&);
    void addCreep(const Point&, const ALLEGRO_COLOR&, const Vector&);
    
    void input(ALLEGRO_KEYBOARD_STATE&);   
@@ -101,7 +101,7 @@ class Single : public Root {
    void cullPlayer();
    void cullProjectiles();
    void cullEnemies();
-   
+   void CircleLaser(std::shared_ptr<Enemy>);
    void clean();
    void showGameOverMessage();
    

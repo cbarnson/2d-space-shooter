@@ -6,8 +6,8 @@
  * @bug
  **/
 
-#ifndef CREEP_H
-#define CREEP_H
+#ifndef CREEPBOMB_H
+#define CREEPBOMB_H
 
 #include "Enemy.h"
 #include "Drawable.h"
@@ -21,17 +21,17 @@
 #include <memory>
 #include <iostream>
 #include <stdexcept>
+#include "Timer.h"
+#include "Root.h"
 
 using std::shared_ptr;
 using std::make_shared;
 
-class Creep : public Enemy {
+class CreepBomb : public Enemy {
   private:
    Point centre, end; 
    ALLEGRO_COLOR color;
    Vector speed;
-	
-   ALLEGRO_TIMER *fireDelay;
    //shared_ptr<Sprite> death;
    //shared_ptr<Sprite> enemySprite;
 
@@ -45,44 +45,38 @@ class Creep : public Enemy {
    bool dAnim_complete;
    //bool dead;
    bool fire;
+   std::shared_ptr<Timer> fireDelay;
 	
   public:
    // CONSTRUCTOR 1
-  Creep(Point p, ALLEGRO_COLOR c, Vector s)
+  CreepBomb(Point p, ALLEGRO_COLOR c, Vector s)
      : Enemy(p, c, s), centre(p), color(c), speed(s)
    {
-      if((fireDelay = al_create_timer(1.0 / 30)) == NULL)
-	 throw std::runtime_error("cannot create fireDelay timer");
-      al_start_timer(fireDelay);
-      
-      load_assets();
+      // speed.x=-50; speed.y=0;y
+      projSpeed= Vector(-500, 0);//not used
+      fireDelay=std::make_shared<Timer> (60);
+      fireDelay->startTimer();
 
-      projSpeed = Vector(-500, 0);
-
-      fireSpeed = (rand() % 50) + 30;  
-
-      lives = 1;
+      lives = 3;
       size = 20;
       
       dAnim = 0;      
       dAnim_complete = false;
-      //dead = false;
-      fire = true;
+      // dead = false;
+      fire = false;
+      //std::cout<<
    }
 
-   ~Creep();
+   ~CreepBomb();
    
-  	
+   void setFire(bool f);	
    ALLEGRO_COLOR getColor();
    Vector getProjSpeed(); 
    Point getCentre();
-   int getSize();
-   
+   int getSize();    
    bool getdAnim_complete(); 
    bool getDead(); 
-   bool getFire();
-
-   void setFire(bool f);
+   bool getFire();    
    void update(double dt);
    void load_assets();
    void deathAnim(std::shared_ptr<Sprite>);

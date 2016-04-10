@@ -23,7 +23,7 @@ void Menu::init() {
    al_append_path_component(path, "resources");
    al_change_directory(al_path_cstr(path, '/'));
    
-   splash = std::make_shared<Sprite> ("Titlescreen.png"); 
+   splash = std::make_shared<Sprite> ("Titlescreen2.png"); 
    al_destroy_path(path);
 }
 
