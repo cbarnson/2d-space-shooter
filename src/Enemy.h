@@ -8,21 +8,14 @@
 #ifndef ENEMY_H
 #define ENEMY_H
 
-//#include "Drawable.h"
 #include "Updateable.h"
 #include "Point.h"
 #include "Vector.h"
-#include "Sprite.h"
 
 #include <allegro5/allegro.h>
-#include <allegro5/allegro_primitives.h>
 #include <memory>
-#include <iostream>
-#include <stdexcept>
 
-using std::shared_ptr;
-using std::make_shared;
-using std::cout;
+class Sprite;
 
 class Enemy : public Updateable {
   private:
@@ -31,9 +24,6 @@ class Enemy : public Updateable {
    Vector speed;
 	
    ALLEGRO_TIMER *fireDelay;
-   //shared_ptr<Sprite> death;
-   //shared_ptr<Sprite> enemySprite;
-
    
    Vector projSpeed;
    int size;
@@ -47,24 +37,7 @@ class Enemy : public Updateable {
 	
   public:
    // CONSTRUCTOR 1
-  Enemy(Point p, ALLEGRO_COLOR c, Vector s) : centre(p), color(c), speed(s)
-   {
-      if((fireDelay = al_create_timer(1.0 / 30)) == NULL)
-	 throw std::runtime_error("cannot create fireDelay timer");
-      al_start_timer(fireDelay);
-      
-      load_assets();
-
-      projSpeed = Vector(-500, 0);
-      fireSpeed = (rand() % 20) + 80;  
-      lives = 1;
-      size = 20;
-      
-      dAnim = 0;      
-      dAnim_complete = false;
-      dead = false;
-      fire = true;
-   }
+   Enemy(Point p, ALLEGRO_COLOR c, Vector s);
    ~Enemy();
    
    void setFire(bool f);	
@@ -76,7 +49,6 @@ class Enemy : public Updateable {
    bool getDead(); 
    bool getFire();    
    void update(double dt);
-   void load_assets();
    void deathAnim(std::shared_ptr<Sprite>);
    void hit();
    void draw(std::shared_ptr<Sprite> ship, std::shared_ptr<Sprite> death);

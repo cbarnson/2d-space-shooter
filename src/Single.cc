@@ -135,6 +135,10 @@ void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
 }
 
 
+int Single::getScore() const {
+   return playerScoreTotal;
+}
+
 void Single::addLaser(const Point& cen, const ALLEGRO_COLOR& col, const Vector& spd) {
    proj.push_back(std::make_shared<Laser> (cen, col, spd));
 }

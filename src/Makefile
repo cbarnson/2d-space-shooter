@@ -5,19 +5,20 @@
 
 # declaration of variables
 CC = g++11
-CCFLAGS = -Wall -g -std=c++11 -I/home/lib2720/allegro/include
-#CCFLAGS = -Wall -g -std=c++11 `pkg-config --cflags allegro-5.0`
+CCFLAGS = -Wall -g -std=c++11 -I $(HEADERDIRS)
 
 # file names
+HEADERDIRS = /home/lib2720/allegro/include
+
 SOURCES = $(wildcard *.cc)
 OBJECTS = $(SOURCES:.cc=.o)
 LIBDIR = -L/home/lib2720/allegro/lib
-LNFLAGS = -lallegro -lallegro_primitives -lallegro_image -lallegro_font -lallegro_ttf
-#LNFLAGS = `pkg-config --libs allegro-5.0` -lallegro_primitives \
--lallegro_font -lallegro_ttf -lallegro_image
+LNFLAGS = -lallegro -lallegro_primitives -lallegro_image -lallegro_font \
+-lallegro_ttf
 
 
 # main target
+.PHONY: all
 all: main
 
 

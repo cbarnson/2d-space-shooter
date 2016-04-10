@@ -6,8 +6,28 @@
  * @bug
  */
 #include "Enemy.h"
+#include "Sprite.h"
+#include <iostream>
+#include <stdexcept>
 
-	
+
+Enemy::Enemy(Point p, ALLEGRO_COLOR c, Vector s) : centre(p), color(c), speed(s) {
+   if((fireDelay = al_create_timer(1.0 / 60)) == NULL) //NOTE MUST BE CHANGED LATER
+      throw std::runtime_error("cannot create fireDelay timer");
+   al_start_timer(fireDelay);
+      
+   projSpeed = Vector(-500, 0);
+   fireSpeed = (rand() % 20) + 80;  
+   lives = 1;
+   size = 20;
+      
+   dAnim = 0;      
+   dAnim_complete = false;
+   dead = false;
+   fire = true;
+}
+
+
 Enemy::~Enemy() {
    if(fireDelay != NULL)
       al_destroy_timer(fireDelay);   
@@ -21,20 +41,6 @@ Point Enemy::getCentre() { return centre; }
 bool Enemy::getDead() { return dead; }   
 bool Enemy::getFire() { return fire; }
 bool Enemy::getdAnim_complete() { return dAnim_complete; }
-
-
-
-void Enemy::load_assets() {
-   //ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
-   //al_append_path_component(path, "resources");
-   //al_change_directory(al_path_cstr(path, '/'));
-
-   //death = make_shared<Sprite> ("explode.png");
-   //enemySprite = make_shared<Sprite> ("EnemyBasic.png");
-   //death = new Sprite("explode.png");
-
-   //al_destroy_path(path);
-}
 
 
 // decrement enemy life by a value of 1
