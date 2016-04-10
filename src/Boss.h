@@ -26,8 +26,12 @@ using std::make_shared;
 
 class Boss : public Enemy {
   private:
+   Point centre;
+   ALLEGRO_COLOR color;
+   Vector speed;
+
    ALLEGRO_TIMER *fireDelay;
-   shared_ptr<Sprite> bShip;
+   //shared_ptr<Sprite> bShip;
    
    Vector projSpeed;
    int size; //after it works in this state, check to see if I can move size and lives
@@ -39,13 +43,12 @@ class Boss : public Enemy {
    bool fire;
    
   public:
-   Boss (point p, ALLEGRO_COLOR c, Vector s)
-      : Enemy(p, c, s)
+   Boss (Point p, ALLEGRO_COLOR c, Vector s)
+      : Enemy(p, c, s), centre(p), color(c), speed(s)
    {
       if((fireDelay = al_create_timer(1.0 / 30)) == NULL)
 	 throw std::runtime_error("cannot create fireDelay timer");
       al_start_timer(fireDelay);
-
       load_assets();
 
       projSpeed = Vector(-500, 0);
@@ -61,12 +64,12 @@ class Boss : public Enemy {
    
    ~Boss();
    
-   ALLEGRO_COLOR getcolor();
+   ALLEGRO_COLOR getColor();
    Vector getProjSpeed();
    Point getCentre();
    int getSize();
    
-   bool getAnim_complete();
+   bool getdAnim_complete();
    bool getDead();
    bool getFire();
 
