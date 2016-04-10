@@ -36,14 +36,12 @@ void Creep::load_assets() {
    //al_destroy_path(path);
 }
 
-
 // decrement enemy life by a value of 1
 void Creep::hit() {
    lives = lives - 1;
    if (lives < 1)
       dead = true;
 }
-
 	
 // draw image to display of enemy ship
 void Creep::draw(std::shared_ptr<Sprite> enemyShip, std::shared_ptr<Sprite> enemyDeath) {

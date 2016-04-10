@@ -21,6 +21,7 @@
 #include "Timer.h"
 #include "Font.h"
 #include "Creep.h"
+#include "CreepBomb.h"
 using namespace act;
 
 const int WEAPON_DELAY_LASER = 6;
@@ -38,7 +39,6 @@ Single::~Single() {
    
    proj.clear();
    enem.clear();
-   
 }
 
 // initialize Single player mode
@@ -61,7 +61,7 @@ void Single::init() {
    gameOverFont = std::make_shared<Font> ("DavidCLM-BoldItalic.ttf", 64);
    gameScoreFont = std::make_shared<Font> ("ipag.ttf", 18);
    // background
-   bg = std::make_shared<Background> (Vector(50, 0), Vector(90, 0));
+   bg = std::make_shared<Background> (Vector(50, 0), Vector(-90, 0));
    // sprites
    playerShip = std::make_shared<Sprite> ("Sprite.png");
    enemyShip = std::make_shared<Sprite> ("EnemyBasic.png");
@@ -276,7 +276,7 @@ void Single::checkCollisionOnEnemies() {
 	       Point pt_proj = (*it_proj)->centre;
 	       Point pt_enem = (*it_enem)->getCentre();
 	       int enem_size = (*it_enem)->getSize();
-		  
+
 	       // check for collision
 	       if ((pt_proj.x > pt_enem.x - enem_size) &&
 		   (pt_proj.x < pt_enem.x + enem_size) &&
@@ -295,7 +295,6 @@ void Single::checkCollisionOnEnemies() {
 	    }
 	 }
       }
-    
    }
 }
 
@@ -348,7 +347,7 @@ void Single::spawn() {
       playerloc = Point (200, 300);
 
    // roll for enemy routine
-   int n = rand() % 6 + 1;
+   int n = rand() % 7 + 1;
    
    // select enemy routine
    switch(n) {
@@ -357,7 +356,7 @@ void Single::spawn() {
 	 for (int i = 0; i < 5; i++) {
 	    pt.rollRandom();
 	    spd.rollRandom();
-	    addCreep(pt, al_map_rgb(255, 51, 51), spd);//
+	    addCreep(pt, al_map_rgb(255, 51, 51), spd);
 	 }	 
 	 break;
 	 
@@ -367,47 +366,52 @@ void Single::spawn() {
 	    pt.rollRandom();
 	    spd.rollRandom();
 	    addCreep(pt, al_map_rgb(255, 159, 48), spd);
-   }
-   break;
+	 }
+	 break;
    
    
-   case 3: // V shaped spawn, shoots 3 shots
-      addCreep(Point(800, 300), al_map_rgb(246, 64, 234),Vector(-180, 0));
+      case 3: // V shaped spawn, shoots 3 shots
+	 addCreep(Point(800, 300), al_map_rgb(246, 64, 234),Vector(-180, 0));
       
-      addCreep(Point(900, 350), al_map_rgb(246, 64, 234), Vector(-180, 0));
-      addCreep(Point(900, 250), al_map_rgb(246, 64, 234), Vector(-180, 0));
-      addCreep(Point(1000, 400), al_map_rgb(246, 64, 234), Vector(-180, 0));
-      addCreep(Point(1000, 200), al_map_rgb(246, 64, 234), Vector(-180, 0));
-      addCreep(Point(1100, 100), al_map_rgb(246, 64, 234), Vector(-180, 0));
-      addCreep(Point(1100, 500), al_map_rgb(246, 64, 234), Vector(-180, 0));
-      break;
+	 addCreep(Point(900, 350), al_map_rgb(246, 64, 234), Vector(-180, 0));
+	 addCreep(Point(900, 250), al_map_rgb(246, 64, 234), Vector(-180, 0));
+	 addCreep(Point(1000, 400), al_map_rgb(246, 64, 234), Vector(-180, 0));
+	 addCreep(Point(1000, 200), al_map_rgb(246, 64, 234), Vector(-180, 0));
+	 addCreep(Point(1100, 100), al_map_rgb(246, 64, 234), Vector(-180, 0));
+	 addCreep(Point(1100, 500), al_map_rgb(246, 64, 234), Vector(-180, 0));
+	 break;
       
-   case 4: // 3 enemies that track to initial position of player
-      pt1.x=800; pt1.y=580;
-      pt2.x=800; pt2.y=20;
-      pt3.x=850; pt3.y=300;
-      addCreep(pt1, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt1.x)/1.5),
-						     ((playerloc.y-pt1.y)/1.5)));
-      addCreep(pt2, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt2.x)/1.5),
-						     ((playerloc.y-pt2.y)/1.5)));
-      addCreep(pt3, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt3.x)/1.5),
-						     ((playerloc.y-pt3.y)/1.5)));
-      break;
-      
-      
-   case 5:
-      spawn();
-      spawn();
-      break;
+      case 4: // 3 enemies that track to initial position of player
+	 pt1.x=800; pt1.y=580;
+	 pt2.x=800; pt2.y=20;
+	 pt3.x=850; pt3.y=300;
+	 addCreep(pt1, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt1.x)/1.5),
+							((playerloc.y-pt1.y)/1.5)));
+	 addCreep(pt2, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt2.x)/1.5),
+							((playerloc.y-pt2.y)/1.5)));
+	 addCreep(pt3, al_map_rgb(255, 255, 255),Vector(((playerloc.x-pt3.x)/1.5),
+							((playerloc.y-pt3.y)/1.5)));
+	 break;
       
       
-   case 6: 
-      color = al_map_rgb(255, 153, 255);
-      for(int i=0; i<5; i++) {
-	 spd.rollReallyRandom();
-	 addCreep(Point(800, 300), color, spd);
-      }
-      break;
+      case 5:
+	 spawn();
+	 spawn();
+	 break;
+      
+      
+      case 6: 
+	 color = al_map_rgb(255, 153, 255);
+	 for(int i=0; i<5; i++) {
+	    spd.rollReallyRandom();
+	    addCreep(Point(800, 300), color, spd);
+	 }
+	 break;
+      case 7:
+	 addCreepB(Point (800, 300), al_map_rgb(204,3,3), Vector(-60, 0));
+	 break;
+	 
+	 
    }
    
 }
@@ -415,6 +419,10 @@ void Single::spawn() {
 void Single::addCreep(const Point& cen, const ALLEGRO_COLOR& col, const Vector& spd)
 {
    enem.push_back(std::make_shared<Creep> (cen, col, spd));
+}
+void Single::addCreepB(const Point& cen, const ALLEGRO_COLOR& col, const Vector& spd)
+{
+   enem.push_back(std::make_shared<CreepBomb>(cen, col, spd));
 }
 
 // HELPER FUNCTIONS GO DOWN HERE
@@ -435,26 +443,47 @@ void Single::updateEnemyPosition(double dt) {
 	   it != enem.end(); ++it) {
 	 (*it)->update(dt);
 	 if((*it)->getFire()){
+	    if(doColorsMatch((*it)->getColor(), al_map_rgb(204,3,3)))
+	       CircleLaser((*it));
 	    //Purple enemies will spawn two extra projectiles
-	    if(doColorsMatch((*it)->getColor(), al_map_rgb(246, 64, 234)))
-	       {
-		  proj.push_back(std::make_shared<Laser>((*it)->getCentre(),
-							 (*it)->getColor(),
-							 (*it)->getProjSpeed()+Vector(0,40)));
-		  proj.push_back(std::make_shared<Laser>((*it)->getCentre(),
-							 (*it)->getColor(),
-							 (*it)->getProjSpeed()+Vector(0,-40)));
-	       }
+	    else if(doColorsMatch((*it)->getColor(), al_map_rgb(246, 64, 234)))
+	    {
+	       proj.push_back(std::make_shared<Laser>((*it)->getCentre(),
+						      (*it)->getColor(),
+						      (*it)->getProjSpeed()+Vector(0,40)));
+	       proj.push_back(std::make_shared<Laser>((*it)->getCentre(),
+						      (*it)->getColor(),
+						      (*it)->getProjSpeed()+Vector(0,-40)));
+	    }
+	    
 	    //regular enemies spawn one straight projectile
-	       proj.push_back(std::make_shared<Laser> ((*it)->getCentre(), 
-						       (*it)->getColor(),
-						       (*it)->getProjSpeed()));
-	       (*it)->setFire(false);	    
-	       }	 	 
-	 }
+	    else proj.push_back(std::make_shared<Laser> ((*it)->getCentre()+Vector(20,0), 
+						    (*it)->getColor(),
+						    (*it)->getProjSpeed()));
+	    (*it)->setFire(false);
+	 }	 	 
       }
-      if(enem.size() <= 3)
-	 spawn();
+   }
+   if(enem.size() <= 3)
+         spawn();
+}
+void Single::CircleLaser(std::shared_ptr<Enemy> E)
+{
+   addLaser(E->getCentre(), E->getColor(), Vector(0, -500));   //up
+   addLaser(E->getCentre(), E->getColor(), Vector(150, -350)); //UUR
+   addLaser(E->getCentre(), E->getColor(), Vector(250, -250)); //UR
+   addLaser(E->getCentre(), E->getColor(), Vector(500, 0));    //right
+   addLaser(E->getCentre(), E->getColor(), Vector(150, 350));  //RRD
+   addLaser(E->getCentre(), E->getColor(), Vector(250, 250));  //RD
+   addLaser(E->getCentre(), E->getColor(), Vector(0, 500));    //down
+   addLaser(E->getCentre(), E->getColor(), Vector(-250, 250)); //DR
+   addLaser(E->getCentre(), E->getColor(), Vector(-350, 150)); //DDR
+   addLaser(E->getCentre(), E->getColor(), Vector(-500, 0));   //left
+   addLaser(E->getCentre(), E->getColor(), Vector(-250, -250));//UL
+   addLaser(E->getCentre(), E->getColor(), Vector(-150, -350));//UUL
+   addLaser(E->getCentre(), E->getColor(), Vector(-350, -150));
+ 
+   E->setFire(false);
 }
 /*
 void Single::updateBackgroundPosition(double dt) {
