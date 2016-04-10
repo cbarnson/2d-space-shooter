@@ -1,6 +1,6 @@
 /**
  * @file Creep.cc
- * @brief Implementation of Enemy class- draws, updates and destroys enemies
+ * @brief Implementation of Creep class- draws, updates and destroys enemies
  *
  * @author
  * @bug
