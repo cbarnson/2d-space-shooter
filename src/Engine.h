@@ -15,13 +15,10 @@
 // forward declarations
 class Menu;
 class Root;
-class HighScore;
 using namespace gs;
 
 class Engine {
-   std::shared_ptr<Root> _root; // interface for game modes
-   
-   
+      
   public:
    Engine(int w, int h, int fps);
    ~Engine();
@@ -40,19 +37,17 @@ class Engine {
    int _fps;
    int _gameScore; // initially -1
    ALLEGRO_TIMER *_timer;
-   ALLEGRO_EVENT_QUEUE *eventQueue;
-   ALLEGRO_DISPLAY *display;
+   ALLEGRO_EVENT_QUEUE *_eventQueue;
+   ALLEGRO_DISPLAY *_display;
 
    bool running;
    gs::state _state;
    std::shared_ptr<Menu> _menu;
-   //std::shared_ptr<HighScore> scores;
+   std::shared_ptr<Root> _root; // interface for game modes
 
    void addSingle();
-   
-   //std::shared_ptr<Game> _game;
-   //std::shared_ptr<Menu> _menu;
-   
+   void addMenu();
+     
 };
 
 

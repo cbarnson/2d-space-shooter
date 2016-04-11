@@ -1,0 +1,29 @@
+Unit testing
+Testlist for TestGame.h
+
+
+Point class tests
+-----------------
+test default constructor
+test overloaded addition operator (Point as param)
+test overloaded addition operator (Vector as param)
+
+
+Vector class tests
+------------------
+test default constructor
+test overloaded addition operator (Vector as param)
+test one of the reflect methods in Vector
+
+Allegro setup tests
+-------------------
+test that allegro initializes
+
+Font class tests
+----------------
+test that font addon and ttf addon initialize and font loads
+
+Timer class tests
+-----------------
+test timer is created and initially stopped
+test that timer starts and runs properly

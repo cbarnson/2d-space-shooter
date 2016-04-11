@@ -30,14 +30,14 @@ void Vector::rollRandom() {
 }
 
 void Vector::rollReallyRandom() {
-   switch((rand()%2)+1){
+   switch((rand() % 2) + 1){
       case 1:
-	 x=rand() % 100 - 500;
-	 y=rand() % 500;
+	 x = rand() % 100 - 500;
+	 y = rand() % 500;
 	 break;
       case 2:
-	 x=rand() % 200 - 600;
-	 y=0- rand()% 500;
+	 x = rand() % 200 - 600;
+	 y = 0 - rand() % 500;
 	 break;
    }
 }

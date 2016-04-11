@@ -1,8 +1,10 @@
 #ifndef MENU_H
 #define MENU_H
 
-#include <memory>
 #include <allegro5/allegro.h>
+
+#include <memory>
+
 #include "State.h"
 
 class Sprite;

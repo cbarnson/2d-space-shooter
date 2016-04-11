@@ -19,11 +19,12 @@ class Sprite;
 class Background : public Drawable, public Updateable {
    // important members
    Point bgMid;
-   Point fgMid;   
+   Point fgMid;
+   Point fg2Mid;
    Vector bgSpeed;
    Vector fgSpeed;
    std::shared_ptr<Sprite> bg;
-   std::shared_ptr<Sprite> fg;
+    std::shared_ptr<Sprite> fg;
    
   public:
  Background(Vector bg_, Vector fg_) : bgSpeed(bg_), fgSpeed(fg_) {

@@ -10,6 +10,7 @@
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
+
 #include <list>
 #include <memory>
 
@@ -28,8 +29,10 @@ class Font;
  * @class Single
  */
 
+extern const int GAME_OVER_WAIT_TIME;
 extern const int WEAPON_DELAY_LASER;
 extern const int WEAPON_DELAY_MISSILE;
+extern const Vector PLAYER_PROJECTILE_SPEED;
 
 class Single : public Root {
 
@@ -74,14 +77,16 @@ class Single : public Root {
    void update(double);
    void draw();
 
+   void addLaser(const Point&, const ALLEGRO_COLOR&, const Vector&);
+   void addMissile(const Point&, const ALLEGRO_COLOR&, const Vector&);
+   void addCreepB(const Point&, const ALLEGRO_COLOR&, const Vector&);
+   void addCreep(const Point&, const ALLEGRO_COLOR&, const Vector&);
+   
    void input(ALLEGRO_KEYBOARD_STATE&);   
    bool is_game_over() const;
    void updateScore(ALLEGRO_COLOR&);
    int getScore() const;
-   
-   void addLaser(const Point&, const ALLEGRO_COLOR&, const Vector&);
-   void addMissile(const Point&, const ALLEGRO_COLOR&, const Vector&);
-   
+      
    void spawn();
    void respawnPlayer();
    
@@ -100,7 +105,7 @@ class Single : public Root {
    void cullPlayer();
    void cullProjectiles();
    void cullEnemies();
-   
+   void CircleLaser(std::shared_ptr<Enemy>);
    void clean();
    void showGameOverMessage();
    

@@ -16,12 +16,15 @@ class Timer {
    Timer(int fps);
    ~Timer();
 
+   void create();
+   
    void startTimer();
    void stopTimer();
    void resetCount();
    
    int getCount() const;
    bool isRunning() const;
+   bool isCreated() const;
 
   private:
    ALLEGRO_TIMER* _timer;

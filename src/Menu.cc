@@ -1,16 +1,17 @@
+#include <stdexcept>
+#include <iostream>
 
 #include "Menu.h"
 #include "Sprite.h"
 #include "Timer.h"
 #include "State.h"
-#include <stdexcept>
-#include <iostream>
 
 const int MENU_ANIMATION_DELAY = 2;
 
 Menu::Menu(int fps) : _fps(fps), _mAnim(0)
 {
-   init();
+   //init();
+   std::cout << "in the menu constructor\n";
 }
 
 
@@ -19,7 +20,6 @@ Menu::~Menu() {
 }
 
 void Menu::init() {
-
    ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
    al_append_path_component(path, "resources");
    al_change_directory(al_path_cstr(path, '/'));
@@ -27,7 +27,7 @@ void Menu::init() {
    _splash = std::make_shared<Sprite> ("Titlescreen.png"); 
    al_destroy_path(path);
    
-   _timer = std::make_shared<Timer> (_fps);
+   _timer = std::make_shared<Timer> (_fps); _timer->create();   
 }
 
 void Menu::draw() {

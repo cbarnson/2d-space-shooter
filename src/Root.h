@@ -9,11 +9,13 @@
 #ifndef ROOT_H
 #define ROOT_H
 
-#include "Drawable.h"
-#include "Updateable.h"
 #include <allegro5/allegro.h>
 
+#include "Drawable.h"
+#include "Updateable.h"
+
 class Root : public Drawable, public Updateable {
+   
   public:
    int displayWidth;
    int displayHeight;
@@ -28,6 +30,8 @@ class Root : public Drawable, public Updateable {
    void draw() { }
    void update(double dt) { }
 
+   
+   virtual void init() = 0;
    virtual void input(ALLEGRO_KEYBOARD_STATE&) = 0;   
    virtual bool is_game_over() const  = 0;
    virtual void updateScore(ALLEGRO_COLOR&) = 0;
