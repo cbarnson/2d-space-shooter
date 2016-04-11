@@ -13,11 +13,10 @@
 #include <memory>
 #include <vector>
 
-#include "Projectile.h"
 #include "Point.h"
 #include "Vector.h"
-
-class Sprite;
+#include "Projectile.h"
+#include "Sprite.h"
 
 class Missile : public Projectile {
   public:

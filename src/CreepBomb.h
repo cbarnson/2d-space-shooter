@@ -1,6 +1,6 @@
 /**
  * @file Creep.h
- * @brief derived class of Enemy
+ * @brief derived class of Enemy- main implementation of Enemy type
  *
  * @author
  * @bug
@@ -35,22 +35,23 @@ class CreepBomb : public Enemy {
    std::shared_ptr<Timer> fireDelay;
    Vector projSpeed;
    int size;
+   int row, col;
    int lives;
    int dAnim;
    bool dAnim_complete;   
    int fireSpeed;   
-   bool fire;
+   bool fire, fire1, fire2;
 	
   public:
    CreepBomb(Point cen, ALLEGRO_COLOR col, Vector spd);
    ~CreepBomb();
-   
+   /*
    void load_assets();
    void update(double dt);
    void deathAnim(std::shared_ptr<Sprite>);
    void hit();
    void draw(std::shared_ptr<Sprite> ship, std::shared_ptr<Sprite> death);
-   
+   */
    void setFire(bool f);	
    ALLEGRO_COLOR getColor();
    Vector getProjSpeed(); 
@@ -58,8 +59,22 @@ class CreepBomb : public Enemy {
    Point getCentre();
    bool getDead(); 
    bool getFire();    
+   void update(double dt);
+   void load_assets();
+   
+   /** @fn deathAnim(shared_ptr<Sprite>)
+    * @param d sprite to be used for death explosion animation
+    */
+   void deathAnim(std::shared_ptr<Sprite> d);
+   void hit();
+   
+   /** @fn draw(shared_ptr<Sprite> ship, shared_ptr<Sprite> death>
+    * @param ship Animation for enemy ship
+    * @param death Animation for death
+    */
+   void draw(std::shared_ptr<Sprite> ship, std::shared_ptr<Sprite> death);
    bool getdAnim_complete();
    
-   
 };
+
 #endif

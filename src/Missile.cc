@@ -3,18 +3,21 @@
 
 #include "Sprite.h"
 
-Missile::Missile(Point p, ALLEGRO_COLOR c, Vector s) : Projectile(p, c, s), mAnim(0)
+Missile::Missile(Point p, ALLEGRO_COLOR c, Vector s) : Projectile(p, c, s)
 {
    centre = centre + speed * 0.1; // so it doesn't hit its own projectile
+   mAnim = 0;
    load_assets();
 }
 
-void Missile::load_assets() {
+Missile::~Missile() {
+   mvec.clear();
+}
 
+void Missile::load_assets() {
    ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
    al_append_path_component(path, "resources");
-   al_change_directory(al_path_cstr(path, '/'));
-   
+   al_change_directory(al_path_cstr(path, '/'));   
    mvec.push_back(std::make_shared<Sprite> ("m1.png"));
    mvec.push_back(std::make_shared<Sprite> ("m2.png"));
    mvec.push_back(std::make_shared<Sprite> ("m3.png"));
@@ -22,8 +25,7 @@ void Missile::load_assets() {
    mvec.push_back(std::make_shared<Sprite> ("m5.png"));
    mvec.push_back(std::make_shared<Sprite> ("m6.png"));
    mvec.push_back(std::make_shared<Sprite> ("m7.png"));
-   mvec.push_back(std::make_shared<Sprite> ("m8.png"));
-   
+   mvec.push_back(std::make_shared<Sprite> ("m8.png"));   
    al_destroy_path(path);
 }
 

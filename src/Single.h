@@ -16,6 +16,7 @@
 
 #include "Root.h"
 #include "Vector.h"
+#include "Background.h"
 
 // forward declaring classes is preferable to include "....h" in headers
 struct Point;
@@ -23,7 +24,6 @@ class Timer;
 class Projectile;
 class Enemy;
 class Player;
-class Background;
 class Sprite;
 class Font;
 
@@ -61,6 +61,7 @@ class Single : public Root {
    std::shared_ptr<Sprite> playerShip;
    std::shared_ptr<Sprite> enemyShip;
    std::shared_ptr<Sprite> enemyDeath;
+   std::shared_ptr<Sprite> enemyBomb;
 
    bool gameOver;
    int playerLives;

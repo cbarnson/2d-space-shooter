@@ -1,6 +1,6 @@
 /**
  * @file Font.cc
- * @brief
+ * @brief File that handles the allegro functions of loading and displaying fonts
  *
  * @author
  * @bug

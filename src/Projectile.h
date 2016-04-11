@@ -25,8 +25,10 @@ class Projectile : public Drawable, public Updateable {
    Vector speed;
    bool live;
    
-   Projectile(Point p, ALLEGRO_COLOR c, Vector s) : centre(p), color(c), speed(s), live(true)
-   { }
+   Projectile(Point p, ALLEGRO_COLOR c, Vector s) : centre(p), color(c), speed(s)
+   {
+      live = false;
+   }
 
    virtual ~Projectile() { }
    

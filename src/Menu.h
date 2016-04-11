@@ -1,14 +1,19 @@
+/** @file Menu.h
+ * @brief Declaration of Menu class
+ *
+ * @author Cody Barnson
+ */
+ 
 #ifndef MENU_H
 #define MENU_H
-
-#include <allegro5/allegro.h>
 
 #include <memory>
 
 #include "State.h"
 
-class Sprite;
-class Timer;
+#include <allegro5/allegro.h>
+class Sprite;/**< forward declaration of Sprite class */
+class Timer;/**< forward declaration of Timer class */
 
 extern const int MENU_ANIMATION_DELAY;
 
@@ -17,9 +22,9 @@ class Menu {
    Menu(int fps);
    ~Menu();
    
-   void init();
-   void draw();
-   bool animation();
+   void init();/**< initializes resources- loads titlescreen image */
+   void draw();/**< draws menu */
+   bool animation();/**< function to handle timing of menu animation */
 
    void handleEvent(const ALLEGRO_EVENT&, gs::state&);
    void handleKey(const ALLEGRO_KEYBOARD_STATE&, gs::state&);

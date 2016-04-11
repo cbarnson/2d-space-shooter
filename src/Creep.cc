@@ -15,7 +15,7 @@
 const int CREEP_SIZE = 20;
 
 Creep::Creep(Point cen, ALLEGRO_COLOR col, Vector spd) : Enemy(cen, col, spd),
-							 projSpeed(Vector(0, 0)),
+							 projSpeed(Vector(-400, 0)),
 							 fireSpeed(rand() % 50 + 30),
 							 lives(1), dAnim(0),
 							 dAnim_complete(false), fire(true)

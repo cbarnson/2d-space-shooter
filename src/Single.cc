@@ -13,15 +13,16 @@
 #include "Point.h"
 #include "Vector.h"
 #include "Projectile.h"
-#include "Background.h"
-#include "Enemy.h"
 #include "Player.h"
 #include "Laser.h"
 #include "Missile.h"
 #include "Sprite.h"
+
 #include "Action.h"
 #include "Timer.h"
 #include "Font.h"
+
+#include "Enemy.h"
 #include "Creep.h"
 #include "CreepBomb.h"
 
@@ -81,7 +82,8 @@ void Single::init() {
    // sprites
    playerShip = std::make_shared<Sprite> ("Sprite.png");
    enemyShip = std::make_shared<Sprite> ("EnemyBasic.png");
-   enemyDeath = std::make_shared<Sprite> ("explode.png");   
+   enemyDeath = std::make_shared<Sprite> ("explode.png");
+   enemyBomb = std::make_shared<Sprite> ("spikebomb.png");
    // delete path 
    al_destroy_path(path);
    //std::cout << "end of single init \n";
@@ -108,8 +110,8 @@ void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
 	    }
 	    
 	    // double
-	    else if (playerWeapon1->getCount() > WEAPON_DELAY_LASER &&
-		     playerScore >= 30 && playerScore < 100) {
+	    else if (playerWeapon1->getCount() > WEAPON_DELAY_LASER+4 &&
+		playerScore >= 30 && playerScore < 100) {
 
 	       addLaser(player->centre + Point(-25, 10), player->color,
 			PLAYER_PROJECTILE_SPEED);
@@ -122,8 +124,8 @@ void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
 	    }
 	    
 	    // triple
-	    else if (playerWeapon1->getCount() > WEAPON_DELAY_LASER &&
-		     playerScore >= 100) {
+	    else if (playerWeapon1->getCount() > WEAPON_DELAY_LASER+6 &&
+		playerScore >= 100) {
 
 	       addLaser(player->centre, player->color, PLAYER_PROJECTILE_SPEED);
 	       addLaser(player->centre + Point(0, 5), player->color,
@@ -377,7 +379,7 @@ void Single::spawn() {
       playerloc = Point (200, 300);
 
    // roll for enemy routine
-   int n = rand() % 7 + 1;
+   int n = rand() % 6 + 1;
    
    // select enemy routine
    switch(n) {
@@ -425,8 +427,9 @@ void Single::spawn() {
       
       
       case 5:
-	 spawn();
-	 spawn();
+	 pt.rollRandom();
+	 addCreepB(pt, al_map_rgb(204,3,3), Vector(-60, 0));
+	  spawn();
 	 break;
       
       
@@ -437,9 +440,9 @@ void Single::spawn() {
 	    addCreep(Point(800, 300), color, spd);
 	 }
 	 break;
-      case 7:
-	 addCreepB(Point (800, 300), al_map_rgb(204,3,3), Vector(-60, 0));
-	 break;
+	 //    case 7:
+	 // addCreepB(Point (800, 300), al_map_rgb(204,3,3), Vector(-60, 0));
+	 // break;
 	 
 	 
    }
@@ -489,7 +492,7 @@ void Single::updateEnemyPosition(double dt) {
    }
 }
 void Single::CircleLaser(std::shared_ptr<Enemy> E)
-{
+{/*
    addLaser(E->getCentre(), E->getColor(), Vector(0, -500));   //up
    addLaser(E->getCentre(), E->getColor(), Vector(150, -350)); //UUR
    addLaser(E->getCentre(), E->getColor(), Vector(250, -250)); //UR
@@ -497,13 +500,17 @@ void Single::CircleLaser(std::shared_ptr<Enemy> E)
    addLaser(E->getCentre(), E->getColor(), Vector(150, 350));  //RRD
    addLaser(E->getCentre(), E->getColor(), Vector(250, 250));  //RD
    addLaser(E->getCentre(), E->getColor(), Vector(0, 500));    //down
-   addLaser(E->getCentre(), E->getColor(), Vector(-250, 250)); //DR
+   addLaser(E->getCentre(), E->getColor(), Vector(-2150, 250)); //DR
    addLaser(E->getCentre(), E->getColor(), Vector(-350, 150)); //DDR
    addLaser(E->getCentre(), E->getColor(), Vector(-500, 0));   //left
    addLaser(E->getCentre(), E->getColor(), Vector(-250, -250));//UL
    addLaser(E->getCentre(), E->getColor(), Vector(-150, -350));//UUL
-   addLaser(E->getCentre(), E->getColor(), Vector(-350, -150));
- 
+   addLaser(E->getCentre(), E->getColor(), Vector(-350, -150));//ULL
+ *//*
+   for(int i=-500; i<=500; i+=200)
+   for(int j=-500; j<=500; j+=200)*/
+   
+   addLaser(E->getCentre(), E->getColor(), Vector(500, 0));
    E->setFire(false);
 }
 
@@ -521,6 +528,11 @@ void Single::drawEnemies() {
    if (!enem.empty()) {
       for (std::list< std::shared_ptr<Enemy> >::iterator it = enem.begin(); 
 	   it != enem.end(); ++it) {
+	 if(doColorsMatch((*it)->getColor(), al_map_rgb(204, 3, 3)))
+	 {
+	    (*it)->draw(enemyBomb, enemyDeath);
+	 }
+	 else
 	 (*it)->draw(enemyShip, enemyDeath);
       }
    }
