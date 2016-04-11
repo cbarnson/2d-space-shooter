@@ -11,14 +11,14 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "Updateable.h"
-#include "Projectile.h"
-#include "Laser.h"
-#include "Action.h"
-
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_image.h>
+
+#include "Updateable.h"
+#include "Projectile.h"
+#include "Action.h"
+
 #include <memory>
 
 struct Point;

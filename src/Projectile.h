@@ -8,16 +8,15 @@
 #ifndef PROJECTILE_H
 #define PROJECTILE_H
 
+#include <allegro5/allegro.h> // for color
+#include <allegro5/allegro_primitives.h>
+
+#include <iostream>
+
 #include "Drawable.h"
 #include "Updateable.h"
 #include "Point.h"
 #include "Vector.h"
-
-#include <allegro5/allegro.h> // for color
-#include <allegro5/allegro_primitives.h>
-#include <iostream>
-
-using std::cout;
 
 class Projectile : public Drawable, public Updateable {
   public:
@@ -26,12 +25,8 @@ class Projectile : public Drawable, public Updateable {
    Vector speed;
    bool live;
    
-   Projectile (Point p, ALLEGRO_COLOR c, Vector s)
-      : centre(p), color(c), speed(s)
-   {
-      live = true;
-      //centre = centre + speed * 0.1;
-   }
+   Projectile(Point p, ALLEGRO_COLOR c, Vector s) : centre(p), color(c), speed(s), live(true)
+   { }
 
    virtual ~Projectile() { }
    

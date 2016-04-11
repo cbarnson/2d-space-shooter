@@ -16,12 +16,15 @@
 #include "Player.h"
 #include "Font.h"
 #include "Timer.h"
+#include "Menu.h"
+#include "Projectile.h"
+#include "Laser.h"
+//#include "Missile.h"
 
 class TestGame: public CppUnit::TestFixture {
    
    CPPUNIT_TEST_SUITE(TestGame);
    CPPUNIT_TEST(PointConstTest);
-   CPPUNIT_TEST(PlayerConstTest);
    CPPUNIT_TEST(testDefPoint);
    CPPUNIT_TEST(testPointPointAddition);
    CPPUNIT_TEST(testPointVectorAddition);
@@ -29,21 +32,28 @@ class TestGame: public CppUnit::TestFixture {
    CPPUNIT_TEST(testVectorVectorAddition);
    CPPUNIT_TEST(testVectorReflectX);
    
-   //CPPUNIT_TEST(testInitAllegro);
-   //CPPUNIT_TEST(testLoadFont);
-   //CPPUNIT_TEST(testCreateTimer);
-   
-   //CPPUNIT_TEST(MissileConstTest);
+   CPPUNIT_TEST(testInitAllegro);
+   CPPUNIT_TEST(testLoadFont);
+   CPPUNIT_TEST(testCreateTimer);
+   CPPUNIT_TEST(testTimerStarted);
+   CPPUNIT_TEST(testTimerStopped);
+
+   CPPUNIT_TEST(testPlayerPosition);
+   CPPUNIT_TEST(testPlayerDead);
+   CPPUNIT_TEST(testPlayerBounds);
+
+   CPPUNIT_TEST(testLaserBounds);
+   //CPPUNIT_TEST(testMissileBounds);
    
    CPPUNIT_TEST_SUITE_END();
    
   private:
    Point *p1, *p2;
    Vector *v1, *v2;
-   Player *pla;
    Font *f1;
    Timer *timer1;
-   
+   Player *player, *player2;
+   Projectile *proj;//, *proj2;
    
   public:
    void setUp() {
@@ -51,10 +61,15 @@ class TestGame: public CppUnit::TestFixture {
       p2 = new Point;
       v1 = new Vector(100, 0);
       v2 = new Vector;
-      pla = new Player((*p1), al_map_rgb(255, 0,0));
+      
+      f1 = new Font("resources/ipag.ttf", 10);
+      timer1 = new Timer(60);
+      
+      player = new Player(Point(300, 300), al_map_rgb(0, 200, 0));
+      player2 = new Player(Point(-1, 300), al_map_rgb(0, 200, 0));
 
-      //f1 = new Font("resources/ipag.ttf", 10);
-      //timer1 = new Timer(60);
+      proj = new Laser(Point(900, 300), al_map_rgb(200, 0, 0), Vector(50, 0));
+      //proj2 = new Missile(Point(1000, 300), al_map_rgb(200, 0, 0), Vector(50, 0));
    }
    
    void tearDown() {
@@ -62,9 +77,12 @@ class TestGame: public CppUnit::TestFixture {
       delete p2;
       delete v1;
       delete v2;
-      delete pla;
       delete f1;
       delete timer1;
+      delete player;
+      delete player2;
+      delete proj;
+      //delete proj2;
    }
    
    void PointConstTest() {
@@ -72,11 +90,6 @@ class TestGame: public CppUnit::TestFixture {
       CPPUNIT_ASSERT(p1->x == 300 && p1->y == 200);
    }
    
-   void PlayerConstTest() {
-      CPPUNIT_ASSERT(pla->centre.x == 300 && pla->centre.y == 200);
-      CPPUNIT_ASSERT(pla->speed.x == 0 && pla->speed.y == 0);
-   }
-
    void testDefPoint() {
       CPPUNIT_ASSERT(p2->x == 0.0);
    }
@@ -104,7 +117,7 @@ class TestGame: public CppUnit::TestFixture {
       v1->reflectX();
       CPPUNIT_ASSERT(v1->x = -100);
    }
-/*
+
    void testInitAllegro() {
       al_init();
       CPPUNIT_ASSERT(al_is_system_installed());
@@ -121,12 +134,46 @@ class TestGame: public CppUnit::TestFixture {
       CPPUNIT_ASSERT(!timer1->isCreated());
    }
    
-   
+   void testTimerStarted() {
+      timer1->create();
+      timer1->startTimer();
+      CPPUNIT_ASSERT(timer1->isRunning());
+   }
+
+   void testTimerStopped() {
+      timer1->create();
+      timer1->startTimer();
+      timer1->stopTimer();
+      CPPUNIT_ASSERT(!timer1->isRunning());
+   }
+
+   void testPlayerPosition() {
+      CPPUNIT_ASSERT(player->centre.x == 300);
+   }
+
+   void testPlayerDead() {
+      player->hit(1);
+      player->hit(1);
+      player->hit(1);
+      CPPUNIT_ASSERT(player->dead == true);
+   }
+
+   void testPlayerBounds() {
+      player2->update(1);
+      CPPUNIT_ASSERT(player2->centre.x == PLAYER_SIZE);
+   }
+
+   void testLaserBounds() {
+      proj->update(1);
+      CPPUNIT_ASSERT(proj->live == false);
+   }
+/*
+   void testMissileBounds() {
+      proj2->update(1);
+      CPPUNIT_ASSERT(proj2->live = false);
+   }
 */
-   /*
-   void MissileConstTest(){
-      // CPPUNIT_ASSERT(mis->in_bound()==true);
-      }*/
+
 };
 #endif
   

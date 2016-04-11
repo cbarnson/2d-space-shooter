@@ -10,6 +10,13 @@
 
 
 CreepBomb::CreepBomb(Point cen, ALLEGRO_COLOR col, Vector spd) : Enemy(cen, col, spd) {
+   projSpeed = Vector(-500, 0);//not used
+   lives = 3;
+   size = 20;   
+   dAnim = 0;      
+   dAnim_complete = false;
+   fire = false;
+   
    load_assets();
 }
 	
@@ -29,19 +36,9 @@ bool CreepBomb::getdAnim_complete() { return dAnim_complete; }
 
 
 void CreepBomb::load_assets() {
-
-   std::cout << "in creepbomb load assets\n";
-   
    fireDelay = std::make_shared<Timer> (60);
    fireDelay->create();
-   fireDelay->startTimer();
-   
-   projSpeed = Vector(-500, 0);//not used
-   lives = 3;
-   size = 20;   
-   dAnim = 0;      
-   dAnim_complete = false;
-   fire = false;
+   fireDelay->startTimer();   
 }
 
 // decrement enemy life by a value of 1

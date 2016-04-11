@@ -11,12 +11,12 @@ const int MENU_ANIMATION_DELAY = 2;
 Menu::Menu(int fps) : _fps(fps), _mAnim(0)
 {
    //init();
-   std::cout << "in the menu constructor\n";
+   //std::cout << "in the menu constructor\n";
 }
 
 
 Menu::~Menu() {
-   std::cout << "menu deleted\n";
+   //std::cout << "menu deleted\n";
 }
 
 void Menu::init() {

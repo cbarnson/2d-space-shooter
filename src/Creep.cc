@@ -6,6 +6,7 @@
  * @bug
  **/
 #include "Creep.h"
+
 #include "Point.h"
 #include "Vector.h"
 #include "Timer.h"
@@ -22,9 +23,15 @@ Creep::Creep(Point cen, ALLEGRO_COLOR col, Vector spd) : Enemy(cen, col, spd),
    load_assets();
 }
 						
+// creates and starts the fireDelay timer for the Creep
+void Creep::load_assets() {
+   fireDelay = std::make_shared<Timer> (60);   
+   fireDelay->create();
+   fireDelay->startTimer();
+}
 	
 Creep::~Creep() {
-   
+   fireDelay.reset();
 }
 
 // setter and getter methods
@@ -37,12 +44,6 @@ bool Creep::getDead() { return dead; }
 bool Creep::getFire() { return fire; }
 bool Creep::getdAnim_complete() { return dAnim_complete; }
 
-// creates and starts the fireDelay timer for the Creep
-void Creep::load_assets() {
-   fireDelay = std::make_shared<Timer> (60);   
-   fireDelay->create();
-   fireDelay->startTimer();
-}
 
 // decrement enemy life by a value of 1
 void Creep::hit() {

@@ -11,17 +11,13 @@
 #include <stdexcept>
 
 Timer::Timer(int fps) : _timer(NULL), _fps(fps) {
-   /*
-   if ((_timer = al_create_timer(1.0 / _fps)) == NULL) {
-      throw std::runtime_error("cannot initialize timer\n");
-      }
-   */
+
 }
 
 Timer::~Timer() {
    if (_timer != NULL) {
       al_destroy_timer(_timer);
-      std::cout << "timer deleted\n";      
+      //std::cout << "timer deleted\n";      
    }
 }
 

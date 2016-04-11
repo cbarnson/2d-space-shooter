@@ -14,9 +14,11 @@
 #include <list>
 #include <memory>
 
+#include "Root.h"
+#include "Vector.h"
+
 // forward declaring classes is preferable to include "....h" in headers
 struct Point;
-struct Vector;
 class Timer;
 class Projectile;
 class Enemy;

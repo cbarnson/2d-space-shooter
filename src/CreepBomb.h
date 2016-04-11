@@ -29,8 +29,6 @@ struct Point;
 struct Vector;
 class Timer;
 
-
-
 class CreepBomb : public Enemy {
    
   private:
