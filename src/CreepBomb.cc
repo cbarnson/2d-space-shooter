@@ -13,7 +13,7 @@ CreepBomb::~CreepBomb() {
 }	
 void CreepBomb::setFire(bool f) { fire = f; }
 ALLEGRO_COLOR CreepBomb::getColor() { return color; }
-Vector CreepBomb::getProjSpeed() { return projSpeed; }
+Vector CreepBomb::getProjSpeed() { return 0; }//not used
 int CreepBomb::getSize() { return size; }
 Point CreepBomb::getCentre() { return centre; }
 bool CreepBomb::getDead() { return dead; }   
@@ -28,6 +28,7 @@ void CreepBomb::load_assets() {
 // decrement enemy life by a value of 1
 void CreepBomb::hit() {
    lives = lives - 1;
+   col++%3;
    //change anim column
    if (lives < 1)
       dead = true;
@@ -36,7 +37,7 @@ void CreepBomb::hit() {
 // draw image to display of enemy ship
 void CreepBomb::draw(std::shared_ptr<Sprite> enemyShip, std::shared_ptr<Sprite> enemyDeath) {
    if (!dead) {
-      enemyShip->draw_tinted(centre, color, 0);
+      enemyShip->draw_region(row, col, 40, 41, centre, 0);
    }
    else {
       // enemy has been hit and killed, proceed through death animation sequence
@@ -64,23 +65,22 @@ void CreepBomb::update(double dt) {
    if (centre.y > 600 - size || centre.y < size)
       speed.reflectY();
    
-   if(fireDelay->getCount() > 5){
-      //change animation row
+   if(fireDelay->getCount() > 200&&row==0){
+      row++;
    }
-   if(fireDelay->getCount() > 10){
-      //change animation row
+   if(fireDelay->getCount() > 400&&row==1){
+      row++;
    }
-   if(fireDelay->getCount() > 15){
-      //change animation row
-   }
-   if(fireDelay->getCount() == 100){
+   if(fireDelay->getCount() > 480&& !fire1){
       fire = true;
+      fire1=true;
    }
-   if(fireDelay->getCount() == 120){
+   /*
+   if(fireDelay->getCount() > 490&& !fire2){
       fire = true;
-   }
-   
-   if(fireDelay->getCount() > 140){
+      fire2=true;
+      }*/
+   if(fireDelay->getCount() > 500){
       fire = true;
       dead = true;
       fireDelay->stopTimer();
