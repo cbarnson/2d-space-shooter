@@ -15,8 +15,9 @@
 int main() {
    srand(time(0));
 
-   Engine game(800, 600, 60);
-   game.run();
+   Engine shooty(800, 600, 60);
+   shooty.init();
+   shooty.run();
 
    return 0;
 

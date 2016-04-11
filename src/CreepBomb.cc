@@ -6,14 +6,21 @@
  * @bug
  **/
 #include "CreepBomb.h"
+#include "Timer.h"
 
+
+CreepBomb::CreepBomb(Point cen, ALLEGRO_COLOR col, Vector spd) : Enemy(cen, col, spd) {
+   load_assets();
+}
 	
 CreepBomb::~CreepBomb() {
 
-}	
+}
+
+// setter and getter methods
 void CreepBomb::setFire(bool f) { fire = f; }
 ALLEGRO_COLOR CreepBomb::getColor() { return color; }
-Vector CreepBomb::getProjSpeed() { return 0; }//not used
+Vector CreepBomb::getProjSpeed() { return speed; }//not used
 int CreepBomb::getSize() { return size; }
 Point CreepBomb::getCentre() { return centre; }
 bool CreepBomb::getDead() { return dead; }   
@@ -22,13 +29,25 @@ bool CreepBomb::getdAnim_complete() { return dAnim_complete; }
 
 
 void CreepBomb::load_assets() {
-
+   row =0; col=0;
+   std::cout << "in creepbomb load assets\n";
+   
+   fireDelay = std::make_shared<Timer> (60);
+   fireDelay->create();
+   fireDelay->startTimer();
+   
+   projSpeed = Vector(-500, 0);//not used
+   lives = 3;
+   size = 20;   
+   dAnim = 0;      
+   dAnim_complete = false;
+   fire = false; fire1=false; fire2=false;
 }
 
 // decrement enemy life by a value of 1
 void CreepBomb::hit() {
    lives = lives - 1;
-   col++%3;
+   col++;
    //change anim column
    if (lives < 1)
       dead = true;
@@ -61,12 +80,8 @@ void CreepBomb::update(double dt) {
    if (centre.x < 0)
       dead = true;
    
-   // check y bound and adjust if out
-   if (centre.y > 600 - size || centre.y < size)
-      speed.reflectY();
-   
    if(fireDelay->getCount() > 200&&row==0){
-      row++;
+      row++;  
    }
    if(fireDelay->getCount() > 400&&row==1){
       row++;
@@ -75,15 +90,14 @@ void CreepBomb::update(double dt) {
       fire = true;
       fire1=true;
    }
-   /*
    if(fireDelay->getCount() > 490&& !fire2){
       fire = true;
       fire2=true;
-      }*/
+      }
    if(fireDelay->getCount() > 500){
       fire = true;
       dead = true;
       fireDelay->stopTimer();
       fireDelay->resetCount();
-      }
+   }
 }

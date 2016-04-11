@@ -1,145 +1,134 @@
-#include <stdexcept>
-#include <iostream>
+#include "Engine.h"
+
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_image.h>
-#include "Engine.h"
+
+#include <stdexcept>
+#include <iostream>
+
 #include "Menu.h"
 #include "State.h"
 #include "Action.h"
 #include "Root.h"
 #include "Single.h"
+
 using namespace act;
 using namespace gs;
 
-Engine::Engine(int w, int h, int fps) : displayWidth(w), displayHeight(h), 
-					framesPerSec(fps), _timer(NULL), 
-					eventQueue(NULL), running(true),
-					gameState(state::MENU)
-{
-   init();
-   gameMenu = new Menu(framesPerSec);
-}
+Engine::Engine(int w, int h, int fps) : _displayWidth(w), _displayHeight(h), 
+					_fps(fps), _gameScore(-1),
+					_timer(NULL), _eventQueue(NULL), running(true),
+					_state(state::MENU)
+{ }
 
 Engine::~Engine() {
-   delete gameMenu;
+   if (_timer != NULL) al_destroy_timer(_timer);
+   if (_eventQueue != NULL) al_destroy_event_queue(_eventQueue);
+   if (_display != NULL) al_destroy_display(_display);
+   _root.reset();
 }
-// initialize Allegro, the display window, the addons, the timers, and event 
+
+
+// initialize Allegro, the _display window, the addons, the timers, and event 
 // sources
 void Engine::init() {
    al_init();
-   if ((display = al_create_display(displayWidth, displayHeight)) == NULL) {
-      std::cerr << "Cannot initialize the display\n";
+   
+   if ((_display = al_create_display(_displayWidth, _displayHeight)) == NULL) {
+      std::cout << "Cannot initialize the display\n";
       exit(1); // non-zero argument means "trouble"
    }
+   
    // initialize addons
    al_init_primitives_addon();
    al_init_font_addon();
    al_init_ttf_addon();
    al_init_image_addon();
+   
    // initialize our timers
-   if ((_timer = al_create_timer(1.0 / framesPerSec)) == NULL)
-      throw std::runtime_error("Cannot create allegro timer");
-   if ((eventQueue = al_create_event_queue()) == NULL)
-      throw std::runtime_error("Cannot create event queue");
-   // register our allegro eventQueue
-   al_register_event_source(eventQueue, al_get_display_event_source(display)); 
-   al_register_event_source(eventQueue, al_get_timer_event_source(_timer));
+   if ((_timer = al_create_timer(1.0 / _fps)) == NULL) {
+      std::cout << "error, could not create timer\n";
+      exit(1);
+   }
+   if ((_eventQueue = al_create_event_queue()) == NULL) {
+      std::cout << "error, could not create event queue\n";
+      exit(1);
+   }
+   // register our allegro _eventQueue
+   al_register_event_source(_eventQueue, al_get_display_event_source(_display)); 
+   al_register_event_source(_eventQueue, al_get_timer_event_source(_timer));
    al_start_timer(_timer);
+   
    // install keyboard
    if (!al_install_keyboard()) {
       std::cerr << "Could not install keyboard\n";
    }
+   
    // register keyboard
-   al_register_event_source(eventQueue, al_get_keyboard_event_source());
-}
-
-
-
-// clean up some allegro resources
-void Engine::shutdown() {
-   // clean up some allegro objects
-   if (_timer != NULL) al_destroy_timer(_timer);
-   if (eventQueue != NULL) al_destroy_event_queue(eventQueue);
-   if (display != NULL) al_destroy_display(display);  
+   al_register_event_source(_eventQueue, al_get_keyboard_event_source());
+   
+   //_menu = std::make_shared<Menu> (_fps);
 }
 
 
 
 
-// repeatedly call the state manager function until the gameState is EXIT
+// repeatedly call the state manager function until the _state is EXIT
 void Engine::run() {
    float prevTime = 0;
    // main engine loop
-   while (gameState != state::EXIT) {
-      processGameLogic(prevTime, gameState);
+   while (_state != state::EXIT) {
+      processGameLogic(prevTime, _state);
    }
 }
-
-
 
 
 void Engine::processGameLogic(float& prevTime, gs::state currentState) {
    switch (currentState) {
       case state::PLAY:
+	 if (_root) {
+	    _menu.reset();
+	 }
 	 gameLoop(prevTime);
 	 break;
       case state::MENU:
+	 if (!_menu) {
+	    addMenu();
+	 }
 	 menuLoop();
 	 break;
       case state::LOAD:
 	 menuLoop();
 	 break;
-      case state::GAME_OVER:
-	 return; // for now
       case state::EXIT:
 	 return;
    }
 }
 
 // process a single frame for the menu
-// returns false if menuLoop should terminate
 void Engine::menuLoop() {
    ALLEGRO_EVENT event;
    ALLEGRO_KEYBOARD_STATE kb;
-   al_wait_for_event(eventQueue, &event);
-   // display closes
-   if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-      gameState = state::EXIT;
-      shutdown();
-      return;
-   }
-   // timer
-   if (event.type == ALLEGRO_EVENT_TIMER) {
-      if (gameState == state::LOAD) { // triggers load animation
-	 if (!gameMenu->animation()) { // load animation complete
-	    gameState = state::PLAY; // move into PLAY state
-	    return;
-	 }
-	 al_flip_display();
-      }
-      else {
-	 gameMenu->draw(); // static menu image
-	 al_flip_display();
-      }
-   }
-   // input
+   al_wait_for_event(_eventQueue, &event);
    al_get_keyboard_state(&kb);
-   if (al_key_down(&kb, ALLEGRO_KEY_1)) {
-      gameState = state::LOAD;
-      if (!root) {
-	 root = std::make_shared<Single> (displayWidth, displayHeight, 
-					  framesPerSec);    
-      }
-      return;
+
+   _menu->handleEvent(event, _state);
+   _menu->handleKey(kb, _state);
+   if (_state == state::LOAD && !_root) {
+      addSingle();
    }
-   // escape
-   if (al_key_down(&kb, ALLEGRO_KEY_ESCAPE)) {
-      gameState = state::EXIT;
-      shutdown();
-      return;
-   }
+}
+
+void Engine::addSingle() {
+   _root = std::make_shared<Single> (_displayWidth, _displayHeight, _fps);
+   _root->init();
+}
+
+void Engine::addMenu() {
+   _menu = std::make_shared<Menu> (_fps);
+   _menu->init();
 }
 
 void Engine::gameLoop(float& prevTime) {
@@ -149,15 +138,17 @@ void Engine::gameLoop(float& prevTime) {
    float crtTime;
    // input
    al_get_keyboard_state(&kb);      
-   root->input(kb);
+   _root->input(kb);
+   
    // get event
-   al_wait_for_event(eventQueue, &event);
-   // display closes
+   al_wait_for_event(_eventQueue, &event);
+   
+   // _display closes
    if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-      gameState = state::EXIT;
-      shutdown();
+      _state = state::EXIT;
       return;
    }
+   
    // timer
    if (event.type == ALLEGRO_EVENT_TIMER) {
       crtTime = al_current_time();
@@ -165,31 +156,33 @@ void Engine::gameLoop(float& prevTime) {
       prevTime = crtTime;
       redraw = true;
    }
+   
    // render
-   if (redraw && al_is_event_queue_empty(eventQueue)) {
+   if (redraw && al_is_event_queue_empty(_eventQueue)) {
       redraw = false;      
       draw(); 
       al_flip_display();
-   }   
-   // check if game over
-   if (root->is_game_over()) {
-      gameState = state::MENU;
-      root.reset();
    }
    
+   // check if game over
+   if (_root->is_game_over()) {
+      _state = state::MENU;
+      _root.reset();
+   }   
 }
 
 // update the game mode
 void Engine::update(double dt) {
-   if (root) {
-      root->update(dt);
+   if (_root) {
+      _root->update(dt);
+      //_gameScore = _root->getScore();
    }
 }
 
 // draws for the game mode
 void Engine::draw() {
-   if (root) {
-      root->draw();
+   if (_root) {
+      _root->draw();
    }
 }
 

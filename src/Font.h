@@ -2,6 +2,7 @@
 #define FONT_H
 
 #include <string>
+
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
@@ -16,6 +17,7 @@ class Font {
     * @param i size of text
     */
    Font(const std::string& s, int i);
+   void load();
    ~Font();
    
    /** @fn drawTextCentered( AL_COLOR, string)
@@ -31,6 +33,7 @@ class Font {
     * @param string& text to be drawn
     */
    void drawTextCenteredF(const ALLEGRO_COLOR&, const std::string&, int);
+
    
    /** @fn drawTextF( AL_COLOR, string)
     * @brief draws text at a specific point on the screen
@@ -40,6 +43,8 @@ class Font {
     * @param string& text to be drawn
     */
    void drawTextF(const ALLEGRO_COLOR&, int x, int y, const std::string&, int);
+
+   bool isLoaded() const;
    
   private:
    ALLEGRO_FONT* _font;

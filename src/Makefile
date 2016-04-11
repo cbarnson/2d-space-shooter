@@ -6,41 +6,40 @@
 # declaration of variables
 CC = g++11
 CCFLAGS = -Wall -g -std=c++11 -I/home/lib2720/allegro/include
-#CCFLAGS = -Wall -g -std=c++11 `pkg-config --cflags allegro-5.0`
 
 # file names
 NONMAIN = testmain.cc testmain.o TestGame.h
-NONTEST = main.cc main.o 
+NONTEST = main.cc main.o
+
 SOURCES = $(filter-out $(NONMAIN), $(wildcard *.cc))
 OBJECTS = $(SOURCES:.cc=.o)
+
 SOURCEST = $(filter-out $(NONTEST), $(wildcard *.cc))
 OBJECTST = $(SOURCEST:.cc=.o)
+
 LIBDIR = -L/home/lib2720/allegro/lib
+
 LNFLAGS = -lallegro -lallegro_primitives -lallegro_image -lallegro_font -lallegro_ttf
-LNFLAGST= -lallegro -lallegro_primitives -lallegro_image -lallegro_font -lallegro_ttf -ldl -lcppunit
-#LNFLAGS = `pkg-config --libs allegro-5.0` -lallegro_primitives \
--lallegro_font -lallegro_ttf -lallegro_image
+LNFLAGST= -lallegro -lallegro_primitives -lallegro_image -lallegro_font -lallegro_ttf \
+-ldl -lcppunit
 
 
 # main target
 all: main tests
 
-
 main: $(OBJECTS)
 	$(CC) $(LIBDIR) -o $@ $^ $(LNFLAGS)
-#	$(CC) $(OBJECTS) -o main
+
 tests: $(OBJECTST)
 	$(CC) $(LIBDIR) -o $@ $^ $(LNFLAGST)
 
 # pull in dependency info for existing .o files
--include $(OBJECTS:.o=.d)
+-include $(OBJECTS:.o=.d) $(OBJECTST:.o=.d)
 
 # compile and generate dependency info
 %.o: %.cc
 	$(CC) -c $(CCFLAGS) $< -o $@
 	$(CC) -M $(CCFLAGS) $*.cc > $*.d
-
-
 
 # automatic variables
 # $< contains the first dependency file name
