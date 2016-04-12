@@ -201,8 +201,8 @@ void Single::update(double dt) {
 void Single::draw() {
    bg->draw();
    drawLives();
-   gameScoreFont->drawTextF(al_map_rgb(255, 255, 255), 100, 100,"Score: %i", playerScoreTotal);
-   
+   gameScoreFont->drawTextF(al_map_rgb(255, 255, 255), 100, 50,"Score: %i", playerScoreTotal);
+   drawWeaponUpgradeStatus();
    if (gameOver) showGameOverMessage();
    else if (player) player->draw(playerShip);
    
@@ -250,6 +250,36 @@ void Single::drawLives() {
 
       gameOverFont->drawTextCenteredF(al_map_rgb(255, 0, 0), "%i LIVES REMAINING", playerLives);
    }
+}
+void Single::drawWeaponUpgradeStatus(){
+   
+   al_draw_rounded_rectangle(displayWidth - (displayWidth/2)-50, 50, displayWidth-(displayWidth/2)+50,
+			     70, 2, 2, al_map_rgb(255, 255, 255), 1);
+   if(playerScore!=0){
+      if(playerScore<30)
+	 al_draw_filled_rounded_rectangle(displayWidth - (displayWidth/2)-49, 51, displayWidth-
+					  (displayWidth/2)-49+playerScore*3.3, 69, 2, 2,
+					  al_map_rgb(255, 0, 0));
+      if(playerScore >= 30 && playerScore <100){
+	 al_draw_filled_rounded_rectangle(displayWidth - (displayWidth/2)-49, 51, displayWidth-
+					  (displayWidth/2)-49+(playerScore-30)*1.428, 69, 2, 2,
+					  al_map_rgb(255, 0, 0));}
+      if(playerScore>=100){
+	 al_draw_filled_rounded_rectangle(displayWidth - (displayWidth/2)-49, 51, displayWidth-
+					  (displayWidth/2)+49, 69, 2, 2, al_map_rgb(0, 255, 0));}
+   }
+   if(playerScore==30||playerScore==100)
+      upgradeText->startTimer();
+   if(upgradeText->isRunning()){
+      gameScoreFont->drawText(400, 31, al_map_rgb(255,255,255), "WEAPON UPGRADED");
+      if(upgradeText->getCount() > 10){
+	 upgradeText->stopTimer();
+	 upgradeText->resetCount();
+      }
+
+   }
+      
+ 
 }
 
 void Single::clean() {
