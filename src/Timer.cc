@@ -10,16 +10,21 @@
 #include <iostream>
 #include <stdexcept>
 
-Timer::Timer(int fps) : _fps(fps) {
-   if ((_timer = al_create_timer(1.0 / _fps)) == NULL) {
-      throw std::runtime_error("cannot initialize timer\n");
-   }   
+Timer::Timer(int fps) : _timer(NULL), _fps(fps) {
+
 }
 
 Timer::~Timer() {
    if (_timer != NULL) {
       al_destroy_timer(_timer);
-      std::cout << "timer deleted\n";      
+      //std::cout << "timer deleted\n";      
+   }
+}
+
+void Timer::create() {
+   if ((_timer = al_create_timer(1.0 / _fps)) == NULL) {
+      std::cout << "error, timer could not be created\n";
+      exit(1);
    }
 }
 
@@ -43,3 +48,8 @@ bool Timer::isRunning() const {
    return al_get_timer_started(_timer);
 }
 
+bool Timer::isCreated() const {
+   if (_timer == NULL)
+      return false;
+   return true;
+}

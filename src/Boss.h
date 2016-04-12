@@ -11,41 +11,47 @@
 #define BOSS_H
 
 #include "Enemy.h"
-#include "Drawable.h"
+//#include "Drawable.h"
 #include "Updateable.h"
-#include "Point.h"
-#include "Vector.h"
-#include "Sprite.h"
+//#include "Point.h"
+//#include "Vector.h"
+//#include "Sprite.h"
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 #include <memory>
 
-using std::shared_ptr;
-using std::make_shared;
+//using std::shared_ptr;
+//using std::make_shared;
+
+struct Point;
+struct Vector;
+class Timer;
+class Sprite;
+
+extern const int BOSS_SIZE;
 
 class Boss : public Enemy {
-  private:
-   Point centre;
-   ALLEGRO_COLOR color;
-   Vector speed;
 
-   ALLEGRO_TIMER *fireDelay;
-   //shared_ptr<Sprite> bShip;
-   
+  private:
+   std::shared_ptr<Timer> fireDelay;
    Vector projSpeed;
-   int size; 
+   //Point centre;
+   //ALLEGRO_COLOR color;
+   //Vector speed;
+   //ALLEGRO_TIMER *fireDelay;
+   //shared_ptr<Sprite> bShip;
+   //int size; 
+   int fireSpeed;
    int lives;
    int dAnim;
-   int fireSpeed;
-
    bool dAnim_complete;
    bool fire;
    bool aliveBoss;
    
   public:
-   Boss (Point p, ALLEGRO_COLOR c, Vector s)
-      : Enemy(p, c, s), centre(p), color(c), speed(s)
+   Boss (Point p, ALLEGRO_COLOR c, Vector s);
+   /*: Enemy(p, c, s), centre(p), color(c), speed(s)
    {
       if((fireDelay = al_create_timer(1.0 / 30)) == NULL)
 	 throw std::runtime_error("cannot create fireDelay timer");
@@ -62,7 +68,7 @@ class Boss : public Enemy {
       dAnim_complete = false;
       fire = true;
       aliveBoss = true;
-   }
+      }*/
    
    ~Boss();
    

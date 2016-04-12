@@ -10,6 +10,7 @@
 
 #include <allegro5/allegro.h>
 #include <memory>
+
 #include "State.h"
 
 // forward declarations
@@ -18,8 +19,7 @@ class Root;
 using namespace gs;
 
 class Engine {
-   std::shared_ptr<Root> root; // interface for game modes
-   
+      
   public:
    Engine(int w, int h, int fps);
    ~Engine();
@@ -28,25 +28,27 @@ class Engine {
    void run();
    void draw();
    void update(double dt);
-   void shutdown();
    void processGameLogic(float& prevTime, gs::state currentState);
    void menuLoop();
    void gameLoop(float& prevTime);
 
   private:
-   int displayWidth;
-   int displayHeight;
-   int framesPerSec;
-   //Timer* _timer;
+   int _displayWidth;
+   int _displayHeight;
+   int _fps;
+   int _gameScore; // initially -1
    ALLEGRO_TIMER *_timer;
-   ALLEGRO_EVENT_QUEUE *eventQueue;
-   ALLEGRO_DISPLAY *display;
-
+   ALLEGRO_EVENT_QUEUE *_eventQueue;
+   ALLEGRO_DISPLAY *_display;
 
    bool running;
-   gs::state gameState;
-   Menu *gameMenu;
-   
+   gs::state _state;
+   std::shared_ptr<Menu> _menu;
+   std::shared_ptr<Root> _root; // interface for game modes
+
+   void addSingle();
+   void addMenu();
+     
 };
 
 

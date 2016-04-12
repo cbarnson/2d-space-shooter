@@ -10,17 +10,20 @@
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
+
 #include <list>
 #include <memory>
 
+#include "Root.h"
+#include "Vector.h"
+#include "Background.h"
+
 // forward declaring classes is preferable to include "....h" in headers
 struct Point;
-struct Vector;
 class Timer;
 class Projectile;
 class Enemy;
 class Player;
-class Background;
 class Sprite;
 class Font;
 
@@ -28,8 +31,10 @@ class Font;
  * @class Single
  */
 
+extern const int GAME_OVER_WAIT_TIME;
 extern const int WEAPON_DELAY_LASER;
 extern const int WEAPON_DELAY_MISSILE;
+extern const Vector PLAYER_PROJECTILE_SPEED;
 
 class Single : public Root {
 
@@ -57,6 +62,7 @@ class Single : public Root {
    std::shared_ptr<Sprite> enemyShip;
    std::shared_ptr<Sprite> enemyDeath;
    std::shared_ptr<Sprite> bossShip;
+   std::shared_ptr<Sprite> enemyBomb;
 
    bool gameOver;
    bool aliveBoss = false;
@@ -85,7 +91,8 @@ class Single : public Root {
    void input(ALLEGRO_KEYBOARD_STATE&);   
    bool is_game_over() const;
    void updateScore(ALLEGRO_COLOR&);
-   
+   int getScore() const;
+      
    void spawn();
    void respawnPlayer();
    void spawnBoss();

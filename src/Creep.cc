@@ -7,34 +7,43 @@
  **/
 #include "Creep.h"
 
-	
-Creep::~Creep() {
-   if(fireDelay != NULL)
-      al_destroy_timer(fireDelay);   
+#include "Point.h"
+#include "Vector.h"
+#include "Timer.h"
+#include "Sprite.h"
+
+const int CREEP_SIZE = 20;
+
+Creep::Creep(Point cen, ALLEGRO_COLOR col, Vector spd) : Enemy(cen, col, spd),
+							 projSpeed(Vector(-400, 0)),
+							 fireSpeed(rand() % 50 + 30),
+							 lives(1), dAnim(0),
+							 dAnim_complete(false), fire(true)
+{
+   load_assets();
+}
+						
+// creates and starts the fireDelay timer for the Creep
+void Creep::load_assets() {
+   fireDelay = std::make_shared<Timer> (60);   
+   fireDelay->create();
+   fireDelay->startTimer();
 }
 	
+Creep::~Creep() {
+   fireDelay.reset();
+}
+
+// setter and getter methods
 void Creep::setFire(bool f) { fire = f; }
 ALLEGRO_COLOR Creep::getColor() { return color; }
 Vector Creep::getProjSpeed() { return projSpeed; }
-int Creep::getSize() { return size; }
+int Creep::getSize() { return CREEP_SIZE; }
 Point Creep::getCentre() { return centre; }
 bool Creep::getDead() { return dead; }   
 bool Creep::getFire() { return fire; }
 bool Creep::getdAnim_complete() { return dAnim_complete; }
 
-
-
-void Creep::load_assets() {
-   //ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
-   //al_append_path_component(path, "resources");
-   //al_change_directory(al_path_cstr(path, '/'));
-
-   //death = make_shared<Sprite> ("explode.png");
-   //enemySprite = make_shared<Sprite> ("EnemyBasic.png");
-   //death = new Sprite("explode.png");
-
-   //al_destroy_path(path);
-}
 
 // decrement enemy life by a value of 1
 void Creep::hit() {
@@ -66,17 +75,21 @@ void Creep::deathAnim(std::shared_ptr<Sprite> enemyDeath) {
 // update position of enemy ships
 void Creep::update(double dt) {
    centre = centre + speed * dt;
-
-   if(centre.x < 0)
+				
+   if (centre.x < 0) {
       dead = true;
+      return;
+   }
+   
    // check y bound and adjust if out
-   if (centre.y > 600 - size || centre.y < size)
+   if (centre.y > 600 - CREEP_SIZE || centre.y < CREEP_SIZE) {
       speed.reflectY();
-		
-   if(al_get_timer_count(fireDelay) > fireSpeed){
+   }
+
+   if (fireDelay->getCount() > fireSpeed) {
       fire = true;
-      al_stop_timer(fireDelay);
-      al_set_timer_count(fireDelay, 0);
-      al_start_timer(fireDelay);
-   }    
+      fireDelay->stopTimer();
+      fireDelay->resetCount();
+      fireDelay->startTimer();
+   }
 }

@@ -5,28 +5,25 @@
  * @author
  * @bug
  */
+#include "Player.h"
 
 #include "Point.h"
 #include "Vector.h"
 #include "Sprite.h"
-#include "Player.h"
 #include "Action.h"
+#include "Laser.h"
+#include "Missile.h"
+
 using namespace act;
 
+const int PLAYER_SIZE = 16; // in pixels
+const int PLAYER_TRAVEL_SPEED = 250;
 const float MAX_LIFE = 3;
 
-Player::Player(Point p, ALLEGRO_COLOR c) :
-  centre(p), color(c)
-{ 
-   // set some initial variable values
-   projSpeed = Vector(500, 0);
-   speed_modifier = 250;
-   speed = Vector(0, 0);
-   lives = 3;
-   size = 16;
-   row = 0;
-   col = 0;      
-   dead = false;
+Player::Player(Point p, ALLEGRO_COLOR c) : centre(p), color(c), speed(Vector(0, 0)),
+					   lives(3), row(0), col(0), dead(false)
+{
+   
 }
 
 // destructor
@@ -43,16 +40,16 @@ void Player::hit(int damage) {
 
 act::action Player::input(ALLEGRO_KEYBOARD_STATE& kb) {
   if (al_key_down(&kb, ALLEGRO_KEY_W)) {
-    speed.y -= speed_modifier;    
+     speed.y -= PLAYER_TRAVEL_SPEED;
   }
   if (al_key_down(&kb, ALLEGRO_KEY_D)) {
-    speed.x += speed_modifier;
+     speed.x += PLAYER_TRAVEL_SPEED;
   }
   if (al_key_down(&kb, ALLEGRO_KEY_S)) {
-    speed.y += speed_modifier;
+     speed.y += PLAYER_TRAVEL_SPEED;
   }
   if (al_key_down(&kb, ALLEGRO_KEY_A)) {
-    speed.x -= speed_modifier;
+     speed.x -= PLAYER_TRAVEL_SPEED;
   }
   if (al_key_down(&kb, ALLEGRO_KEY_PAD_0)||al_key_down(&kb, ALLEGRO_KEY_SPACE)) {
     return action::FIRE_PRIMARY;
@@ -97,22 +94,22 @@ void Player::selectShipAnimation() {
 
 void Player::checkBoundary() {   
    // check x bound and adjust if out
-   if (centre.x > 800 - size)
-      centre.x = 800 - size;
-   else if (centre.x < size)
-      centre.x = size;   
+   if (centre.x > 800 - PLAYER_SIZE)
+      centre.x = 800 - PLAYER_SIZE;
+   else if (centre.x < PLAYER_SIZE)
+      centre.x = PLAYER_SIZE;   
    // check y bound and adjust if out
-   if (centre.y > 600 - size)
-      centre.y = 600 - size;
-   else if (centre.y < size)
-      centre.y = size;
+   if (centre.y > 600 - PLAYER_SIZE)
+      centre.y = 600 - PLAYER_SIZE;
+   else if (centre.y < PLAYER_SIZE)
+      centre.y = PLAYER_SIZE;
 }
 
 
 void Player::drawRemainingLife() {   
-   al_draw_line(centre.x - size*2, centre.y + size*2,
-		(centre.x - size*2) + (lives / MAX_LIFE) * (size*4),
-		centre.y + size*2,
+   al_draw_line(centre.x - PLAYER_SIZE*2, centre.y + PLAYER_SIZE*2,
+		(centre.x - PLAYER_SIZE*2) + (lives / MAX_LIFE) * (PLAYER_SIZE*4),
+		centre.y + PLAYER_SIZE*2,
 		al_map_rgb(255 * (1.0 - lives / MAX_LIFE),
 			   200 * (lives / MAX_LIFE),
 			   0), 5);

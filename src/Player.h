@@ -11,14 +11,14 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "Updateable.h"
-#include "Projectile.h"
-#include "Laser.h"
-#include "Action.h"
-
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_image.h>
+
+#include "Updateable.h"
+#include "Projectile.h"
+#include "Action.h"
+
 #include <memory>
 
 struct Point;
@@ -26,21 +26,20 @@ struct Vector;
 class Sprite;
 class Input;
 
+extern const int PLAYER_SIZE;
+extern const int PLAYER_TRAVEL_SPEED;
 extern const float MAX_LIFE;
 
 class Player : public Updateable {
   public:
    Point centre;        // ship position
    ALLEGRO_COLOR color; // ship color
+   
    Vector speed;        // movement speed in any direction
-
-   bool dead;           // signals Player object has been killed
-   Vector projSpeed;    // speed of projectiles from Player object
    float lives;           // lives remaining of Player object before destroyed
-   int speed_modifier;  // affects speed of Player object
-   int size;            // ship size in pixels
    int row;
    int col;
+   bool dead;           // signals Player object has been killed
 
    /**
     * @constructor
