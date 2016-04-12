@@ -11,12 +11,12 @@ const int MENU_ANIMATION_DELAY = 2;
 Menu::Menu(int fps) : _fps(fps), _mAnim(0)
 {
    //init();
-   std::cout << "in the menu constructor\n";
+   //std::cout << "in the menu constructor\n";
 }
 
 
 Menu::~Menu() {
-   std::cout << "menu deleted\n";
+   //std::cout << "menu deleted\n";
 }
 
 void Menu::init() {
@@ -24,7 +24,7 @@ void Menu::init() {
    al_append_path_component(path, "resources");
    al_change_directory(al_path_cstr(path, '/'));
    
-   _splash = std::make_shared<Sprite> ("Titlescreen.png"); 
+   _splash = std::make_shared<Sprite> ("Titlescreen2.png"); 
    al_destroy_path(path);
    
    _timer = std::make_shared<Timer> (_fps); _timer->create();   

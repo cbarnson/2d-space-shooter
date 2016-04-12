@@ -14,14 +14,16 @@
 #include <list>
 #include <memory>
 
+#include "Root.h"
+#include "Vector.h"
+#include "Background.h"
+
 // forward declaring classes is preferable to include "....h" in headers
 struct Point;
-struct Vector;
 class Timer;
 class Projectile;
 class Enemy;
 class Player;
-class Background;
 class Sprite;
 class Font;
 

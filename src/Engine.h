@@ -10,6 +10,7 @@
 
 #include <allegro5/allegro.h>
 #include <memory>
+
 #include "State.h"
 
 // forward declarations

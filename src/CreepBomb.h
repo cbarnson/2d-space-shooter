@@ -43,13 +43,6 @@ class CreepBomb : public Enemy {
    bool fire, fire1, fire2;/**<bool flags to decide when to fire lasers */
 	
   public:
-    /** @fn CreepBomb(Point P, Al_Color C, Vector s)
-    * @brief Constructor for CreepBomb class
-    * @param p Origin point
-    * @param c Creep color- used for colission detection in Single
-    * @param s Movement speed
-    * 
-    */
    CreepBomb(Point cen, ALLEGRO_COLOR col, Vector spd);
    ~CreepBomb();
    /*
@@ -68,11 +61,13 @@ class CreepBomb : public Enemy {
    bool getFire();    
    void update(double dt);
    void load_assets();
+   
    /** @fn deathAnim(shared_ptr<Sprite>)
     * @param d sprite to be used for death explosion animation
     */
    void deathAnim(std::shared_ptr<Sprite> d);
    void hit();
+   
    /** @fn draw(shared_ptr<Sprite> ship, shared_ptr<Sprite> death>
     * function inherited from Drawable- draws either the ship or the explosion
     * @param ship Animation for enemy ship
@@ -82,4 +77,5 @@ class CreepBomb : public Enemy {
    bool getdAnim_complete();
    
 };
+
 #endif

@@ -10,6 +10,13 @@
 
 
 CreepBomb::CreepBomb(Point cen, ALLEGRO_COLOR col, Vector spd) : Enemy(cen, col, spd) {
+   projSpeed = Vector(-500, 0);//not used
+   lives = 3;
+   size = 20;   
+   dAnim = 0;      
+   dAnim_complete = false;
+   fire = false;
+   
    load_assets();
 }
 	
@@ -85,10 +92,6 @@ void CreepBomb::update(double dt) {
    }
    if(fireDelay->getCount() > 400&&row==1){
       row++;
-   }
-   if(fireDelay->getCount() > 480&& !fire1){
-      fire = true;
-      fire1=true;
    }
    if(fireDelay->getCount() > 490&& !fire2){
       fire = true;

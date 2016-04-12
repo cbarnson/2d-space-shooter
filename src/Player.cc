@@ -5,12 +5,15 @@
  * @author
  * @bug
  */
+#include "Player.h"
 
 #include "Point.h"
 #include "Vector.h"
 #include "Sprite.h"
-#include "Player.h"
 #include "Action.h"
+#include "Laser.h"
+#include "Missile.h"
+
 using namespace act;
 
 const int PLAYER_SIZE = 16; // in pixels

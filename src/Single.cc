@@ -6,23 +6,26 @@
  * @author
  * @bug
  */
+#include "Single.h"
+
 #include <iostream>
 
-#include "Root.h"
+#include "Point.h"
 #include "Vector.h"
-#include "Single.h"
 #include "Projectile.h"
-#include "Background.h"
-#include "Enemy.h"
 #include "Player.h"
 #include "Laser.h"
 #include "Missile.h"
 #include "Sprite.h"
+
 #include "Action.h"
 #include "Timer.h"
 #include "Font.h"
+
+#include "Enemy.h"
 #include "Creep.h"
 #include "CreepBomb.h"
+
 using namespace act;
 
 const int GAME_OVER_WAIT_TIME = 80;
@@ -34,12 +37,12 @@ const Vector PLAYER_PROJECTILE_SPEED = Vector(500, 0);
 Single::Single(int w, int h, int f) : Root(w, h, f), gameOver(false), playerLives(3),
 				      playerScoreTotal(0), playerScore(0)
 {
-   std::cout << "in the single constructor\n";
+   //std::cout << "in the single constructor\n";
 }
 
 // destructor
 Single::~Single() {
-   std::cout << "in the single destructor\n";
+   //std::cout << "in the single destructor\n";
    player.reset();
    bg.reset();
    proj.clear();
@@ -54,17 +57,17 @@ Single::~Single() {
 
 // initialize Single player mode
 void Single::init() {
-   std::cout << "in single init function\n";
+   //std::cout << "in single init function\n";
    // timers
    gameOverTimer = std::make_shared<Timer> (framesPerSec); gameOverTimer->create();
    playerWeapon1 = std::make_shared<Timer> (framesPerSec); playerWeapon1->create();   
    playerWeapon2 = std::make_shared<Timer> (framesPerSec); playerWeapon2->create();
    playerRespawn = std::make_shared<Timer> (framesPerSec); playerRespawn->create();
    upgradeText = std::make_shared<Timer> (framesPerSec); upgradeText->create();
-   std::cout << "in single init, after timer creation\n";
+   //std::cout << "in single init, after timer creation\n";
    playerWeapon1->startTimer();
    playerWeapon2->startTimer();
-   std::cout << "timers have been started\n";
+   //std::cout << "timers have been started\n";
    // create Player object
    setupPlayer();
    // go to resources directory
@@ -83,9 +86,8 @@ void Single::init() {
    enemyBomb = std::make_shared<Sprite> ("spikebomb.png");
    // delete path 
    al_destroy_path(path);
-   std::cout << "end of single init \n";
+   //std::cout << "end of single init \n";
 }
-
 
 // INPUT -----------------------------
 void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
@@ -100,7 +102,7 @@ void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
 	    if (playerWeapon1->getCount() > WEAPON_DELAY_LASER &&
 		playerScore < 30) {
 	       
-	       addLaser(player->centre+Point(-20, 0), player->color, PLAYER_PROJECTILE_SPEED);
+	       addLaser(player->centre + Point(-20, 0), player->color, PLAYER_PROJECTILE_SPEED);
 	       playerWeapon1->stopTimer();
 	       playerWeapon1->resetCount();
 	       playerWeapon1->startTimer();
@@ -125,11 +127,9 @@ void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
 		playerScore >= 100) {
 
 	       addLaser(player->centre, player->color, PLAYER_PROJECTILE_SPEED);
-	       addLaser(player->centre + Point(0, 5),
-			player->color,
+	       addLaser(player->centre + Point(0, 5), player->color,
 			Vector(0, 75) + PLAYER_PROJECTILE_SPEED);
-	       addLaser(player->centre + Point(0, -5),
-			player->color,
+	       addLaser(player->centre + Point(0, -5), player->color,
 			Vector(0, -75) + PLAYER_PROJECTILE_SPEED);
 	       
 	       playerWeapon1->stopTimer();
@@ -200,14 +200,13 @@ void Single::update(double dt) {
 // renders the entire scene
 void Single::draw() {
    bg->draw();
-   drawLives();
-   gameScoreFont->drawTextF(al_map_rgb(255, 255, 255), 100, 50,"Score: %i", playerScoreTotal);
-   drawWeaponUpgradeStatus();
+   drawEnemies(); // calls draw on each enemy, provides Sprite pointer
+   drawProjectiles();   
    if (gameOver) showGameOverMessage();
    else if (player) player->draw(playerShip);
-   
-   drawProjectiles();   
-   drawEnemies(); // calls draw on each enemy, provides Sprite pointer
+   gameScoreFont->drawTextF(al_map_rgb(255, 255, 255), 100, 50,"Score: %i", playerScoreTotal);
+   drawWeaponUpgradeStatus();
+   drawLives();
 }
 
 
@@ -247,7 +246,6 @@ void Single::drawLives() {
 			al_map_rgb(0, 255, 0) , 5);
    
    if (!player && playerLives > 0) {
-
       gameOverFont->drawTextCenteredF(al_map_rgb(255, 0, 0), "%i LIVES REMAINING", playerLives);
    }
 }
@@ -268,7 +266,8 @@ void Single::drawWeaponUpgradeStatus(){
 	 al_draw_filled_rounded_rectangle(displayWidth - (displayWidth/2)-49, 51, displayWidth-
 					  (displayWidth/2)+49, 69, 2, 2, al_map_rgb(0, 255, 0));}
    }
-   if(playerScore==30||playerScore==100)
+   if(playerScore==30 || playerScore==100)
+      //  if(!(upgradeText->isRunning()))
       upgradeText->startTimer();
    if(upgradeText->isRunning()){
       gameScoreFont->drawText(400, 31, al_map_rgb(255,255,255), "WEAPON UPGRADED");
@@ -278,8 +277,6 @@ void Single::drawWeaponUpgradeStatus(){
       }
 
    }
-      
- 
 }
 
 void Single::clean() {
@@ -310,8 +307,7 @@ void Single::checkCollisionOnPlayer() {
 	      proj.begin(); it_proj != proj.end(); ++it_proj) {	    
 	 // check if projectile color is different from player color
 	 if (!doColorsMatch((*it_proj)->color, player->color)) {
-	    if (isPointBoxCollision((*it_proj)->centre,
-				    player->centre, PLAYER_SIZE)) {	  
+	    if (isPointBoxCollision((*it_proj)->centre, player->centre, PLAYER_SIZE)) {	  
 	       // register damage on player and flag projectile as dead
 	       (*it_proj)->live = false;
 	       player->hit(1);
@@ -398,7 +394,7 @@ void Single::updateScore(ALLEGRO_COLOR& c) {
 
 void Single::spawn() {
    // some initializations 
-   Point pt(0, 0);
+   Point pt(800, 200);
    Point pt1, pt2, playerloc, pt3;
    Vector spd(0, 0);
    ALLEGRO_COLOR color = al_map_rgb(255,255,255);
@@ -433,7 +429,7 @@ void Single::spawn() {
 	 break;
    
    
-      case 3: // V shaped spawn, shoots 3 shots
+      case 3: // V shaped spawn, shoots 2 shots
 	 addCreep(Point(800, 300), al_map_rgb(246, 64, 234),Vector(-180, 0));
       
 	 addCreep(Point(900, 350), al_map_rgb(246, 64, 234), Vector(-180, 0));
@@ -458,9 +454,9 @@ void Single::spawn() {
       
       
       case 5:
-	 pt.rollRandom();
+	 pt.y=pt.y+(rand()%200);
 	 addCreepB(pt, al_map_rgb(204,3,3), Vector(-60, 0));
-	  spawn();
+	 //spawn();
 	 break;
       
       
@@ -482,8 +478,6 @@ void Single::spawn() {
 
 
 // HELPER FUNCTIONS GO DOWN HERE
-
-
 void Single::updateProjectilePosition(double dt) {
    if (!proj.empty()) {
       for (std::list< std::shared_ptr<Projectile> >::iterator it = proj.begin(); 
@@ -492,7 +486,6 @@ void Single::updateProjectilePosition(double dt) {
       }
    }
 }
-
 void Single::updateEnemyPosition(double dt) {
    if (!enem.empty()) {
       for (std::list< std::shared_ptr<Enemy> >::iterator it = enem.begin(); 
@@ -537,12 +530,11 @@ void Single::CircleLaser(std::shared_ptr<Enemy> E)
    addLaser(E->getCentre(), E->getColor(), Vector(-250, -250));//UL
    addLaser(E->getCentre(), E->getColor(), Vector(-150, -350));//UUL
    addLaser(E->getCentre(), E->getColor(), Vector(-350, -150));//ULL
- *//*
-   for(int i=-500; i<=500; i+=200)
-   for(int j=-500; j<=500; j+=200)*/
-   
-   addLaser(E->getCentre(), E->getColor(), Vector(500, 0));
-   E->setFire(false);
+ */
+     for(int i=-500; i<=500; i+=250)
+     for(int j=-500; j<=500; j+=250)
+	addLaser(E->getCentre(), E->getColor(), Vector(i, j));
+     E->setFire(false);
 }
 
 
@@ -608,4 +600,3 @@ void Single::cullEnemies() {
       enem.assign(newEnem.begin(), newEnem.end());      
    }
 }
-
