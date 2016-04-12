@@ -34,13 +34,14 @@ class Boss : public Enemy {
    //shared_ptr<Sprite> bShip;
    
    Vector projSpeed;
-   int size; //after it works in this state, check to see if I can move size and lives
-   int lives;//to the Enemy.h i feel like some others can go tooo....
+   int size; 
+   int lives;
    int dAnim;
    int fireSpeed;
 
    bool dAnim_complete;
    bool fire;
+   bool aliveBoss;
    
   public:
    Boss (Point p, ALLEGRO_COLOR c, Vector s)
@@ -51,15 +52,16 @@ class Boss : public Enemy {
       al_start_timer(fireDelay);
       load_assets();
 
-      projSpeed = Vector(-500, 0);
-      fireSpeed = (rand() %20) + 10;
+      projSpeed = Vector(-300, 0);
+      fireSpeed = (rand() %10) + 10;
 
-      lives = 20;
-      size = 150;
+      lives = 50;
+      size = 70;
 
       dAnim = 0;
       dAnim_complete = false;
       fire = true;
+      aliveBoss = true;
    }
    
    ~Boss();
@@ -68,10 +70,11 @@ class Boss : public Enemy {
    Vector getProjSpeed();
    Point getCentre();
    int getSize();
-   
+
    bool getdAnim_complete();
    bool getDead();
    bool getFire();
+   bool getAlive();
 
    void setFire(bool f);
    void update(double dt);

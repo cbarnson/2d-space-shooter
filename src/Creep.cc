@@ -66,10 +66,9 @@ void Creep::deathAnim(std::shared_ptr<Sprite> enemyDeath) {
 // update position of enemy ships
 void Creep::update(double dt) {
    centre = centre + speed * dt;
-				
-   if (centre.x < 0)
+
+   if(centre.x < 0)
       dead = true;
-   
    // check y bound and adjust if out
    if (centre.y > 600 - size || centre.y < size)
       speed.reflectY();

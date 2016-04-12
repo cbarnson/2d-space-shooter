@@ -56,8 +56,10 @@ class Single : public Root {
    std::shared_ptr<Sprite> playerShip;
    std::shared_ptr<Sprite> enemyShip;
    std::shared_ptr<Sprite> enemyDeath;
+   std::shared_ptr<Sprite> bossShip;
 
    bool gameOver;
+   bool aliveBoss = false;
    int playerLives;
    int playerScoreTotal;
    int playerScore;
@@ -78,6 +80,7 @@ class Single : public Root {
    void addMissile(const Point&, const ALLEGRO_COLOR&, const Vector&);
    void addCreepB(const Point&, const ALLEGRO_COLOR&, const Vector&);
    void addCreep(const Point&, const ALLEGRO_COLOR&, const Vector&);
+   void addBoss(const Point&, const ALLEGRO_COLOR&, const Vector&);
    
    void input(ALLEGRO_KEYBOARD_STATE&);   
    bool is_game_over() const;
@@ -85,6 +88,7 @@ class Single : public Root {
    
    void spawn();
    void respawnPlayer();
+   void spawnBoss();
    
   private:   
    // HELPER FUNCTIONS - simplicity & readability

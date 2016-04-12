@@ -22,6 +22,7 @@
 #include "Font.h"
 #include "Creep.h"
 #include "CreepBomb.h"
+#include "Boss.h"
 using namespace act;
 
 const int WEAPON_DELAY_LASER = 6;
@@ -167,7 +168,7 @@ void Single::update(double dt) {
 void Single::draw() {
    bg->draw();
    drawLives();
-   gameScoreFont->drawTextF(al_map_rgb(255, 255, 255), 100, 100,"Score: %i", playerScoreTotal);
+   gameScoreFont->drawTextF(al_map_rgb(255, 255, 255), 100, 100, "Score: %i", playerScoreTotal);
    
    if (gameOver) showGameOverMessage();
    else if (player) player->draw(playerShip);
@@ -410,19 +411,28 @@ void Single::spawn() {
       case 7:
 	 addCreepB(Point (800, 300), al_map_rgb(204,3,3), Vector(-60, 0));
 	 break;
-	 
-	 
    }
    
+}
+
+void Single::spawnBoss()
+{  
+   addBoss(Point(900, 300),  al_map_rgb(155, 0, 0), Vector(-30, 50));
 }
 
 void Single::addCreep(const Point& cen, const ALLEGRO_COLOR& col, const Vector& spd)
 {
    enem.push_back(std::make_shared<Creep> (cen, col, spd));
 }
+
 void Single::addCreepB(const Point& cen, const ALLEGRO_COLOR& col, const Vector& spd)
 {
-   enem.push_back(std::make_shared<CreepBomb>(cen, col, spd));
+   enem.push_back(std::make_shared<CreepBomb> (cen, col, spd));
+}
+
+void Single::addBoss(const Point& cen, const ALLEGRO_COLOR& col, const Vector& spd)
+{
+   enem.push_back(std::make_shared<Boss> (cen, col, spd));
 }
 
 // HELPER FUNCTIONS GO DOWN HERE
@@ -455,18 +465,55 @@ void Single::updateEnemyPosition(double dt) {
 						      (*it)->getColor(),
 						      (*it)->getProjSpeed()+Vector(0,-40)));
 	    }
-	    
+	    //boss is going to spawn a lot of projectiles
+	    else if(doColorsMatch((*it)->getColor(), al_map_rgb(155, 0, 0)))
+	    {
+	       proj.push_back(std::make_shared<Laser>((*it)->getCentre(),
+						      (*it)->getColor(),
+						      (*it)->getProjSpeed()+Vector(0,10)));
+	       proj.push_back(std::make_shared<Laser>((*it)->getCentre(),
+						      (*it)->getColor(),
+						      (*it)->getProjSpeed()+Vector(0,-10)));
+	       proj.push_back(std::make_shared<Laser>((*it)->getCentre(),
+						      (*it)->getColor(),
+						      (*it)->getProjSpeed()+Vector(0,30)));
+	       proj.push_back(std::make_shared<Laser>((*it)->getCentre(),
+						      (*it)->getColor(),
+						      (*it)->getProjSpeed()+Vector(0,-30)));
+	       proj.push_back(std::make_shared<Laser>((*it)->getCentre(),
+						      (*it)->getColor(),
+						      (*it)->getProjSpeed()+Vector(0,50)));
+	       proj.push_back(std::make_shared<Laser>((*it)->getCentre(),
+						      (*it)->getColor(),
+						      (*it)->getProjSpeed()+Vector(0,-50)));
+	       proj.push_back(std::make_shared<Laser>((*it)->getCentre(),
+						      (*it)->getColor(),
+						      (*it)->getProjSpeed()+Vector(0,70)));
+	       proj.push_back(std::make_shared<Laser>((*it)->getCentre(),
+						      (*it)->getColor(),
+						      (*it)->getProjSpeed()+Vector(0,-70)));
+	       
+	    }
 	    //regular enemies spawn one straight projectile
 	    else proj.push_back(std::make_shared<Laser> ((*it)->getCentre()+Vector(20,0), 
-						    (*it)->getColor(),
-						    (*it)->getProjSpeed()));
+							 (*it)->getColor(),
+							 (*it)->getProjSpeed()));
 	    (*it)->setFire(false);
 	 }	 	 
       }
    }
-   if(enem.size() <= 3)
-         spawn();
+  if(aliveBoss == false && playerScoreTotal == 10)//this is definitely wrong
+  {
+     //if()
+     //{
+     spawnBoss();//spawns many bosses
+     aliveBoss = true;
+	//}
+  }
+  if(enem.size() <= 3 && aliveBoss == false)
+     spawn();
 }
+
 void Single::CircleLaser(std::shared_ptr<Enemy> E)
 {
    addLaser(E->getCentre(), E->getColor(), Vector(0, -500));   //up
@@ -543,12 +590,14 @@ void Single::cullEnemies() {
    if (!enem.empty()) {
       for (std::list< std::shared_ptr<Enemy> >::iterator it = enem.begin(); 
 	   it != enem.end(); ++it) {
-	 if (!(*it)->getdAnim_complete()) 
-	    // if not dead (death animation not complete)
-	    newEnem.push_back(*it);
+	 //if(doColorsMatch((*it)->getColor(), al_map_rgb(155, 0, 0)))
+	 //   aliveBoss = false;
+	  if (!(*it)->getdAnim_complete()) 
+	     // if not dead (death animation not complete)
+	     newEnem.push_back(*it);	  
       }
       enem.clear();
-      enem.assign(newEnem.begin(), newEnem.end());      
+      enem.assign(newEnem.begin(), newEnem.end());
    }
 }
 
