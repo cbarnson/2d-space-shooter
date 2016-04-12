@@ -19,7 +19,8 @@ class Font {
    Font(const std::string& s, int i);
    void load();
    ~Font();
-   
+
+   void drawText(int, int, const ALLEGRO_COLOR&, const std::string&);
    /** @fn drawTextCentered( AL_COLOR, string)
     * @brief draws text centered on the screen
     * @param ALLEGRO_COLOR color of text to be drawn

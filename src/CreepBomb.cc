@@ -93,10 +93,6 @@ void CreepBomb::update(double dt) {
    if(fireDelay->getCount() > 400&&row==1){
       row++;
    }
-   if(fireDelay->getCount() > 480&& !fire1){
-      fire = true;
-      fire1=true;
-   }
    if(fireDelay->getCount() > 490&& !fire2){
       fire = true;
       fire2=true;

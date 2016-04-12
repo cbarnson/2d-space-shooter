@@ -100,7 +100,7 @@ class Single : public Root {
   private:   
    // HELPER FUNCTIONS - simplicity & readability
    void drawLives();
-   
+   void drawWeaponUpgradeStatus();
    void drawProjectiles();
    void drawEnemies();
 

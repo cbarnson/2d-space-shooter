@@ -32,17 +32,18 @@ extern const float MAX_LIFE;
 
 class Player : public Updateable {
   public:
-   Point centre;        // ship position
-   ALLEGRO_COLOR color; // ship color
+   Point centre;        /**< ship position */
+   ALLEGRO_COLOR color; /**< ship color */
    
-   Vector speed;        // movement speed in any direction
-   float lives;           // lives remaining of Player object before destroyed
-   int row;
-   int col;
-   bool dead;           // signals Player object has been killed
+   Vector speed;        /**< movement speed in any direction */
+   float lives;           /**< lives remaining of Player object before destroyed */
+   int row; /**<row of animation to be played */
+   int col;/**< column of animation to be played */
+   bool dead;           /**< signals Player object has been killed */
 
-   /**
-    * @constructor
+   /**@fn Constructor
+    * @param p centre point of player
+    * @param c color of player
     */
    Player(Point p, ALLEGRO_COLOR c);
 
@@ -52,9 +53,9 @@ class Player : public Updateable {
    ~Player();
 
    /**
-    * @fn hit(...)
-    * @brief 
-    * @param 
+    * @fn hit(int)
+    * @brief reduces player life on hit
+    * @param int to reduce life by
     */
    void hit(int);
 
@@ -68,7 +69,7 @@ class Player : public Updateable {
 
    
    /**
-    * @fn update(...)
+    * @fn update(double)
     * @brief
     * @param
     */

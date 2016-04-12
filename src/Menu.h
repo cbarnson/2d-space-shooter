@@ -26,7 +26,7 @@ class Menu {
    void draw();/**< draws menu */
    bool animation();/**< function to handle timing of menu animation */
 
-   void handleEvent(const ALLEGRO_EVENT&, gs::state&);
+   void handleEvent(const ALLEGRO_EVENT&, gs::state&);/**<chooses whether to load or exit game */
    void handleKey(const ALLEGRO_KEYBOARD_STATE&, gs::state&);
 
   private:

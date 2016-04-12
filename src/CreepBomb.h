@@ -33,14 +33,14 @@ class CreepBomb : public Enemy {
    
   private:
    std::shared_ptr<Timer> fireDelay;
-   Vector projSpeed;
-   int size;
-   int row, col;
-   int lives;
-   int dAnim;
-   bool dAnim_complete;   
-   int fireSpeed;   
-   bool fire, fire1, fire2;
+   Vector projSpeed;//not actually used in this class
+   int size;/**< size of the enemy-- used for hitbox detection */
+   int row, col;/**<rows and column of the animation to be played */
+   int lives;/**<lives of the enemy-- how many hits it takes to be destroyed */
+   int dAnim;/**<counter to play frames of the death animation */
+   bool dAnim_complete;/**<bool flag for death animation- used to delete dead enemies in Single*/   
+   // int fireSpeed;//pretty sure not needed   
+   bool fire, fire1, fire2;/**<bool flags to decide when to fire lasers */
 	
   public:
    CreepBomb(Point cen, ALLEGRO_COLOR col, Vector spd);
@@ -69,6 +69,7 @@ class CreepBomb : public Enemy {
    void hit();
    
    /** @fn draw(shared_ptr<Sprite> ship, shared_ptr<Sprite> death>
+    * function inherited from Drawable- draws either the ship or the explosion
     * @param ship Animation for enemy ship
     * @param death Animation for death
     */

@@ -91,7 +91,6 @@ void Single::init() {
    //std::cout << "end of single init \n";
 }
 
-
 // INPUT -----------------------------
 void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
    if (player) {
@@ -204,13 +203,15 @@ void Single::update(double dt) {
 void Single::draw() {
    bg->draw();
    drawLives();
-   gameScoreFont->drawTextF(al_map_rgb(255, 255, 255), 100, 100, "Score: %i", playerScoreTotal);
+   //gameScoreFont->drawTextF(al_map_rgb(255, 255, 255), 100, 100, "Score: %i", playerScoreTotal);
    
+   drawEnemies(); // calls draw on each enemy, provides Sprite pointer
+   drawProjectiles();   
    if (gameOver) showGameOverMessage();
    else if (player) player->draw(playerShip);
-   
-   drawProjectiles();   
-   drawEnemies(); // calls draw on each enemy, provides Sprite pointer
+   gameScoreFont->drawTextF(al_map_rgb(255, 255, 255), 100, 50,"Score: %i", playerScoreTotal);
+   drawWeaponUpgradeStatus();
+   drawLives();
 }
 
 
@@ -251,6 +252,35 @@ void Single::drawLives() {
    
    if (!player && playerLives > 0) {
       gameOverFont->drawTextCenteredF(al_map_rgb(255, 0, 0), "%i LIVES REMAINING", playerLives);
+   }
+}
+void Single::drawWeaponUpgradeStatus(){
+   
+   al_draw_rounded_rectangle(displayWidth - (displayWidth/2)-50, 50, displayWidth-(displayWidth/2)+50,
+			     70, 2, 2, al_map_rgb(255, 255, 255), 1);
+   if(playerScore!=0){
+      if(playerScore<30)
+	 al_draw_filled_rounded_rectangle(displayWidth - (displayWidth/2)-49, 51, displayWidth-
+					  (displayWidth/2)-49+playerScore*3.3, 69, 2, 2,
+					  al_map_rgb(255, 0, 0));
+      if(playerScore >= 30 && playerScore <100){
+	 al_draw_filled_rounded_rectangle(displayWidth - (displayWidth/2)-49, 51, displayWidth-
+					  (displayWidth/2)-49+(playerScore-30)*1.428, 69, 2, 2,
+					  al_map_rgb(255, 0, 0));}
+      if(playerScore>=100){
+	 al_draw_filled_rounded_rectangle(displayWidth - (displayWidth/2)-49, 51, displayWidth-
+					  (displayWidth/2)+49, 69, 2, 2, al_map_rgb(0, 255, 0));}
+   }
+   if(playerScore==30 || playerScore==100)
+      //  if(!(upgradeText->isRunning()))
+      upgradeText->startTimer();
+   if(upgradeText->isRunning()){
+      gameScoreFont->drawText(400, 31, al_map_rgb(255,255,255), "WEAPON UPGRADED");
+      if(upgradeText->getCount() > 10){
+	 upgradeText->stopTimer();
+	 upgradeText->resetCount();
+      }
+
    }
 }
 
@@ -369,7 +399,7 @@ void Single::updateScore(ALLEGRO_COLOR& c) {
 
 void Single::spawn() {
    // some initializations 
-   Point pt(0, 0);
+   Point pt(800, 200);
    Point pt1, pt2, playerloc, pt3;
    Vector spd(0, 0);
    ALLEGRO_COLOR color = al_map_rgb(255,255,255);
@@ -404,7 +434,7 @@ void Single::spawn() {
 	 break;
    
    
-      case 3: // V shaped spawn, shoots 3 shots
+      case 3: // V shaped spawn, shoots 2 shots
 	 addCreep(Point(800, 300), al_map_rgb(246, 64, 234),Vector(-180, 0));
       
 	 addCreep(Point(900, 350), al_map_rgb(246, 64, 234), Vector(-180, 0));
@@ -429,9 +459,9 @@ void Single::spawn() {
       
       
       case 5:
-	 pt.rollRandom();
+	 pt.y=pt.y+(rand()%200);
 	 addCreepB(pt, al_map_rgb(204,3,3), Vector(-60, 0));
-	  spawn();
+	 //spawn();
 	 break;
       
       
@@ -463,8 +493,6 @@ void Single::addBoss(const Point& cen, const ALLEGRO_COLOR& col, const Vector& s
 }
 
 // HELPER FUNCTIONS GO DOWN HERE
-
-
 void Single::updateProjectilePosition(double dt) {
    if (!proj.empty()) {
       for (std::list< std::shared_ptr<Projectile> >::iterator it = proj.begin(); 
@@ -473,7 +501,6 @@ void Single::updateProjectilePosition(double dt) {
       }
    }
 }
-
 void Single::updateEnemyPosition(double dt) {
    if (!enem.empty()) {
       for (std::list< std::shared_ptr<Enemy> >::iterator it = enem.begin(); 
@@ -529,13 +556,10 @@ void Single::updateEnemyPosition(double dt) {
       }
    }
       
-   if(aliveBoss == false && playerScoreTotal == 1)//this is definitely wrong
+   if(aliveBoss == false && playerScoreTotal == 20)
    {
-      //if()
-      //{
-      spawnBoss();//spawns many bosses
+      spawnBoss();
       aliveBoss = true;
-      //}
    }
    if(enem.size() <= 3 && aliveBoss == false) {
       spawn();
@@ -558,12 +582,11 @@ void Single::CircleLaser(std::shared_ptr<Enemy> E)
    addLaser(E->getCentre(), E->getColor(), Vector(-250, -250));//UL
    addLaser(E->getCentre(), E->getColor(), Vector(-150, -350));//UUL
    addLaser(E->getCentre(), E->getColor(), Vector(-350, -150));//ULL
- *//*
-   for(int i=-500; i<=500; i+=200)
-   for(int j=-500; j<=500; j+=200)*/
-   
-   addLaser(E->getCentre(), E->getColor(), Vector(500, 0));
-   E->setFire(false);
+ */
+     for(int i=-500; i<=500; i+=250)
+     for(int j=-500; j<=500; j+=250)
+	addLaser(E->getCentre(), E->getColor(), Vector(i, j));
+     E->setFire(false);
 }
 
 
@@ -631,4 +654,3 @@ void Single::cullEnemies() {
       enem.assign(newEnem.begin(), newEnem.end());
    }
 }
-
