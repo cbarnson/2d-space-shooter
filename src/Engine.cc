@@ -28,6 +28,7 @@ Engine::~Engine() {
    if (_eventQueue != NULL) al_destroy_event_queue(_eventQueue);
    if (_display != NULL) al_destroy_display(_display);
    _root.reset();
+   _menu.reset();
 }
 
 
@@ -68,8 +69,6 @@ void Engine::init() {
    
    // register keyboard
    al_register_event_source(_eventQueue, al_get_keyboard_event_source());
-   
-   //_menu = std::make_shared<Menu> (_fps);
 }
 
 

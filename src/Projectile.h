@@ -31,6 +31,8 @@ class Projectile : public Drawable, public Updateable {
    }
 
    virtual ~Projectile() { }
+
+   virtual void load_assets() = 0;
    
    void draw() { }
    void update(double dt) { }

@@ -40,17 +40,20 @@ class Enemy : public Updateable {
    virtual ~Enemy() { }
 
    void update(double dt) { }
+
+   
    /** @fn set fire
     * @brief used to reset the boolean flag that represents when an enemy is able to fire
     * @param f boolean value to Fire to
     */
    virtual void setFire(bool f) = 0;
-
+   
    
    /** @fn getColor
     * @brief getter method to return the color value of an enemy
     */
    virtual ALLEGRO_COLOR getColor() = 0;
+   
 
    /** @fn getProjSpeed
     *   @return returns a vector representing Projectile Speed

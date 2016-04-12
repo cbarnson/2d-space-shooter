@@ -5,6 +5,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 
 #include <memory>
+#include <typeinfo>
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
@@ -13,12 +14,18 @@
 #include "Point.h"
 #include "Vector.h"
 #include "Updateable.h"
+#include "Drawable.h"
+
 #include "Player.h"
 #include "Font.h"
 #include "Timer.h"
 #include "Menu.h"
 #include "Projectile.h"
 #include "Laser.h"
+#include "Missile.h"
+#include "Engine.h"
+#include "Enemy.h"
+#include "Creep.h"
 
 class TestGame: public CppUnit::TestFixture {
    
@@ -42,6 +49,12 @@ class TestGame: public CppUnit::TestFixture {
    CPPUNIT_TEST(testPlayerBounds);
 
    CPPUNIT_TEST(testLaserBounds);
+   CPPUNIT_TEST(testMissileBounds);
+
+   CPPUNIT_TEST(testEngineDisplayWidth);
+   CPPUNIT_TEST(testEngineFps);
+
+   CPPUNIT_TEST(testCreateCreep);
    
    CPPUNIT_TEST_SUITE_END();
    
@@ -51,7 +64,9 @@ class TestGame: public CppUnit::TestFixture {
    Font *f1;
    Timer *timer1;
    Player *player, *player2;
-   Projectile *proj;
+   Projectile *laser, *missile;
+   Engine* engine;
+   Enemy *creep;
    
   public:
    void setUp() {
@@ -66,7 +81,12 @@ class TestGame: public CppUnit::TestFixture {
       player = new Player(Point(300, 300), al_map_rgb(0, 200, 0));
       player2 = new Player(Point(-1, 300), al_map_rgb(0, 200, 0));
 
-      proj = new Laser(Point(900, 300), al_map_rgb(200, 0, 0), Vector(50, 0));
+      laser = new Laser(Point(900, 300), al_map_rgb(200, 0, 0), Vector(50, 0));
+      missile = new Missile(Point(900, 300), al_map_rgb(200, 0, 0), Vector(50, 0));
+
+      engine = new Engine(800, 600, 60);
+
+      creep = new Creep(Point(400, 300), al_map_rgb(150, 100, 0), Vector(-30, 0));
    }
    
    void tearDown() {
@@ -78,7 +98,10 @@ class TestGame: public CppUnit::TestFixture {
       delete timer1;
       delete player;
       delete player2;
-      delete proj;
+      delete laser;
+      delete missile;
+      delete engine;
+      delete creep;
    }
    
    void PointConstTest() {
@@ -160,12 +183,28 @@ class TestGame: public CppUnit::TestFixture {
    }
 
    void testLaserBounds() {
-      proj->update(1);
-      CPPUNIT_ASSERT(proj->live == false);
+      laser->update(1);
+      CPPUNIT_ASSERT(laser->live == false);
    }
 
+   void testMissileBounds() {
+      missile->update(1.0);
+      CPPUNIT_ASSERT(!missile->live);
+   }
 
+   void testEngineDisplayWidth() {
+      CPPUNIT_ASSERT(engine->getWidth() == 800);
+   }
 
+   void testEngineFps() {
+      CPPUNIT_ASSERT(engine->getFps() == 60);
+   }
+
+   void testCreateCreep() {
+      CPPUNIT_ASSERT(typeid(creep).name() == typeid(Creep).name());
+   }
+
+   
 };
 #endif
   

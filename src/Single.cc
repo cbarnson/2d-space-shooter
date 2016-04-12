@@ -85,7 +85,6 @@ void Single::init() {
    enemyShip = std::make_shared<Sprite> ("EnemyBasic.png");
    enemyDeath = std::make_shared<Sprite> ("explode.png");
    enemyBomb = std::make_shared<Sprite> ("spikebomb.png");
-   
    // delete path 
    al_destroy_path(path);
    //std::cout << "end of single init \n";
@@ -167,7 +166,9 @@ void Single::addLaser(const Point& cen, const ALLEGRO_COLOR& col, const Vector& 
 
 // function to add a Missile object onto the Projectile list
 void Single::addMissile(const Point& cen, const ALLEGRO_COLOR& col, const Vector& spd) {
-   proj.push_back(std::make_shared<Missile> (cen, col, spd));
+   std::shared_ptr<Projectile> missileObject = std::make_shared<Missile> (cen, col, spd);
+   missileObject->load_assets();
+   proj.push_back(missileObject);
 }
 
 // function to add a Creep object onto the Enemy list

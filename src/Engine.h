@@ -32,6 +32,21 @@ class Engine {
    void menuLoop();
    void gameLoop(float& prevTime);
 
+   void addSingle();
+   void addMenu();
+   
+   inline int getWidth() const {
+      return _displayWidth;
+   }
+
+   inline int getHeight() const {
+      return _displayHeight;
+   }
+
+   inline int getFps() const {
+      return _fps;
+   }
+
   private:
    int _displayWidth;
    int _displayHeight;
@@ -46,8 +61,6 @@ class Engine {
    std::shared_ptr<Menu> _menu;
    std::shared_ptr<Root> _root; // interface for game modes
 
-   void addSingle();
-   void addMenu();
      
 };
 

@@ -35,8 +35,18 @@ test player position after being constructed
 test that player takes 3 hits of 1 damage each and dies
 test that if player goes out of bounds they are immediately brought back within bounds
 
+Projectile class tests
+----------------------
+For Laser and Missile, test that pointer to base class Projectile is able to instantiate
+derived objects
+
 Laser class tests
 -----------------
 test that Laser is marked dead when it goes out of bounds
+
+Missile class tests
+-------------------
+test that Missile is marked dead when it goes out of bounds
+
 
 

@@ -12,6 +12,7 @@
 #include <allegro5/allegro_font.h>
 
 #include <list>
+#include <vector>
 #include <memory>
 
 #include "Root.h"
@@ -58,6 +59,8 @@ class Single : public Root {
    std::shared_ptr<Background> bg;
 
    // sprites
+   std::vector< std::shared_ptr<Sprite> > missileVec;
+   
    std::shared_ptr<Sprite> playerShip;
    std::shared_ptr<Sprite> enemyShip;
    std::shared_ptr<Sprite> enemyDeath;

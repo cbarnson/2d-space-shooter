@@ -22,6 +22,7 @@ class Laser : public Projectile {
    
    void draw();
    void update(double dt);
+   void load_assets() { }
    
   private:
    bool in_bound();

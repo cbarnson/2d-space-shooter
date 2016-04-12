@@ -18,7 +18,7 @@
 #include "Projectile.h"
 #include "Sprite.h"
 
-class Missile : public Projectile {
+class Missile : public Projectile {   
   public:
    Missile(Point p, ALLEGRO_COLOR c, Vector s);
    ~Missile();

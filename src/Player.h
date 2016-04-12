@@ -15,11 +15,12 @@
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_image.h>
 
+#include <memory>
+
 #include "Updateable.h"
 #include "Projectile.h"
 #include "Action.h"
 
-#include <memory>
 
 struct Point;
 struct Vector;
@@ -36,14 +37,15 @@ class Player : public Updateable {
    ALLEGRO_COLOR color; /**< ship color */
    
    Vector speed;        /**< movement speed in any direction */
-   float lives;           /**< lives remaining of Player object before destroyed */
-   int row; /**<row of animation to be played */
-   int col;/**< column of animation to be played */
+   float lives;         /**< lives remaining of Player object before destroyed */
+   int row;             /**<row of animation to be played */
+   int col;             /**< column of animation to be played */
    bool dead;           /**< signals Player object has been killed */
 
-   /**@fn Constructor
+   /**
+    * @fn Constructor
     * @param p centre point of player
-    * @param c color of player
+    * @param c color of player represented as an al_map_rgb(r, g, b)
     */
    Player(Point p, ALLEGRO_COLOR c);
 
@@ -62,8 +64,8 @@ class Player : public Updateable {
    
    /**
     * @fn draw(...)
-    * @brief
-    * @param
+    * @brief renders the player
+    * @param std::shared_ptr<Sprite>
     */
    void draw(std::shared_ptr<Sprite>);
 
