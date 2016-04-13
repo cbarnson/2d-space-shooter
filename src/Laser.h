@@ -11,21 +11,30 @@
 
 #include <allegro5/allegro.h>
 
+#include "Entity.h"
+#include "Type.h"
 #include "Point.h"
 #include "Vector.h"
 #include "Projectile.h"
 
-class Laser : public Projectile {
-  public:
-   Laser (Point p, ALLEGRO_COLOR c, Vector s);   
-   ~Laser();
+class Laser : public Entity {
+ public:
+  bool _dead; // consistency
+
+ Laser(Point centre, ALLEGRO_COLOR color, Vector speed) : 
+  Entity(centre, color, speed, id::type::PROJECTILE), _dead(false)
+    {
+      _centre = _centre + _speed * 0.1;
+    }
+
+  ~Laser() {}
    
-   void draw();
-   void update(double dt);
-   void load_assets() { }
+  void draw();
+  void update(double dt);
+  //void load_assets() { }
    
-  private:
-   bool in_bound();
+ private:
+  bool in_bound();
 };
 
 #endif

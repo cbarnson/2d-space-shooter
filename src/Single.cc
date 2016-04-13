@@ -35,7 +35,8 @@ const int WEAPON_DELAY_MISSILE = 20;
 const Vector PLAYER_PROJECTILE_SPEED = Vector(500, 0);
 
 // constructor
-Single::Single(int w, int h, int f) : Root(w, h, f), gameOver(false), playerLives(3),
+Single::Single(int w, int h, int f) : Root(w, h, f), gameOver(false), 
+				      playerLives(3),
 				      playerScoreTotal(0), playerScore(0)
 {
    //std::cout << "in the single constructor\n";
@@ -60,11 +61,16 @@ Single::~Single() {
 void Single::init() {
    //std::cout << "in single init function\n";
    // timers
-   gameOverTimer = std::make_shared<Timer> (framesPerSec); gameOverTimer->create();
-   playerWeapon1 = std::make_shared<Timer> (framesPerSec); playerWeapon1->create();   
-   playerWeapon2 = std::make_shared<Timer> (framesPerSec); playerWeapon2->create();
-   playerRespawn = std::make_shared<Timer> (framesPerSec); playerRespawn->create();
-   upgradeText = std::make_shared<Timer> (framesPerSec); upgradeText->create();
+   gameOverTimer = std::make_shared<Timer> (framesPerSec); 
+   gameOverTimer->create();
+   playerWeapon1 = std::make_shared<Timer> (framesPerSec); 
+   playerWeapon1->create();   
+   playerWeapon2 = std::make_shared<Timer> (framesPerSec); 
+   playerWeapon2->create();
+   playerRespawn = std::make_shared<Timer> (framesPerSec); 
+   playerRespawn->create();
+   upgradeText = std::make_shared<Timer> (framesPerSec); 
+   upgradeText->create();
    //std::cout << "in single init, after timer creation\n";
    playerWeapon1->startTimer();
    playerWeapon2->startTimer();
@@ -76,8 +82,10 @@ void Single::init() {
    al_append_path_component(path, "resources");
    al_change_directory(al_path_cstr(path, '/'));   
    // fonts
-   gameOverFont = std::make_shared<Font> ("DavidCLM-BoldItalic.ttf", 64); gameOverFont->load();
-   gameScoreFont = std::make_shared<Font> ("ipag.ttf", 18); gameScoreFont->load();   
+   gameOverFont = std::make_shared<Font> ("DavidCLM-BoldItalic.ttf", 64); 
+   gameOverFont->load();
+   gameScoreFont = std::make_shared<Font> ("ipag.ttf", 18); 
+   gameScoreFont->load();   
    // background
    bg = std::make_shared<Background> (Vector(50, 0), Vector(-90, 0));
    // sprites
@@ -103,7 +111,8 @@ void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
 	    if (playerWeapon1->getCount() > WEAPON_DELAY_LASER &&
 		playerScore < 30) {
 	       
-	       addLaser(player->centre + Point(-20, 0), player->color, PLAYER_PROJECTILE_SPEED);
+	       addLaser(player->_centre + Point(-20, 0), player->_color, 
+			PLAYER_PROJECTILE_SPEED);
 	       playerWeapon1->stopTimer();
 	       playerWeapon1->resetCount();
 	       playerWeapon1->startTimer();
@@ -113,9 +122,9 @@ void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
 	    else if (playerWeapon1->getCount() > WEAPON_DELAY_LASER+4 &&
 		playerScore >= 30 && playerScore < 100) {
 
-	       addLaser(player->centre + Point(-25, 10), player->color,
+	       addLaser(player->_centre + Point(-25, 10), player->_color,
 			PLAYER_PROJECTILE_SPEED);
-	       addLaser(player->centre + Point(-25, -10), player->color,
+	       addLaser(player->_centre + Point(-25, -10), player->_color,
 			PLAYER_PROJECTILE_SPEED);
 	       
 	       playerWeapon1->stopTimer();
@@ -127,10 +136,10 @@ void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
 	    else if (playerWeapon1->getCount() > WEAPON_DELAY_LASER+6 &&
 		playerScore >= 100) {
 
-	       addLaser(player->centre, player->color, PLAYER_PROJECTILE_SPEED);
-	       addLaser(player->centre + Point(0, 5), player->color,
+	       addLaser(player->_centre, player->_color, PLAYER_PROJECTILE_SPEED);
+	       addLaser(player->_centre + Point(0, 5), player->_color,
 			Vector(0, 75) + PLAYER_PROJECTILE_SPEED);
-	       addLaser(player->centre + Point(0, -5), player->color,
+	       addLaser(player->_centre + Point(0, -5), player->_color,
 			Vector(0, -75) + PLAYER_PROJECTILE_SPEED);
 	       
 	       playerWeapon1->stopTimer();
@@ -141,7 +150,7 @@ void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
 	 case action::FIRE_SECONDARY:	    	    
 	    if (playerWeapon2->getCount() > WEAPON_DELAY_MISSILE) {
 	       
-	       addMissile(player->centre, player->color, PLAYER_PROJECTILE_SPEED);
+	       addMissile(player->_centre, player->_color, PLAYER_PROJECTILE_SPEED);
 
 	       playerWeapon2->stopTimer();
 	       playerWeapon2->resetCount();
@@ -312,8 +321,8 @@ void Single::checkCollisionOnPlayer() {
       for (std::list< std::shared_ptr<Projectile> >::iterator it_proj = 
 	      proj.begin(); it_proj != proj.end(); ++it_proj) {	    
 	 // check if projectile color is different from player color
-	 if (!doColorsMatch((*it_proj)->color, player->color)) {
-	    if (isPointBoxCollision((*it_proj)->centre, player->centre, PLAYER_SIZE)) {	  
+	 if (!doColorsMatch((*it_proj)->color, player->_color)) {
+	    if (isPointBoxCollision((*it_proj)->centre, player->_centre, PLAYER_SIZE)) {	  
 	       // register damage on player and flag projectile as dead
 	       (*it_proj)->live = false;
 	       player->hit(1);
@@ -334,7 +343,7 @@ void Single::checkCollisionOnEnemies() {
 	      proj.begin(); it_proj != proj.end(); ++it_proj) {
 	    
 	 // check if colors match
-	 if (doColorsMatch(player->color, (*it_proj)->color)) {
+	 if (doColorsMatch(player->_color, (*it_proj)->color)) {
 	    for (std::list< std::shared_ptr<Enemy> >::iterator it_enem = 
 		    enem.begin(); it_enem != enem.end(); ++it_enem) {
 		  
@@ -355,7 +364,7 @@ void Single::checkCollisionOnEnemies() {
 		     
 		  // check for enemy death, update score if true
 		  if ((*it_enem)->getDead())
-		     updateScore(player->color);
+		     updateScore(player->_color);
 		  
 	       }
 	    }
@@ -369,7 +378,7 @@ void Single::checkCollidingEnemyWithPlayer() {
       for (std::list< std::shared_ptr<Enemy> >::iterator it_enem = enem.begin();
 	   it_enem != enem.end(); ++it_enem) {
 	 if (!(*it_enem)->getDead()){
-	    if (doHitboxesIntersect(player->centre, PLAYER_SIZE,
+	    if (doHitboxesIntersect(player->_centre, PLAYER_SIZE,
 				    (*it_enem)->getCentre(), 
 				    (*it_enem)->getSize())) {
 	       // collision - register damage
@@ -390,7 +399,7 @@ bool Single::doHitboxesIntersect(const Point& centre1, const int& size1,
 
 
 void Single::updateScore(ALLEGRO_COLOR& c) {
-   if (player && doColorsMatch(player->color, c)) {
+   if (player && doColorsMatch(player->_color, c)) {
       playerScore += 1;
       playerScoreTotal += 1;
    }
@@ -407,7 +416,7 @@ void Single::spawn() {
 
  
    if (player)
-      playerloc = player->centre;
+      playerloc = player->_centre;
    else
       playerloc = Point (200, 300);
 
@@ -615,8 +624,13 @@ void Single::drawEnemies() {
 }
 
 void Single::setupPlayer() {
+  /*
    player = std::make_shared<Player> (Point(215, 245),
 				      al_map_rgb(0, 200, 0));
+  */
+  player = std::make_shared<Player> (Point(215, 245), al_map_rgb(0, 200, 0),
+				     Vector(0, 0));
+
 }
 
 void Single::cullPlayer() {

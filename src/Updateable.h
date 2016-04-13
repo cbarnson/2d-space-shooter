@@ -18,7 +18,8 @@ class Updateable {
   public:
    /**
     * @fn virtual void update(double)
-    * @brief virtual function declaration of update, updates the position of derived objects
+    * @brief virtual function declaration of update, updates the position of 
+    *        derived objects
     * @param t the change in time since the last position update
     */
    virtual ~Updateable() {}
@@ -27,7 +28,8 @@ class Updateable {
 
    /**
     * @fn virtual void inBound()
-    * @brief returns true if the object is within the display boundaries, false otherwise
+    * @brief returns true if the object is within the display boundaries, 
+    *        false otherwise
     */
    //virtual bool inBound() = 0;
 };

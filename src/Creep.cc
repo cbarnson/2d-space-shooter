@@ -13,23 +13,24 @@
 #include "Sprite.h"
 
 const int CREEP_SIZE = 20;
-
+/*
 Creep::Creep(Point cen, ALLEGRO_COLOR col, Vector spd) : Enemy(cen, col, spd),
 							 projSpeed(Vector(-400, 0)),
 							 fireSpeed(rand() % 50 + 30),
 							 lives(1), dAnim(0),
 							 dAnim_complete(false), fire(true)
 {
-   load_assets();
+  load_assets();
 }
-						
+*/						
 // creates and starts the fireDelay timer for the Creep
+/*
 void Creep::load_assets() {
    fireDelay = std::make_shared<Timer> (60);   
    fireDelay->create();
    fireDelay->startTimer();
 }
-	
+*/
 Creep::~Creep() {
    fireDelay.reset();
 }

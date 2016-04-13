@@ -17,13 +17,13 @@
 
 #include <memory>
 
-#include "Updateable.h"
+#include "Entity.h"
+#include "Type.h"
 #include "Projectile.h"
 #include "Action.h"
+#include "Point.h"
+#include "Vector.h"
 
-
-struct Point;
-struct Vector;
 class Sprite;
 class Input;
 
@@ -31,13 +31,9 @@ extern const int PLAYER_SIZE;
 extern const int PLAYER_TRAVEL_SPEED;
 extern const float MAX_LIFE;
 
-class Player : public Updateable {
+class Player : public Entity {
   public:
-   Point centre;        /**< ship position */
-   ALLEGRO_COLOR color; /**< ship color */
-   
-   Vector speed;        /**< movement speed in any direction */
-   float lives;         /**< lives remaining of Player object before destroyed */
+   float lives;         /**< lives remaining of Player object before destroyed*/
    int row;             /**<row of animation to be played */
    int col;             /**< column of animation to be played */
    bool dead;           /**< signals Player object has been killed */
@@ -47,7 +43,12 @@ class Player : public Updateable {
     * @param p centre point of player
     * @param c color of player represented as an al_map_rgb(r, g, b)
     */
-   Player(Point p, ALLEGRO_COLOR c);
+ Player(Point centre, ALLEGRO_COLOR color, Vector speed) : 
+   Entity(centre, color, speed, id::type::PLAYER), lives(3.0), row(0), col(0), 
+     dead(false) 
+     {
+       
+     }
 
    /**
     * @destructor

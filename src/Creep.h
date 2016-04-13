@@ -13,40 +13,43 @@
 #include <allegro5/allegro_primitives.h>
 
 #include <memory>
+#include <ctime>
+#include <cstdlib>
 
 #include "Enemy.h"
 #include "Updateable.h"
+#include "Point.h"
+#include "Vector.h"
+#include "Timer.h"
 
-
-struct Point;
-struct Vector;
-class Timer;
 class Sprite;
 
 extern const int CREEP_SIZE;
 
 class Creep : public Enemy {
    
-  private:
-   std::shared_ptr<Timer> fireDelay;   
-   Vector projSpeed;
-   int fireSpeed;
-   int lives;
-   int dAnim;   
-   bool dAnim_complete;
-   bool fire;
-	
-  public:
+ public:
+ Creep(Point p, ALLEGRO_COLOR c, Vector s) : Enemy(p, c, s),
+    projSpeed(Vector(-400, 0)),
+    fireSpeed(rand() % 50 + 30),
+    lives(1), dAnim(0),
+    dAnim_complete(false), fire(true) 
+    {
+      //load_assets();
+      fireDelay = std::make_shared<Timer> (60);   
+      fireDelay->create();
+      fireDelay->startTimer();
+    }
 
-   Creep(Point p, ALLEGRO_COLOR c, Vector s);
-   ~Creep();
+  ~Creep();
    
    void update(double dt);
-   void load_assets();
+   //void load_assets();
    void deathAnim(std::shared_ptr<Sprite>);
    void hit();
    void draw(std::shared_ptr<Sprite> ship, std::shared_ptr<Sprite> death);
    
+   // setters and getters
    void setFire(bool f);	
    ALLEGRO_COLOR getColor();
    Vector getProjSpeed(); 
@@ -56,6 +59,14 @@ class Creep : public Enemy {
    bool getFire();    
    bool getdAnim_complete();
 
+  private:
+   std::shared_ptr<Timer> fireDelay;   
+   Vector projSpeed;
+   int fireSpeed;
+   int lives;
+   int dAnim;   
+   bool dAnim_complete;
+   bool fire;
    
 };
 #endif

@@ -4,8 +4,10 @@
 # Makefile for allegro game project
 
 # declaration of variables
-CC = g++11
-CCFLAGS = -Wall -g -std=c++11 -I/home/lib2720/allegro/include
+#CC = g++11
+CC = g++
+#CCFLAGS = -Wall -g -std=c++11 -I/home/lib2720/allegro/include
+CCFLAGS = -Wall -g -std=c++11 `pkg-config --cflags allegro-5.0`
 
 # file names
 NONMAIN = testmain.cc testmain.o TestGame.h
@@ -17,11 +19,13 @@ OBJECTS = $(SOURCES:.cc=.o)
 SOURCEST = $(filter-out $(NONTEST), $(wildcard *.cc))
 OBJECTST = $(SOURCEST:.cc=.o)
 
-LIBDIR = -L/home/lib2720/allegro/lib
+#LIBDIR = -L/home/lib2720/allegro/lib
+LIBDIR = `pkg-config --libs allegro-5.0`
 
-LNFLAGS = -lallegro -lallegro_primitives -lallegro_image -lallegro_font -lallegro_ttf
-LNFLAGST= -lallegro -lallegro_primitives -lallegro_image -lallegro_font -lallegro_ttf \
--ldl -lcppunit
+LNFLAGS = -lallegro -lallegro_primitives -lallegro_image -lallegro_font \
+-lallegro_ttf
+LNFLAGST= -lallegro -lallegro_primitives -lallegro_image -lallegro_font \
+-lallegro_ttf -ldl -lcppunit
 
 
 # main target
