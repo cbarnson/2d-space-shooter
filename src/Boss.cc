@@ -90,7 +90,7 @@ void Boss::draw(std::shared_ptr<Sprite> bossShip, std::shared_ptr<Sprite> bossDe
 //this function is going to be a little interesting
 void Boss::deathAnim(std::shared_ptr<Sprite> bossDeath)
 {
-   bossDeath -> draw_death_anim(dAnim, centre, 0);
+   bossDeath->draw_death_anim(dAnim, centre, 0);
    dAnim++;
 }
 

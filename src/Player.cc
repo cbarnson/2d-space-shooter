@@ -51,7 +51,33 @@ act::action Player::input(ALLEGRO_KEYBOARD_STATE& kb) {
   if (al_key_down(&kb, ALLEGRO_KEY_A)) {
      speed.x -= PLAYER_TRAVEL_SPEED;
   }
-  if (al_key_down(&kb, ALLEGRO_KEY_PAD_0)||al_key_down(&kb, ALLEGRO_KEY_SPACE)) {
+  if (al_key_down(&kb, ALLEGRO_KEY_SPACE)) {
+    return action::FIRE_PRIMARY;
+  }
+  if (al_key_down(&kb, ALLEGRO_KEY_F)) {
+    return action::FIRE_SECONDARY;
+  }
+  if (al_key_down(&kb, ALLEGRO_KEY_ESCAPE)) {
+    return action::QUIT_GAME;
+  }
+
+  return action::NO_ACTION;
+}
+
+act::action Player::inputPlayer2(ALLEGRO_KEYBOARD_STATE& kb) {
+ if (al_key_down(&kb, ALLEGRO_KEY_UP)) {
+     speed.y -= PLAYER_TRAVEL_SPEED;
+  }
+  if (al_key_down(&kb, ALLEGRO_KEY_RIGHT)) {
+     speed.x += PLAYER_TRAVEL_SPEED;
+  }
+  if (al_key_down(&kb, ALLEGRO_KEY_DOWN)) {
+     speed.y += PLAYER_TRAVEL_SPEED;
+  }
+  if (al_key_down(&kb, ALLEGRO_KEY_LEFT)) {
+     speed.x -= PLAYER_TRAVEL_SPEED;
+  }
+  if (al_key_down(&kb, ALLEGRO_KEY_PAD_0)) {
     return action::FIRE_PRIMARY;
   }
   if (al_key_down(&kb, ALLEGRO_KEY_PAD_DELETE)) {
@@ -64,8 +90,9 @@ act::action Player::input(ALLEGRO_KEYBOARD_STATE& kb) {
   return action::NO_ACTION;
 }
 
-void Player::draw(std::shared_ptr<Sprite> sprite) {   
-   sprite->draw_region(row, col, 47.0, 40.0, centre, 0);
+
+void Player::draw(std::shared_ptr<Sprite> sprite, int flags) {   
+   sprite->draw_region(row, col, 47.0, 40.0, centre, flags);
    drawRemainingLife();
 }
 

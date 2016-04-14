@@ -48,5 +48,12 @@ Missile class tests
 -------------------
 test that Missile is marked dead when it goes out of bounds
 
+Single class tests
+------------------
+test that Single class can be created through base class Root and that it has
+access to Root members
+
+
+
 
 

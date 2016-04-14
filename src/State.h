@@ -6,6 +6,7 @@ namespace gs {
   enum state {
     MENU,
     LOAD,
+    LOAD_VERSUS,
     PLAY,
     //GAME_OVER,
     EXIT

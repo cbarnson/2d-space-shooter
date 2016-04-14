@@ -52,6 +52,7 @@ class Sprite {
    void draw(Point p, int f) {
       al_draw_bitmap(image, p.x - width/2, p.y - height/2, f);
    }
+   
    void drawFore(Point p, int f){
       al_draw_bitmap(image, p.x, p.y, f);
    }
