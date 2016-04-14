@@ -175,7 +175,7 @@ void Versus::updateScore(ALLEGRO_COLOR& color) {
    }
 }
 // pure virtual from Root
-bool Versus::is_game_over() const {
+bool Versus::is_game_over() {
    if (_gameOverTimer->getCount() > GAME_OVER_DELAY && _gameOver) {
       _gameOverTimer->srsTimer();
       return true;
