@@ -204,15 +204,15 @@ void Single::update(double dt) {
 void Single::draw() {
    bg->draw();
    drawLives();
-   //gameScoreFont->drawTextF(al_map_rgb(255, 255, 255), 100, 100, "Score: %i", playerScoreTotal);
+   // gameScoreFont->drawTextF(al_map_rgb(255, 255, 255), 100, 100, "Score: %i",
+   // playerScoreTotal);
    
    drawEnemies(); // calls draw on each enemy, provides Sprite pointer
    drawProjectiles();   
    if (gameOver) showGameOverMessage();
-   else if (player) player->draw(playerShip);
+   else if (player) player->draw(playerShip, 0);
    gameScoreFont->drawTextF(al_map_rgb(255, 255, 255), 100, 50,"Score: %i", playerScoreTotal);
    drawWeaponUpgradeStatus();
-   drawLives();
 }
 
 
@@ -257,7 +257,8 @@ void Single::drawLives() {
 }
 void Single::drawWeaponUpgradeStatus(){
    
-   al_draw_rounded_rectangle(displayWidth - (displayWidth/2)-50, 50, displayWidth-(displayWidth/2)+50,
+   al_draw_rounded_rectangle(displayWidth - (displayWidth/2)-50, 50,
+			     displayWidth-(displayWidth/2)+50,
 			     70, 2, 2, al_map_rgb(255, 255, 255), 1);
    if(playerScore!=0){
       if(playerScore<30)

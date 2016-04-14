@@ -12,7 +12,6 @@
 #ifndef _POINT_H
 #define _POINT_H
 
-#include "Vector.h"
 #include <cmath>
 #include <ctime>
 #include <cstdlib>

@@ -32,9 +32,6 @@ class Engine {
    void menuLoop();
    void gameLoop(float& prevTime);
 
-   void addSingle();
-   void addMenu();
-   
    inline int getWidth() const {
       return _displayWidth;
    }
@@ -61,6 +58,11 @@ class Engine {
    std::shared_ptr<Menu> _menu;
    std::shared_ptr<Root> _root; // interface for game modes
 
+   // functions to add components
+   void addSingle();
+   void addVersus();
+   void addMenu();
+   
      
 };
 

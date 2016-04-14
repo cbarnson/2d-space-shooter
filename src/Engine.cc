@@ -13,14 +13,14 @@
 #include "Action.h"
 #include "Root.h"
 #include "Single.h"
+#include "Versus.h"
 
 using namespace act;
-using namespace gs;
 
 Engine::Engine(int w, int h, int fps) : _displayWidth(w), _displayHeight(h), 
 					_fps(fps), _gameScore(-1),
 					_timer(NULL), _eventQueue(NULL), running(true),
-					_state(state::MENU)
+					_state(gs::state::MENU)
 { }
 
 Engine::~Engine() {
@@ -78,7 +78,7 @@ void Engine::init() {
 void Engine::run() {
    float prevTime = 0;
    // main engine loop
-   while (_state != state::EXIT) {
+   while (_state != gs::state::EXIT) {
       processGameLogic(prevTime, _state);
    }
 }
@@ -86,22 +86,25 @@ void Engine::run() {
 
 void Engine::processGameLogic(float& prevTime, gs::state currentState) {
    switch (currentState) {
-      case state::PLAY:
+      case gs::state::PLAY:
 	 if (_root) {
 	    _menu.reset();
 	 }
 	 gameLoop(prevTime);
 	 break;
-      case state::MENU:
+      case gs::state::MENU:
 	 if (!_menu) {
 	    addMenu();
 	 }
 	 menuLoop();
 	 break;
-      case state::LOAD:
+      case gs::state::LOAD:
 	 menuLoop();
 	 break;
-      case state::EXIT:
+      case gs::state::LOAD_VERSUS:
+	 menuLoop();
+	 break;
+      case gs::state::EXIT:
 	 return;
    }
 }
@@ -115,20 +118,14 @@ void Engine::menuLoop() {
 
    _menu->handleEvent(event, _state);
    _menu->handleKey(kb, _state);
-   if (_state == state::LOAD && !_root) {
+   if (_state == gs::state::LOAD && !_root) {
       addSingle();
+   }
+   else if (_state == gs::state::LOAD_VERSUS && !_root) {
+      addVersus();
    }
 }
 
-void Engine::addSingle() {
-   _root = std::make_shared<Single> (_displayWidth, _displayHeight, _fps);
-   _root->init();
-}
-
-void Engine::addMenu() {
-   _menu = std::make_shared<Menu> (_fps);
-   _menu->init();
-}
 
 void Engine::gameLoop(float& prevTime) {
    ALLEGRO_EVENT event;
@@ -183,6 +180,22 @@ void Engine::draw() {
    if (_root) {
       _root->draw();
    }
+}
+
+
+void Engine::addSingle() {
+   _root = std::make_shared<Single> (_displayWidth, _displayHeight, _fps);
+   _root->init();
+}
+
+void Engine::addVersus() {
+   _root = std::make_shared<Versus> (_displayWidth, _displayHeight, _fps);
+   _root->init();
+}
+
+void Engine::addMenu() {
+   _menu = std::make_shared<Menu> (_fps);
+   _menu->init();
 }
 
 

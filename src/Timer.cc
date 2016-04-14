@@ -40,6 +40,13 @@ void Timer::resetCount() {
    al_set_timer_count(_timer, 0);
 }
 
+void Timer::srsTimer() {
+   stopTimer();
+   resetCount();
+   startTimer();
+}
+
+
 int Timer::getCount() const {
    return al_get_timer_count(_timer);
 }

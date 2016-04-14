@@ -13,7 +13,7 @@
 
 #include <allegro5/allegro.h>
 class Sprite;/**< forward declaration of Sprite class */
-class Timer;/**< forward declaration of Timer class */
+class Timer; /**< forward declaration of Timer class */
 
 extern const int MENU_ANIMATION_DELAY;
 
@@ -22,11 +22,11 @@ class Menu {
    Menu(int fps);
    ~Menu();
    
-   void init();/**< initializes resources- loads titlescreen image */
-   void draw();/**< draws menu */
+   void init();     /**< initializes resources- loads titlescreen image */
+   void draw();     /**< draws menu */
    bool animation();/**< function to handle timing of menu animation */
 
-   void handleEvent(const ALLEGRO_EVENT&, gs::state&);/**<chooses whether to load or exit game */
+   void handleEvent(const ALLEGRO_EVENT&, gs::state&);/**< chooses whether to load or exit game */
    void handleKey(const ALLEGRO_KEYBOARD_STATE&, gs::state&);
 
   private:

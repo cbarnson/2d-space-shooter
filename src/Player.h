@@ -67,7 +67,7 @@ class Player : public Updateable {
     * @brief renders the player
     * @param std::shared_ptr<Sprite>
     */
-   void draw(std::shared_ptr<Sprite>);
+   void draw(std::shared_ptr<Sprite> sprite, int flags);
 
    
    /**
@@ -84,6 +84,7 @@ class Player : public Updateable {
     * @param
     */
    act::action input(ALLEGRO_KEYBOARD_STATE&);
+   act::action inputPlayer2(ALLEGRO_KEYBOARD_STATE&); // only used in versus mode
 
   private:
    // HELPER FUNCTIONS 

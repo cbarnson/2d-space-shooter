@@ -24,8 +24,9 @@
 #include "Laser.h"
 #include "Missile.h"
 #include "Engine.h"
-#include "Enemy.h"
-#include "Creep.h"
+
+#include "Root.h"
+#include "Single.h"
 
 class TestGame: public CppUnit::TestFixture {
    
@@ -54,7 +55,7 @@ class TestGame: public CppUnit::TestFixture {
    CPPUNIT_TEST(testEngineDisplayWidth);
    CPPUNIT_TEST(testEngineFps);
 
-   CPPUNIT_TEST(testCreateCreep);
+   CPPUNIT_TEST(testCreateSingleThroughRoot);
    
    CPPUNIT_TEST_SUITE_END();
    
@@ -66,8 +67,8 @@ class TestGame: public CppUnit::TestFixture {
    Player *player, *player2;
    Projectile *laser, *missile;
    Engine* engine;
-   Enemy *creep;
-   
+   Root* root;
+
   public:
    void setUp() {
       p1 = new Point(300, 200);
@@ -85,8 +86,8 @@ class TestGame: public CppUnit::TestFixture {
       missile = new Missile(Point(900, 300), al_map_rgb(200, 0, 0), Vector(50, 0));
 
       engine = new Engine(800, 600, 60);
-
-      creep = new Creep(Point(400, 300), al_map_rgb(150, 100, 0), Vector(-30, 0));
+      
+      root = new Single(800, 600, 60);
    }
    
    void tearDown() {
@@ -101,7 +102,7 @@ class TestGame: public CppUnit::TestFixture {
       delete laser;
       delete missile;
       delete engine;
-      delete creep;
+      delete root;
    }
    
    void PointConstTest() {
@@ -200,10 +201,9 @@ class TestGame: public CppUnit::TestFixture {
       CPPUNIT_ASSERT(engine->getFps() == 60);
    }
 
-   void testCreateCreep() {
-      CPPUNIT_ASSERT(typeid(creep).name() == typeid(Creep).name());
+   void testCreateSingleThroughRoot() {
+      CPPUNIT_ASSERT(root->displayWidth == 800);
    }
-
    
 };
 #endif
