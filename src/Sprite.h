@@ -64,10 +64,12 @@ class Sprite {
 			    f);                // flags
    }
    
-   void draw_rotated(Point p, int f) {
+   void draw_rotated(Point p, double angle, int f) {
       al_draw_rotated_bitmap(image, width / 2, height / 2,
-				    p.x, p.y, 3.14159265 / 2, f);
+				    p.x, p.y, angle, f);
    }
+
+   
    
    void draw_tinted(Point p, ALLEGRO_COLOR c, int f) {
       al_draw_tinted_bitmap(image, c, p.x, p.y - height / 2, f);
@@ -107,6 +109,13 @@ class Sprite {
 			    bw, bh,
 			    destination.x - 47.0 / 2,
 			    destination.y - 40.0 / 2, f);
+   }
+   void draw_boss(int r, int c, float bw, float bh, Point destination, int f){
+      al_draw_bitmap_region(image,
+			    c * bw, r * bh,
+			    bw, bh,
+			    destination.x - 200.0 / 2,
+			    destination.y - 200.0 / 2, f);
    }
 
    

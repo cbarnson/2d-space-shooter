@@ -87,17 +87,13 @@ void CreepBomb::update(double dt) {
    if (centre.x < 0)
       dead = true;
    
-   if(fireDelay->getCount() > 200&&row==0){
+   if(centre.x<670&&row==0){
       row++;  
    }
-   if(fireDelay->getCount() > 400&&row==1){
+   if(centre.x<540&& row==1){
       row++;
    }
-   if(fireDelay->getCount() > 490&& !fire2){
-      fire = true;
-      fire2=true;
-      }
-   if(fireDelay->getCount() > 500){
+   if(centre.x<400){
       fire = true;
       dead = true;
       fireDelay->stopTimer();

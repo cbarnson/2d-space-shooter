@@ -56,6 +56,7 @@ struct Point {
     */
    Point operator+(Vector v);
    Point operator+(Point p);
+   bool operator==(Point p);
    double distance(Point p);
    void rollRandom();
    void rollRandomX();

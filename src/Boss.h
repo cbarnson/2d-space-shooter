@@ -29,7 +29,7 @@ struct Vector;
 class Timer;
 class Sprite;
 
-extern const int BOSS_SIZE;
+//extern const int BOSS_SIZE;
 
 class Boss : public Enemy {
 
@@ -48,27 +48,10 @@ class Boss : public Enemy {
    bool dAnim_complete;
    bool fire;
    bool aliveBoss;
-   
+   int col;
   public:
    Boss (Point p, ALLEGRO_COLOR c, Vector s);
-   /*: Enemy(p, c, s), centre(p), color(c), speed(s)
-   {
-      if((fireDelay = al_create_timer(1.0 / 30)) == NULL)
-	 throw std::runtime_error("cannot create fireDelay timer");
-      al_start_timer(fireDelay);
-      load_assets();
-
-      projSpeed = Vector(-300, 0);
-      fireSpeed = (rand() %10) + 10;
-
-      lives = 50;
-      size = 70;
-
-      dAnim = 0;
-      dAnim_complete = false;
-      fire = true;
-      aliveBoss = true;
-      }*/
+ 
    
    ~Boss();
    
@@ -81,7 +64,7 @@ class Boss : public Enemy {
    bool getDead();
    bool getFire();
    bool getAlive();
-
+   int getLives();
    void setFire(bool f);
    void update(double dt);
    void load_assets();

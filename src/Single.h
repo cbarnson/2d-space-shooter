@@ -90,6 +90,7 @@ class Single : public Root {
    void addCreepB(const Point&, const ALLEGRO_COLOR&, const Vector&);
    void addCreep(const Point&, const ALLEGRO_COLOR&, const Vector&);
    void addBoss(const Point&, const ALLEGRO_COLOR&, const Vector&);
+   void addCreepMis(const Point&, Point, Point, Point, Point, const ALLEGRO_COLOR&, const Vector&);
    
    void input(ALLEGRO_KEYBOARD_STATE&);   
    bool is_game_over() const;
@@ -99,7 +100,7 @@ class Single : public Root {
    void spawn();
    void respawnPlayer();
    void spawnBoss();
-   
+   void bossFire(std::shared_ptr<Enemy>);
   private:   
    // HELPER FUNCTIONS - simplicity & readability
    void drawLives();

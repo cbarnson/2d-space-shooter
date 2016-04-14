@@ -12,14 +12,15 @@
 #include "Timer.h"
 #include "Sprite.h"
 
-const int BOSS_SIZE = 100;
+int BOSS_SIZE = 80;
 
-Boss::Boss(Point cen, ALLEGRO_COLOR col, Vector spd) : Enemy(cen, col, spd),
+Boss::Boss(Point cen, ALLEGRO_COLOR c, Vector spd) : Enemy(cen, c, spd),
 							 projSpeed(Vector(-400, 0)),
-							 fireSpeed(rand() % 10 + 30),
-							 lives(50), dAnim(0),
+							 fireSpeed(rand() % 40 + 30),
+							 lives(30), dAnim(0),
 							 dAnim_complete(false), fire(true)
 {
+   col=0;
    load_assets();
 }
 
@@ -58,6 +59,14 @@ void Boss::hit()
       dead = true;
       //aliveBoss = false;
    }
+   if(lives==20){
+      col=1;
+      BOSS_SIZE=70;
+   }
+   if(lives==10){
+      BOSS_SIZE=60;
+      col=2;
+   }
 }
 
 
@@ -65,9 +74,9 @@ void Boss::hit()
 void Boss::draw(std::shared_ptr<Sprite> bossShip, std::shared_ptr<Sprite> bossDeath)
 {
    if(!dead)
-      al_draw_rectangle(centre.x, centre.y, centre.x - BOSS_SIZE,
-			centre.y - BOSS_SIZE, al_map_rgb(155, 0, 0), 5);
-      // bossShip -> draw(centre, 0);
+      // al_draw_rectangle(centre.x, centre.y, centre.x - BOSS_SIZE,
+      //		centre.y - BOSS_SIZE, al_map_rgb(155, 0, 0), 5);
+      bossShip -> draw_boss(0, col, 200, 200, centre, 0);
    else
    {
       //Boss is dead and we proceed to the death animation

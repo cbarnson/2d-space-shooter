@@ -15,7 +15,7 @@
  * @brief represents the change in position of x and y
  */
 
-
+class Point;
 struct Vector {
    double x;
    double y;
@@ -47,6 +47,7 @@ struct Vector {
    
    void xMod(int m);
    void yMod(int m);
+   void Angle(Point p, Point p2, double time);
    
 };
 
