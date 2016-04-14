@@ -87,7 +87,7 @@ void Engine::run() {
 void Engine::processGameLogic(float& prevTime, gs::state currentState) {
    switch (currentState) {
       case gs::state::PLAY:
-	 if (_root) {
+	 if (_root && _menu) {
 	    _menu.reset();
 	 }
 	 gameLoop(prevTime);
@@ -132,6 +132,7 @@ void Engine::gameLoop(float& prevTime) {
    ALLEGRO_KEYBOARD_STATE kb;
    bool redraw = true;
    float crtTime;
+   
    // input
    al_get_keyboard_state(&kb);      
    _root->input(kb);

@@ -1,7 +1,12 @@
 #include "Versus.h"
 
+#include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 
+#include <iostream>
+
+#include "Point.h"
+#include "Vector.h"
 #include "Projectile.h"
 #include "Laser.h"
 #include "Missile.h"
@@ -10,10 +15,11 @@
 #include "Sprite.h"
 #include "Player.h"
 #include "Font.h"
+#include "Action.h"
 
 const int GAME_OVER_DELAY = 80;
 const int RESPAWN_DELAY = 50;
-const int WEAPON_DELAY_LASER_VERSUS = 6;
+const int WEAPON_DELAY_LASER_VERSUS = 10;
 const int WEAPON_DELAY_MISSILE_VERSUS = 20;
 const Vector PLAYER1_PROJECTILE_SPEED = Vector(500, 0);
 const Vector PLAYER2_PROJECTILE_SPEED = Vector(-500, 0);
@@ -32,6 +38,7 @@ Versus::~Versus() {
    _player2WeaponTimer.reset();
    _gameOverTimer.reset();
    _respawnTimer.reset();
+   _respawnTimer2.reset();
    _font18.reset();
    _player1.reset();
    _player2.reset();
@@ -51,6 +58,8 @@ void Versus::init() {
    _gameOverTimer->create();
    _respawnTimer = std::make_shared<Timer> (framesPerSec);
    _respawnTimer->create();
+   _respawnTimer2 = std::make_shared<Timer> (framesPerSec);
+   _respawnTimer2->create();
    // create players
    addPlayer(1);
    addPlayer(2);
@@ -74,6 +83,11 @@ void Versus::draw() {
    // draw each player's lives
    drawLifeRemaining(1);
    drawLifeRemaining(2);
+   // draw projectiles
+   drawProjectiles();
+   // draw game score
+   drawScore(1);
+   drawScore(2);
    // draw players
    if (_player1) {
       _player1->draw(_playerShip, 0);
@@ -81,11 +95,6 @@ void Versus::draw() {
    if (_player2) {
       _player2->draw(_playerShip, ALLEGRO_FLIP_HORIZONTAL);
    }
-   // draw projectiles
-   drawProjectiles();
-   // draw game score
-   drawScore(1);
-   drawScore(2);
    // if game over draw game over message and results
    if (_gameOver) {
       drawGameOver();
@@ -99,60 +108,21 @@ void Versus::update(double dt) {
    _bg->update(dt);
    // update player position
    // player 1
-   if (_player1) {
-      _player1->update(dt);
-   }
-   else if (_life1 <= 0) {
-      _gameOver = true;
-   }
-   else {
-      respawn(1);
-   }
+   if (_player1) _player1->update(dt);
+   else if (!_player1 && _life1 <= 0) _gameOver = true;
+   else respawn(1);   
    // player 2
-   if (_player2) {
-      _player2->update(dt);
-   }
-   else if (_life2 <= 0) {
-      _gameOver = true;
-   }
-   else {
-      respawn(2);
-   }
+   if (_player2) _player2->update(dt);   
+   else if (!_player2 && _life2 <= 0) _gameOver = true;   
+   else respawn(2);
    // update projectile positions
    updateProjectiles(dt);
    // update collisions
    updateCollision();
-   // update status of players
-   updatePlayerStatus();
+   // clean up stuff
+   clean();
 }
 
-void Versus::respawn(int p) {
-   switch(p) {
-      case 1: // respawn player 1
-	 if (!_respawnTimer->isRunning()) {
-	    _respawnTimer->startTimer();
-	 }
-	 else if (_respawnTimer->getCount() > 80) {
-	    addPlayer(p);
-	    _respawnTimer->stopTimer();
-	    _respawnTimer->resetCount();
-	 }
-	 break;
-	 
-      case 2: // respawn player 2
-	 if (!_respawnTimer->isRunning()) {
-	    _respawnTimer->startTimer();
-	 }
-	 else if (_respawnTimer->getCount() > 80) {
-	    addPlayer(p);
-	    _respawnTimer->stopTimer();
-	    _respawnTimer->resetCount();
-	 }
-	 break;
-      default:
-	 break;
-   }
-}
 
 
 void Versus::input(ALLEGRO_KEYBOARD_STATE& kb) {
@@ -161,10 +131,10 @@ void Versus::input(ALLEGRO_KEYBOARD_STATE& kb) {
       switch(_player1->input(kb)) {
 	 case act::action::QUIT_GAME:
 	    _gameOver = true;
-	    return;
+	    break;
 	 case act::action::FIRE_PRIMARY:
 	    if (_player1WeaponTimer->getCount() > WEAPON_DELAY_LASER_VERSUS) {
-	       addLaser(_player1->centre, _player1->color, PLAYER1_PROJECTILE_SPEED);
+	       addLaser(_player1->centre, al_map_rgb(0,200,0), PLAYER1_PROJECTILE_SPEED);
 	       _player1WeaponTimer->srsTimer(); // stop, reset, start
 	    }
 	    break;
@@ -180,10 +150,10 @@ void Versus::input(ALLEGRO_KEYBOARD_STATE& kb) {
       switch(_player2->inputPlayer2(kb)) {
 	 case act::action::QUIT_GAME:
 	    _gameOver = true;
-	    return;
+	    break;
 	 case act::action::FIRE_PRIMARY:
 	    if (_player2WeaponTimer->getCount() > WEAPON_DELAY_LASER_VERSUS) {
-	       addLaser(_player2->centre, _player2->color, PLAYER2_PROJECTILE_SPEED);
+	       addLaser(_player2->centre, al_map_rgb(200,0,0), PLAYER2_PROJECTILE_SPEED);
 	       _player2WeaponTimer->srsTimer();
 	    }
 	    break;
@@ -197,11 +167,20 @@ void Versus::input(ALLEGRO_KEYBOARD_STATE& kb) {
 }
 // pure virtual from Root
 void Versus::updateScore(ALLEGRO_COLOR& color) {
-   
+   if (doColorsMatch(color, al_map_rgb(0,200,0))) {
+      _score1 += 1;
+   }
+   else if (doColorsMatch(color, al_map_rgb(200,0,0))) {
+      _score2 += 1;
+   }
 }
 // pure virtual from Root
 bool Versus::is_game_over() const {
-   return (_gameOverTimer->getCount() > GAME_OVER_DELAY) && _gameOver;
+   if (_gameOverTimer->getCount() > GAME_OVER_DELAY && _gameOver) {
+      _gameOverTimer->srsTimer();
+      return true;
+   }
+   return false;
 }
 // pure virtual from Root
 int Versus::getScore() const {
@@ -214,10 +193,10 @@ int Versus::getScore() const {
 void Versus::addPlayer(int p) {
    switch(p) {
       case 1:
-	 _player1 = std::make_shared<Player> (Point(215, 245), al_map_rgb(0, 200, 0));
+	 _player1 = std::make_shared<Player> (Point(215, 245), al_map_rgb(0,200,0));
 	 break;
       case 2:
-	 _player2 = std::make_shared<Player> (Point(585, 245), al_map_rgb(200, 0, 0));
+	 _player2 = std::make_shared<Player> (Point(585, 245), al_map_rgb(200,0,0));
 	 break;
       default:
 	 break;
@@ -240,26 +219,26 @@ void Versus::drawLifeRemaining(int p) {
    switch(p) {
       case 1: // player 1
 	 if (_life1 > 0)
-	    al_draw_rectangle(displayWidth - 70, 50, displayWidth - 50, 70,
-			      _player1->color, 5);
+	    al_draw_rectangle(50, 50, 70, 70,
+			      al_map_rgb(0,200,0), 5);
 	 if (_life1 > 1)
-	    al_draw_rectangle(displayWidth - 110, 50, displayWidth - 90, 70,
-			      _player1->color, 5);
+	    al_draw_rectangle(90, 50, 110, 70,
+			      al_map_rgb(0,200,0), 5);
 	 if (_life1 > 2)
-	    al_draw_rectangle(displayWidth - 150, 50, displayWidth - 130, 70,
-			      _player1->color, 5);
+	    al_draw_rectangle(130, 50, 150, 70,
+			      al_map_rgb(0,200,0), 5);
 	 break;
 	 
       case 2: // player 2
 	 if (_life2 > 0)
-	    al_draw_rectangle(50, 50, 70, 70,
-			      _player2->color, 5);
+	    al_draw_rectangle(displayWidth - 70, 50, displayWidth - 50, 70,
+			      al_map_rgb(200,0,0), 5);
 	 if (_life2 > 1)
-	    al_draw_rectangle(90, 50, 110, 70,
-			      _player2->color, 5);
+	    al_draw_rectangle(displayWidth - 110, 50, displayWidth - 90, 70,
+			      al_map_rgb(200,0,0), 5);
 	 if (_life2 > 2)
-	    al_draw_rectangle(130, 50, 150, 70,
-			      _player2->color, 5);
+	    al_draw_rectangle(displayWidth - 150, 50, displayWidth - 130, 70,
+			      al_map_rgb(200,0,0), 5);
 	 break;
       default:
 	 break;	 
@@ -268,24 +247,29 @@ void Versus::drawLifeRemaining(int p) {
 
 void Versus::drawProjectiles() {
    if (!_proj.empty()) {
-      for (std::vector< std::shared_ptr<Projectile> >::iterator it = _proj.begin(); 
-	   it != _proj.end(); ++it) { 
-	 (*it)->draw();
+      for (auto it = _proj.begin(); 
+	   it != _proj.end(); ++it) {
+	 if ((*it)->live) {
+	    (*it)->draw();
+	 }
       }
    }
 }
 
 
 void Versus::drawGameOver() {
+   // make sure timer has started
    if (!_gameOverTimer->isRunning()) {
       _gameOverTimer->startTimer();
    }
-   if (_gameOverTimer->getCount() < 80) {
+   // draw message until delay is finished
+   if (_gameOverTimer->getCount() < GAME_OVER_DELAY) {
       _font18->drawTextCentered(al_map_rgb(255, 0, 0), "game over");
    }
+   /*
    else {
       _gameOverTimer->stopTimer();
-   }
+      }*/
 }
 
 // takes an integer equal to either 1 or 2, representing the player, and draws their score
@@ -314,41 +298,53 @@ void Versus::updateProjectiles(double dt) {
    }
 }
 
-
-void Versus::updateCollision() {
-   // check collision on each player
-   if (_player1 && _player2) { // no reason to check if either player is dead
-      for (std::vector< std::shared_ptr<Projectile> >::iterator it = _proj.begin();
-	   it != _proj.end(); ++it) {
-	 if (!doColorsMatch((*it)->color, _player1->color)) {
-	    if (pointBoxCollision((*it)->centre, _player1->centre, 16)) { // note 16 is size
+void Versus::updateCollisionPlayer1() {
+   if (_player1) {
+      for (auto it = _proj.begin(); it != _proj.end(); ++it) {
+	 if ((*it)->live && !doColorsMatch((*it)->color, al_map_rgb(0,200,0))) {
+	    if (pointBoxCollision((*it)->centre, _player1->centre, 16)) {
 	       (*it)->live = false;
 	       _player1->hit(1);
-	       _score2 += 1; // player2 score increase
+	       updatePlayerStatus();
 	    }
-	 }
-	 if (!doColorsMatch((*it)->color, _player2->color)) {
+	 }	 
+      }
+   }
+}
+
+void Versus::updateCollisionPlayer2() {
+   if (_player2) {
+      for (auto it = _proj.begin(); it != _proj.end(); ++it) {
+	 if ((*it)->live && !doColorsMatch((*it)->color, al_map_rgb(200,0,0))) {
 	    if (pointBoxCollision((*it)->centre, _player2->centre, 16)) {
 	       (*it)->live = false;
 	       _player2->hit(1);
-	       _score1 += 1; // player1 score increase
+	       updatePlayerStatus();
 	    }
-	 }
+	 }	 
       }
-   }
+   }   
+}
+
+void Versus::updateCollision() {
+   updateCollisionPlayer1();
+   updateCollisionPlayer2();
 }
 
 
 void Versus::updatePlayerStatus() {
    if (_player1 && _player1->dead) {
       _life1 -= 1;
+      _score2 += 1;
       _player1.reset();
    }
    if (_player2 && _player2->dead) {
       _life2 -= 1;
+      _score1 += 1;
       _player2.reset();
    }
 }
+
 
 
 //=========================
@@ -364,4 +360,47 @@ bool Versus::pointBoxCollision(const Point& p1, const Point& p2,
 	   (p1.x < p2.x + s2) &&
 	   (p1.y > p2.y - s2) &&
 	   (p1.y < p2.y + s2));
+}
+
+void Versus::clean() {
+   //updatePlayerStatus();
+   // cull projectiles
+   std::vector< std::shared_ptr<Projectile> > newProj;
+   if (!_proj.empty()) {
+      for (auto it = _proj.begin(); it != _proj.end(); ++it) {
+	 if ((*it)->live) {
+	    newProj.push_back(*it);
+	 }	 
+      }
+      _proj.clear();
+      _proj.assign(newProj.begin(), newProj.end());
+   }
+}
+
+void Versus::respawn(int p) {
+   switch(p) {
+      case 1: // respawn player 1
+	 if (!_respawnTimer->isRunning()) {
+	    _respawnTimer->startTimer();
+	 }
+	 if (_respawnTimer->getCount() > RESPAWN_DELAY) {
+	    addPlayer(1);
+	    _respawnTimer->stopTimer();
+	    _respawnTimer->resetCount();
+	 }
+	 break;
+	 
+      case 2: // respawn player 2
+	 if (!_respawnTimer2->isRunning()) {
+	    _respawnTimer2->startTimer();
+	 }
+	 if (_respawnTimer2->getCount() > RESPAWN_DELAY) {
+	    addPlayer(2);
+	    _respawnTimer2->stopTimer();
+	    _respawnTimer2->resetCount();
+	 }
+	 break;
+      default:
+	 break;
+   }
 }

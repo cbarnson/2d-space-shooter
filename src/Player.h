@@ -25,7 +25,6 @@
 struct Point;
 struct Vector;
 class Sprite;
-class Input;
 
 extern const int PLAYER_SIZE;
 extern const int PLAYER_TRAVEL_SPEED;

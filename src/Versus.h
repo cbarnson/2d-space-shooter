@@ -53,6 +53,7 @@ class Versus : public Root {
    std::shared_ptr<Timer> _player2WeaponTimer;
    std::shared_ptr<Timer> _gameOverTimer;
    std::shared_ptr<Timer> _respawnTimer;
+   std::shared_ptr<Timer> _respawnTimer2;
    // fonts
    std::shared_ptr<Font> _font18; // size 18 font
    // background
@@ -78,11 +79,14 @@ class Versus : public Root {
    // update functions for components
    void updateProjectiles(double dt);
    void updateCollision();
+   void updateCollisionPlayer1();
+   void updateCollisionPlayer2();
    void updatePlayerStatus();
    // utility functions
    bool doColorsMatch(const ALLEGRO_COLOR&, const ALLEGRO_COLOR&);
    bool pointBoxCollision(const Point&, const Point&, const int&);
    void respawn(int p);
+   void clean();
 };
 
 
