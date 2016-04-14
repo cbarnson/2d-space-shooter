@@ -11,7 +11,7 @@
 #include "Vector.h"
 #include "Timer.h"
 #include "Sprite.h"
-
+#include <iostream>
 int BOSS_SIZE = 80;
 
 Boss::Boss(Point cen, ALLEGRO_COLOR c, Vector spd) : Enemy(cen, c, spd),
@@ -20,7 +20,7 @@ Boss::Boss(Point cen, ALLEGRO_COLOR c, Vector spd) : Enemy(cen, c, spd),
 							 lives(30), dAnim(0),
 							 dAnim_complete(false), fire(true)
 {
-   col=0;
+   col=0; row=0; 
    load_assets();
 }
 
@@ -59,6 +59,8 @@ void Boss::hit()
       dead = true;
       //aliveBoss = false;
    }
+   // chooseFrame();
+   /*
    if(lives==20){
       col=1;
       BOSS_SIZE=70;
@@ -66,17 +68,18 @@ void Boss::hit()
    if(lives==10){
       BOSS_SIZE=60;
       col=2;
-   }
+      }*/
 }
 
 
 //draw image to display the boss ship
 void Boss::draw(std::shared_ptr<Sprite> bossShip, std::shared_ptr<Sprite> bossDeath)
 {
+   chooseFrame();
    if(!dead)
       // al_draw_rectangle(centre.x, centre.y, centre.x - BOSS_SIZE,
       //		centre.y - BOSS_SIZE, al_map_rgb(155, 0, 0), 5);
-      bossShip -> draw_boss(0, col, 200, 200, centre, 0);
+      bossShip -> draw_boss(row, col, 200, 200, centre, 0);
    else
    {
       //Boss is dead and we proceed to the death animation
@@ -116,4 +119,20 @@ void Boss::update(double dt)
       fireDelay->startTimer();
    }
 	 
+}
+void Boss::chooseFrame(){
+   if(lives>20){
+      frame=0;
+   }
+   if(lives<=20 && frame<3){
+      BOSS_SIZE=70;
+      frame++;
+   }
+   if(lives<=10 && frame <8){
+      BOSS_SIZE=60;
+      frame++;
+   }
+   std::cout<<frame<<", ";
+   row=frame/3;
+   col=frame%3;
 }

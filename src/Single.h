@@ -48,7 +48,8 @@ class Single : public Root {
    std::shared_ptr<Timer> playerWeapon1;
    std::shared_ptr<Timer> playerWeapon2;
    std::shared_ptr<Timer> playerRespawn;
-   std::shared_ptr<Timer> upgradeText;   
+   std::shared_ptr<Timer> upgradeText;
+   std::shared_ptr<Timer> bossTime;
 
    // base classes
    std::list< std::shared_ptr<Projectile> > proj;
@@ -68,7 +69,7 @@ class Single : public Root {
    std::shared_ptr<Sprite> enemyBomb;
 
    bool gameOver;
-   bool aliveBoss = false;
+   bool aliveBoss; bool killedBoss;
    int playerLives;
    int playerScoreTotal;
    int playerScore;
@@ -99,6 +100,8 @@ class Single : public Root {
       
    void spawn();
    void respawnPlayer();
+
+   void bossIntro();
    void spawnBoss();
    void bossFire(std::shared_ptr<Enemy>);
   private:   

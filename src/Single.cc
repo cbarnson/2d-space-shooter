@@ -65,6 +65,7 @@ void Single::init() {
    playerWeapon1 = std::make_shared<Timer> (framesPerSec); playerWeapon1->create();   
    playerWeapon2 = std::make_shared<Timer> (framesPerSec); playerWeapon2->create();
    playerRespawn = std::make_shared<Timer> (framesPerSec); playerRespawn->create();
+   bossTime      = std::make_shared<Timer> (framesPerSec); bossTime->create();
    upgradeText = std::make_shared<Timer> (framesPerSec); upgradeText->create();
    //std::cout << "in single init, after timer creation\n";
    playerWeapon1->startTimer();
@@ -87,9 +88,11 @@ void Single::init() {
    enemyShip = std::make_shared<Sprite> ("EnemyBasic.png");
    enemyDeath = std::make_shared<Sprite> ("explode.png");
    enemyBomb = std::make_shared<Sprite> ("spikebomb.png");
-   bossShip = std::make_shared<Sprite> ("bossv1.png");
+   bossShip = std::make_shared<Sprite> ("bossv2.png");
    // delete path 
    al_destroy_path(path);
+   aliveBoss=false;
+   killedBoss=false;
    //std::cout << "end of single init \n";
 }
 
@@ -220,6 +223,7 @@ void Single::draw() {
    else if (player) player->draw(playerShip, 0);
    gameScoreFont->drawTextF(al_map_rgb(255, 255, 255), 100, 50,"Score: %i", playerScoreTotal);
    drawWeaponUpgradeStatus();
+   bossIntro();
 }
 
 
@@ -419,7 +423,7 @@ void Single::spawn() {
       playerloc = Point (200, 300);
 
    // roll for enemy routine
-   int n = rand() % 7 + 1;
+   int n = rand() % 6 + 1;
    
    // select enemy routine
    switch(n) {
@@ -470,17 +474,7 @@ void Single::spawn() {
 	 addCreepB(pt, al_map_rgb(204,3,3), Vector(-60, 0));
 	 //spawn();
 	 break;
-      
-      
-      case 6: 
-	 color = al_map_rgb(255, 153, 255);
-	 for(int i=0; i<5; i++) {
-	    spd.rollReallyRandom();
-	    addCreep(Point(800, 300), color, spd);
-	 }
-	 break;
-
-      case 7:
+      case 6:
 	 for(int i=800; i<=1000; i+=50)
 	    addCreepMis(Point(i,300), Point(700,100), Point(100,100),
 			Point(100,500), Point(700,500), al_map_rgb(255,254,253), Vector(-90, 0));
@@ -492,8 +486,8 @@ void Single::spawn() {
 
 
 void Single::spawnBoss()
-{  
-   addBoss(Point(900, 300),  al_map_rgb(155, 0, 0), Vector(-100, 0));
+{  if(enem.size()==0)
+      addBoss(Point(900, 300),  al_map_rgb(155, 0, 0), Vector(-100, 0));
 }
 
 void Single::addBoss(const Point& cen, const ALLEGRO_COLOR& col, const Vector& spd)
@@ -543,15 +537,28 @@ void Single::updateEnemyPosition(double dt) {
       }
    }
       
-   if(aliveBoss == false && playerScoreTotal == 10)
+   if(aliveBoss == false && playerScoreTotal >= 10)
    {
-      spawnBoss();
+      bossIntro();
       aliveBoss = true;
    }
-   if(enem.size() <= 0 && aliveBoss == false) {
+   if((enem.size() <= 0 && aliveBoss == false)||killedBoss&&enem.size()<=0) {
       spawn();
    }
 }
+void Single::bossIntro(){
+   if(!(bossTime->isRunning())&& aliveBoss)
+      bossTime->startTimer();
+   else{
+      if(bossTime->getCount()>1&&bossTime->getCount() < 100)
+	 gameOverFont->drawTextCentered(al_map_rgb(204, 204, 0), "BOSS INCOMING");
+      if(bossTime->getCount()>200){
+	 spawnBoss();
+	 aliveBoss=false;
+      }
+   }
+}
+      
 
 
 void Single::CircleLaser(std::shared_ptr<Enemy> E)
@@ -573,7 +580,7 @@ void Single::bossFire(std::shared_ptr<Enemy> e){
 	   addLaser(e->centre+Point(50,0), e->color, e->getProjSpeed() + Vector(0,i));
 	break;
       case 2:
-	 addCreepB(e->centre+Point(50,0), al_map_rgb(204,3,3), Vector(-100, 0));
+//	 addCreepB(e->centre+Point(50,0), al_map_rgb(204,3,3), Vector(-100, 0)); wave is too fucking hard
 	 break;
       case 3:
 	 aim.Angle(playerloc, e->centre+Point(0,50), 0.9);
@@ -641,8 +648,9 @@ void Single::cullEnemies() {
    if (!enem.empty()) {
       for (std::list< std::shared_ptr<Enemy> >::iterator it = enem.begin(); 
 	   it != enem.end(); ++it) {
-	 //if(doColorsMatch((*it)->getColor(), al_map_rgb(155, 0, 0)))
-	 //   aliveBoss = false;
+	 if(doColorsMatch((*it)->getColor(), al_map_rgb(155, 0, 0)))
+	    if((*it)->getdAnim_complete())
+	       killedBoss=true;
 	  if (!(*it)->getdAnim_complete()) 
 	     // if not dead (death animation not complete)
 	     newEnem.push_back(*it);	  
