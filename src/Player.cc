@@ -14,8 +14,6 @@
 #include "Laser.h"
 #include "Missile.h"
 
-using namespace act;
-
 const int PLAYER_SIZE = 16; // in pixels
 const int PLAYER_TRAVEL_SPEED = 250;
 const float MAX_LIFE = 3;
@@ -52,16 +50,16 @@ act::action Player::input(ALLEGRO_KEYBOARD_STATE& kb) {
      speed.x -= PLAYER_TRAVEL_SPEED;
   }
   if (al_key_down(&kb, ALLEGRO_KEY_SPACE)) {
-    return action::FIRE_PRIMARY;
+     return act::action::FIRE_PRIMARY;
   }
   if (al_key_down(&kb, ALLEGRO_KEY_F)) {
-    return action::FIRE_SECONDARY;
+     return act::action::FIRE_SECONDARY;
   }
   if (al_key_down(&kb, ALLEGRO_KEY_ESCAPE)) {
-    return action::QUIT_GAME;
+     return act::action::QUIT_GAME;
   }
 
-  return action::NO_ACTION;
+  return act::action::NO_ACTION;
 }
 
 act::action Player::inputPlayer2(ALLEGRO_KEYBOARD_STATE& kb) {
@@ -78,16 +76,16 @@ act::action Player::inputPlayer2(ALLEGRO_KEYBOARD_STATE& kb) {
      speed.x -= PLAYER_TRAVEL_SPEED;
   }
   if (al_key_down(&kb, ALLEGRO_KEY_PAD_0)) {
-    return action::FIRE_PRIMARY;
+     return act::action::FIRE_PRIMARY;
   }
   if (al_key_down(&kb, ALLEGRO_KEY_PAD_DELETE)) {
-    return action::FIRE_SECONDARY;
+     return act::action::FIRE_SECONDARY;
   }
   if (al_key_down(&kb, ALLEGRO_KEY_ESCAPE)) {
-    return action::QUIT_GAME;
+     return act::action::QUIT_GAME;
   }
 
-  return action::NO_ACTION;
+  return act::action::NO_ACTION;
 }
 
 

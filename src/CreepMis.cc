@@ -15,12 +15,13 @@
 
 const int CREEP_SIZE = 20;
 
-CreepMis::CreepMis(Point cen,Point c2, Point c3, Point c4, Point c5, ALLEGRO_COLOR col, Vector spd) : Enemy(cen, col, spd),
-							 projSpeed(Vector(-400, 0)),
-							 fireSpeed(rand() % 50 + 30),
-							 lives(1), dAnim(0),
-							 dAnim_complete(false), fire(true), stop1(c2),
-							 stop2(c3), stop3(c4), stop4(c5)
+CreepMis::CreepMis(Point cen, Point c2, Point c3, Point c4, Point c5, ALLEGRO_COLOR col, Vector spd) :
+   Enemy(cen, col, spd),
+   projSpeed(Vector(-400, 0)),
+   fireSpeed(rand() % 50 + 30),
+   lives(1), dAnim(0),
+   dAnim_complete(false), fire(true), stop1(c2),
+   stop2(c3), stop3(c4), stop4(c5)
 {
    next=stop1; at1=false; at2=false; at3=false; at4=false; init =false;
    focal.x=400; focal.y=300;
@@ -85,16 +86,16 @@ void CreepMis::update(double dt) {
          
    
 // check y bound and adjust if out
-if (centre.y > 600 - CREEP_SIZE || centre.y < CREEP_SIZE) {
-   speed.reflectY();
-}
+   if (centre.y > 600 - CREEP_SIZE || centre.y < CREEP_SIZE) {
+      speed.reflectY();
+   }
 
-if (fireDelay->getCount() > fireSpeed) {
-   fire = true;
-   fireDelay->stopTimer();
-   fireDelay->resetCount();
-   fireDelay->startTimer();
-}
+   if (fireDelay->getCount() > fireSpeed) {
+      fire = true;
+      fireDelay->stopTimer();
+      fireDelay->resetCount();
+      fireDelay->startTimer();
+   }
 }
 void CreepMis::updateAngle()
 {
@@ -103,6 +104,7 @@ void CreepMis::updateAngle()
    {
       delta.x=centre.x-400;
       delta.y=centre.y-300;
+     
       angle=atan(delta.y/delta.x);
    }
    else
