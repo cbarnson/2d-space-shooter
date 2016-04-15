@@ -15,8 +15,6 @@
 #include "Single.h"
 #include "Versus.h"
 
-using namespace act;
-
 Engine::Engine(int w, int h, int fps) : _displayWidth(w), _displayHeight(h), 
 					_fps(fps), _gameScore(-1),
 					_timer(NULL), _eventQueue(NULL), running(true),
