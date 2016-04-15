@@ -82,9 +82,11 @@ void Creep::update(double dt) {
    }
    
    // check y bound and adjust if out
-   if (centre.y > 600 - CREEP_SIZE || centre.y < CREEP_SIZE) {
+   if (centre.y > 600 - CREEP_SIZE &&speed.y > 0)  
       speed.reflectY();
-   }
+   if (centre.y < 0 - CREEP_SIZE && speed.y < 0)
+      speed.reflectY();
+
 
    if (fireDelay->getCount() > fireSpeed) {
       fire = true;

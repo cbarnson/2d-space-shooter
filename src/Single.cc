@@ -36,16 +36,21 @@ const int WEAPON_DELAY_LASER = 6;
 const int WEAPON_DELAY_MISSILE = 20;
 const Vector PLAYER_PROJECTILE_SPEED = Vector(500, 0);
 
-// constructor
+
+//-------------------------------
+// CONSTRUCTOR
+//-------------------------------
 Single::Single(int w, int h, int f, std::string playerName) :
    Root(w, h, f), _playerName(playerName),
    gameOver(false), playerLives(3),
    playerScoreTotal(0), playerScore(0)
 {
-   //std::cout << "in the single constructor\n";
+   
 }
 
-// destructor
+//------------------------------
+// DESTRUCTOR
+//-------------------------------
 Single::~Single() {
    //std::cout << "in the single destructor\n";
    player.reset();
@@ -60,7 +65,9 @@ Single::~Single() {
    upgradeText.reset();
 }
 
-// initialize Single player mode
+//---------------------------------
+// INIT MAIN
+//---------------------------------
 void Single::init() {
    // timers
    gameOverTimer = std::make_shared<Timer> (framesPerSec); gameOverTimer->create();
@@ -69,10 +76,8 @@ void Single::init() {
    playerRespawn = std::make_shared<Timer> (framesPerSec); playerRespawn->create();
    bossTime      = std::make_shared<Timer> (framesPerSec); bossTime->create();
    upgradeText = std::make_shared<Timer> (framesPerSec); upgradeText->create();
-   //std::cout << "in single init, after timer creation\n";
    playerWeapon1->startTimer();
    playerWeapon2->startTimer();
-   //std::cout << "timers have been started\n";
    // create Player object
    setupPlayer();
    // go to resources directory
@@ -84,7 +89,6 @@ void Single::init() {
    gameScoreFont = std::make_shared<Font> ("ipag.ttf", 18); gameScoreFont->load();   
    // background
    bg = std::make_shared<Background> (Vector(50, 0), Vector(-90, 0));
-   
    // sprites
    playerShip = std::make_shared<Sprite> ("Sprite.png");
    enemyShip = std::make_shared<Sprite> ("EnemyBasic.png");
@@ -93,19 +97,52 @@ void Single::init() {
    bossShip = std::make_shared<Sprite> ("bossv2.png");
    // delete path 
    al_destroy_path(path);
-   killedBoss = false;//not sure if necessary
-   //std::cout << "end of single init \n";
 }
 
-// INPUT -----------------------------
+//------------------------------
+// UPDATE MAIN
+//-----------------------------
+void Single::update(double dt) {
+   bg->update(dt);
+   if (player) player->update(dt);
+   else if (!player && playerLives <= 0) gameOver = true;
+   else respawnPlayer();
+   
+   updateProjectilePosition(dt);
+   updateEnemyPosition(dt);   
+   collision();
+   clean();      
+}
+//------------------------------
+// DRAW MAIN
+//-----------------------------
+// renders the entire scene
+void Single::draw() {
+   bg->draw();
+   drawLives();
+   //gameScoreFont->drawTextF(al_map_rgb(255, 255, 255), 100, 100, "Score: %i", playerScoreTotal);
+   drawProjectiles(); 
+
+   drawEnemies(); // calls draw on each enemy, provides Sprite pointer
+  
+   if (gameOver) showGameOverMessage();
+   else if (player) player->draw(playerShip, 0);
+   gameScoreFont->drawTextF(al_map_rgb(255, 255, 255), 100, 50,"Score: %i", playerScoreTotal);
+   drawWeaponUpgradeStatus();
+   bossIntro();
+}
+
+//--------------------------------
+// INPUT MAIN
+//--------------------------------
 void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
    if (player) {
       switch (player->input(kb)) {	 
 	 case action::QUIT_GAME: // player indicated they wish to quit the game
 	    player.reset();
-	    return;	    
-	 case action::FIRE_PRIMARY:
+	    return;
 	    
+	 case action::FIRE_PRIMARY: // case to handle lasers	    
 	    // single
 	    if (playerWeapon1->getCount() > WEAPON_DELAY_LASER &&
 		playerScore < 30) {
@@ -145,7 +182,9 @@ void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
 	       playerWeapon1->startTimer();
 	    }
 	    break;
-	 case action::FIRE_SECONDARY:	    	    
+
+	    
+	 case action::FIRE_SECONDARY: // case to handle missile  	    
 	    if (playerWeapon2->getCount() > WEAPON_DELAY_MISSILE) {
 	       
 	       addMissile(player->centre, player->color, PLAYER_PROJECTILE_SPEED);
@@ -155,6 +194,7 @@ void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
 	       playerWeapon2->startTimer();
 	    }
 	    break;
+	    
 	 default:
 	    break;
       }
@@ -166,31 +206,6 @@ int Single::getScore() const {
    return playerScoreTotal;
 }
 
-// function to add a Laser object onto the Projectile list
-void Single::addLaser(const Point& cen, const ALLEGRO_COLOR& col, const Vector& spd) {
-   proj.push_back(std::make_shared<Laser> (cen, col, spd));
-}
-
-// function to add a Missile object onto the Projectile list
-void Single::addMissile(const Point& cen, const ALLEGRO_COLOR& col, const Vector& spd) {
-   std::shared_ptr<Projectile> missileObject = std::make_shared<Missile> (cen, col, spd);
-   missileObject->load_assets();
-   proj.push_back(missileObject);
-}
-
-// function to add a Creep object onto the Enemy list
-void Single::addCreep(const Point& cen, const ALLEGRO_COLOR& col, const Vector& spd) {
-   enem.push_back(std::make_shared<Creep> (cen, col, spd));
-}
-
-// function to add a CreepBomb object onto the Enemy list
-void Single::addCreepB(const Point& cen, const ALLEGRO_COLOR& col, const Vector& spd) {
-   enem.push_back(std::make_shared<CreepBomb>(cen, col, spd));
-}
-void Single::addCreepMis
-(const Point& cen, Point p1, Point p2, Point p3, Point p4, const ALLEGRO_COLOR& col, const Vector& spd){
-   enem.push_back(std::make_shared<CreepMis>(cen, p1, p2, p3, p4, col, spd));
-}
 
 // returns true if the gameOver is true and if the game over screen has completed
 // its duration
@@ -203,242 +218,8 @@ bool Single::is_game_over() {
    return false;
 }
 
-void Single::updateHighscores() {
-   if (writeComplete == false) { // make sure this is a one time event
-      _highscores = std::make_shared<Score> ("leaderboard.txt");
-      _highscores->init();
-      _highscores->readPrev();
-      if (_highscores->getMin() < playerScoreTotal) {
-	 _highscores->swapWithMin(_playerName, playerScoreTotal);
-	 _highscores->sortRecords();
-      }
-      _highscores->update();
-      /*
-      // setup score stuff
-      _highscores = std::make_shared<Score> ("~/2720project/src/leaderboard.txt");
-      _highscores->readFrom(); // read in data available or create new file if does
-      // not exist   
-      if (_highscores->isNewRecord(playerScoreTotal)) {
-	 _highscores->replaceRecord(_playerName, playerScoreTotal);
-      }
-      std::cout << "now writing out\n";
-      _highscores->writeTo();
-      std::cout << "completed write out\n";*/
-      writeComplete = true;
-   }
-}
 
 
-// performs an update for all the necessary game logic
-void Single::update(double dt) {
-   bg->update(dt);
-   if (player) player->update(dt);
-   else if (!player && playerLives <= 0) gameOver = true;
-   else respawnPlayer();
-   
-   updateProjectilePosition(dt);
-   updateEnemyPosition(dt);   
-   collision();
-   clean();      
-}
-
-// renders the entire scene
-void Single::draw() {
-   bg->draw();
-   drawLives();
-   //gameScoreFont->drawTextF(al_map_rgb(255, 255, 255), 100, 100, "Score: %i", playerScoreTotal);
-   drawProjectiles(); 
-
-   drawEnemies(); // calls draw on each enemy, provides Sprite pointer
-  
-   if (gameOver) showGameOverMessage();
-   else if (player) player->draw(playerShip, 0);
-   gameScoreFont->drawTextF(al_map_rgb(255, 255, 255), 100, 50,"Score: %i", playerScoreTotal);
-   drawWeaponUpgradeStatus();
-   bossIntro();
-}
-
-
-void Single::showGameOverMessage() {
-   if (!gameOverTimer->isRunning()) {
-      gameOverTimer->startTimer();
-   }
-   if (gameOverTimer->getCount() < GAME_OVER_WAIT_TIME) {
-      gameOverFont->drawTextCentered(al_map_rgb(255, 0, 0), "GAME OVER");
-   }
-   
-   else {
-      gameOverTimer->stopTimer();
-   }
-}
-
-void Single::respawnPlayer() {
-   if (!playerRespawn->isRunning())
-      playerRespawn->startTimer();
-   
-   if (playerRespawn->getCount() > 80) {
-      setupPlayer();
-      playerRespawn->stopTimer();
-      playerRespawn->resetCount();
-   }
-}
-
-
-void Single::drawLives() {
-   if (playerLives > 0)
-      al_draw_rectangle(displayWidth - 70, 50, displayWidth - 50, 70,
-			al_map_rgb(0, 255, 0), 5);
-   if (playerLives > 1)
-      al_draw_rectangle(displayWidth - 110, 50, displayWidth - 90, 70,
-			al_map_rgb(0, 255, 0), 5);
-   if (playerLives > 2)
-      al_draw_rectangle(displayWidth - 150, 50, displayWidth - 130, 70,
-			al_map_rgb(0, 255, 0) , 5);
-   
-   if (!player && playerLives > 0) {
-      gameOverFont->drawTextCenteredF(al_map_rgb(255, 0, 0), "%i LIVES REMAINING", playerLives);
-   }
-}
-void Single::drawWeaponUpgradeStatus(){
-   
-   al_draw_rounded_rectangle(displayWidth - (displayWidth/2)-50, 50,
-			     displayWidth-(displayWidth/2)+50,
-			     70, 2, 2, al_map_rgb(255, 255, 255), 1);
-   if(playerScore!=0){
-      if(playerScore<30)
-	 al_draw_filled_rounded_rectangle(displayWidth - (displayWidth/2)-49, 51, displayWidth-
-					  (displayWidth/2)-49+playerScore*3.3, 69, 2, 2,
-					  al_map_rgb(255, 0, 0));
-      if(playerScore >= 30 && playerScore <100){
-	 al_draw_filled_rounded_rectangle(displayWidth - (displayWidth/2)-49, 51, displayWidth-
-					  (displayWidth/2)-49+(playerScore-30)*1.428, 69, 2, 2,
-					  al_map_rgb(255, 0, 0));}
-      if(playerScore>=100){
-	 al_draw_filled_rounded_rectangle(displayWidth - (displayWidth/2)-49, 51, displayWidth-
-					  (displayWidth/2)+49, 69, 2, 2, al_map_rgb(0, 255, 0));}
-   }
-   if(playerScore==30 || playerScore==100)
-      upgradeText->startTimer();
-   if(upgradeText->isRunning()){
-      gameScoreFont->drawText(400, 31, al_map_rgb(255,255,255), "WEAPON UPGRADED");
-      if(upgradeText->getCount() > 50){
-	 upgradeText->stopTimer();
-	 upgradeText->resetCount();
-      }
-
-   }
-}
-
-void Single::clean() {
-   cullPlayer();
-   cullProjectiles();
-   cullEnemies();
-}
-
-void Single::collision() {
-   checkCollisionOnPlayer();
-   checkCollisionOnEnemies();
-   checkCollidingEnemyWithPlayer();
-}
-
-// where p1 is the point, p2 is the centre of the 'box' object, with half of 
-// its width s2
-bool Single::isPointBoxCollision(const Point& p1, const Point& p2, 
-				 const int& s2) {
-   return ((p1.x > p2.x - s2) &&
-	   (p1.x < p2.x + s2) &&
-	   (p1.y > p2.y - s2) &&
-	   (p1.y < p2.y + s2));
-}
-
-void Single::checkCollisionOnPlayer() {
-   if (!proj.empty() && player) {
-      for (std::list< std::shared_ptr<Projectile> >::iterator it_proj = 
-	      proj.begin(); it_proj != proj.end(); ++it_proj) {	    
-	 // check if projectile color is different from player color
-	 if (!doColorsMatch((*it_proj)->color, player->color)) {
-	    if (isPointBoxCollision((*it_proj)->centre, player->centre, PLAYER_SIZE)) {	  
-	       // register damage on player and flag projectile as dead
-	       (*it_proj)->live = false;
-	       player->hit(1);
-	    }
-	 }
-      }
-   }  
-}
-
-bool Single::doColorsMatch(const ALLEGRO_COLOR& a, const ALLEGRO_COLOR& b) {
-   return (a.r == b.r && a.g == b.g && a.b == b.b);
-}
-
-void Single::checkCollisionOnEnemies() {
-   if (!proj.empty() && !enem.empty() && player) {
-      // set player color for which we will be checking for
-      for (std::list< std::shared_ptr<Projectile> >::iterator it_proj = 
-	      proj.begin(); it_proj != proj.end(); ++it_proj) {
-	    
-	 // check if colors match
-	 if (doColorsMatch(player->color, (*it_proj)->color)) {
-	    for (std::list< std::shared_ptr<Enemy> >::iterator it_enem = 
-		    enem.begin(); it_enem != enem.end(); ++it_enem) {
-		  
-	       // set bounding points
-	       Point pt_proj = (*it_proj)->centre;
-	       Point pt_enem = (*it_enem)->getCentre();
-	       int enem_size = (*it_enem)->getSize();
-
-	       // check for collision
-	       if ((pt_proj.x > pt_enem.x - enem_size) &&
-		   (pt_proj.x < pt_enem.x + enem_size) &&
-		   (pt_proj.y > pt_enem.y - enem_size) &&
-		   (pt_proj.y < pt_enem.y + enem_size)) {
-		     
-		  // register damage on enemy and flag projectile as dead
-		  (*it_proj)->live = false;
-		  (*it_enem)->hit();
-		     
-		  // check for enemy death, update score if true
-		  if ((*it_enem)->getDead())
-		     updateScore(player->color);
-		  
-	       }
-	    }
-	 }
-      }
-   }
-}
-
-void Single::checkCollidingEnemyWithPlayer() {
-   if (!enem.empty() && player) {
-      for (std::list< std::shared_ptr<Enemy> >::iterator it_enem = enem.begin();
-	   it_enem != enem.end(); ++it_enem) {
-	 if (!(*it_enem)->getDead()){
-	    if (doHitboxesIntersect(player->centre, PLAYER_SIZE,
-				    (*it_enem)->getCentre(), 
-				    (*it_enem)->getSize())) {
-	       // collision - register damage
-	       (*it_enem)->hit();
-	       player->hit(1);
-	    }
-	 }	       
-      }
-   }
-  
-}
-
-bool Single::doHitboxesIntersect(const Point& centre1, const int& size1,
-				 const Point& centre2, const int& size2) {
-   return (abs(centre1.x - centre2.x) < (size1 + size2) &&
-	   abs(centre1.y - centre2.y) < (size1 + size2));
-}
-
-
-void Single::updateScore(ALLEGRO_COLOR& c) {
-   if (player && doColorsMatch(player->color, c)) {
-      playerScore += 1;
-      playerScoreTotal += 1;
-   }
-}
 
 
 
@@ -459,7 +240,7 @@ void Single::spawn() {
    int n = rand() % 6 + 1;
    
    // select enemy routine
-   switch(6) {
+   switch(n) {
       case 1: // wave of 5
 	 for (int i = 0; i < 5; i++) {
 	    pt.rollRandom();
@@ -518,107 +299,65 @@ void Single::spawn() {
 }
 
 
-void Single::spawnBoss()
-{std::cout<<"in spawnBoss";
-   //if(enem.size()==0){
-   addBoss(Point(850, 300),  al_map_rgb(155, 0, 0), Vector(-100, 0));
-   std::cout<<"boss did spawn";
-   _Boss=true;
-   //}
+void Single::spawnBoss() {
+   std::cout << "in spawnBoss";
+   addBoss(Point(850, 300), al_map_rgb(155, 0, 0), Vector(-100, 0));
+   std::cout << "boss did spawn";
+   _Boss = true;
 }
 
-void Single::addBoss(const Point& cen, const ALLEGRO_COLOR& col, const Vector& spd)
-{
+void Single::addBoss(const Point& cen, const ALLEGRO_COLOR& col, const Vector& spd) {
    enem.push_back(std::make_shared<Boss> (cen, col, spd));
 }
 
-// HELPER FUNCTIONS GO DOWN HERE
-void Single::updateProjectilePosition(double dt) {
-   if (!proj.empty()) {
-      for (std::list< std::shared_ptr<Projectile> >::iterator it = proj.begin(); 
-	   it != proj.end(); ++it) {
-	 (*it)->update(dt);
-      }
+bool Single::bossFlag() {
+   if ((playerScoreTotal % 10 == 0) && !_Boss && playerScoreTotal != 0) {
+      return true;
    }
-}
-void Single::updateEnemyPosition(double dt) {
-   if (!enem.empty()) {
-      for (std::list< std::shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end(); ++it) {
-	 (*it)->update(dt);
-	 //if boss is not set to spawn
-	 
-	    
-	 //fire routines for regular enemies
-	 
-	 if((*it)->getFire()) {
-	    //explosion of lasers from creepBomb	    
-	    if(doColorsMatch((*it)->color, al_map_rgb(204,3,3))) {
-	       CircleLaser((*it));
-	    }
-	    //boss fire mechanics
-	    if(doColorsMatch((*it)->color, al_map_rgb(155, 0, 0)))
-	    {
-	       bossFire((*it));
-	    }
-	    
-	    //Purple enemies will spawn two extra projectiles
-	    else if(doColorsMatch((*it)->color, al_map_rgb(246, 64, 234))) {
-	       addLaser((*it)->centre, (*it)->color, (*it)->getProjSpeed() + Vector(0, 40));
-	       addLaser((*it)->centre, (*it)->color, (*it)->getProjSpeed() + Vector(0, -40));
-	    }	    
-	    else {//regular fire- straight horizontal shot
-	         addLaser((*it)->centre + Vector(20, 0), (*it)->color, (*it)->getProjSpeed());
-	    }
-	    (*it)->setFire(false);
-	    }
-      	 
-	 if(bossFlag()){
-	    bossIntro();//start the series of events that leads to the boss spawning
-	 } 
-      }
-   }
-   if(enem.size() <= 3 && !_Boss)
-      spawn();  
-}
-bool Single::bossFlag(){
-   if ((playerScoreTotal%10==0) && !_Boss && playerScoreTotal!=0){
-      return true;}
    return false;
 }
-void Single::bossIntro(){
-   if(bossFlag())
-      if(!(bossTime->isRunning()))
+
+void Single::bossIntro() {
+   if (bossFlag())
+      if (!bossTime->isRunning())
 	 bossTime->startTimer();
-      if(bossTime->getCount()>1 && bossTime->getCount() < 200)
-	 gameOverFont->drawTextCentered(al_map_rgb(204, 204, 0), "BOSS INCOMING");
-      if(bossTime->getCount()>250){
-	 spawnBoss();
-	 bossTime->stopTimer();
-	 bossTime->resetCount();
-      }
+   if (bossTime->getCount() > 1 && bossTime->getCount() < 200) {
+      gameOverFont->drawTextCentered(al_map_rgb(204, 204, 0), "BOSS INCOMING");
+   }
+   if (bossTime->getCount() > 250) {
+      spawnBoss();
+      bossTime->stopTimer();
+      bossTime->resetCount();
+   }
 }
 
 
-void Single::CircleLaser(std::shared_ptr<Enemy> E)
-{
-   for(int i=-500; i<=500; i+=300)
-      for(int j=-500; j<=500; j+=300)
+void Single::CircleLaser(std::shared_ptr<Enemy> E) {
+   for(int i = -500; i <= 500; i += 300) {
+      for(int j = -500; j <= 500; j += 300) {
 	 addLaser(E->getCentre(), E->getColor(), Vector(i, j));
-     E->setFire(false);
+      }
+   }
+   E->setFire(false);
 }
+
+
 void Single::bossFire(std::shared_ptr<Enemy> e){
-   if(!bossFirstShot){
-      for(int i=800; i<=1000; i+=50)
+   if (!bossFirstShot) {
+      for(int i = 800; i <= 1000; i += 50) {
 	 addCreepMis(Point(i,300), Point(750,50), Point(580,50),
 		     Point(580,550), Point(750,550), al_map_rgb(255,254,253), Vector(-90, 0));
-      bossFirstShot=true;}
-   int n=rand()%3+1;
+      }
+      bossFirstShot = true;
+   }
+   int n = rand() % 3 + 1;
    Point playerloc;
-   if(player)
-      playerloc=player->centre;
-   Vector aim(0,0);
+   if (player) {
+      playerloc = player->centre;
+   }
+   Vector aim(0, 0);
    //change this to be based on lives
-   switch(n){
+   switch(n) {
       case 1:
 	
       case 2:
@@ -637,36 +376,159 @@ void Single::bossFire(std::shared_ptr<Enemy> e){
    }
 }
    
-void Single::drawProjectiles() {
+
+
+
+//==================================
+// UPDATE FUNCTIONS
+//=================================
+void Single::updateHighscores() {
+   if (writeComplete == false) { // make sure this is a one time event
+      _highscores = std::make_shared<Score> ("leaderboard.txt");
+      _highscores->init();
+      _highscores->readPrev();
+      if (_highscores->getMin() < playerScoreTotal) {
+	 _highscores->swapWithMin(_playerName, playerScoreTotal);
+	 _highscores->sortRecords();
+      }
+      _highscores->update();
+      writeComplete = true;
+   }
+}
+
+void Single::updateScore(ALLEGRO_COLOR& c) {
+   if (player && doColorsMatch(player->color, c)) {
+      playerScore += 1;
+      playerScoreTotal += 1;
+   }
+}
+void Single::updateProjectilePosition(double dt) {
    if (!proj.empty()) {
       for (std::list< std::shared_ptr<Projectile> >::iterator it = proj.begin(); 
-	   it != proj.end(); ++it) { 
-	 (*it)->draw();
+	   it != proj.end(); ++it) {
+	 (*it)->update(dt);
       }
    }
 }
-
-void Single::drawEnemies() {
+void Single::updateEnemyPosition(double dt) {
    if (!enem.empty()) {
-      for (std::list< std::shared_ptr<Enemy> >::iterator it = enem.begin(); 
-	   it != enem.end(); ++it) {
-	 if(doColorsMatch((*it)->getColor(), al_map_rgb(204, 3, 3)))
-	 {
-	    (*it)->draw(enemyBomb, enemyDeath);
+      for (std::list< std::shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end();
+	   ++it) {
+	 (*it)->update(dt);
+	 //if boss is not set to spawn	 	    
+	 //fire routines for regular enemies	 
+	 if((*it)->getFire()) {
+	    //explosion of lasers from creepBomb	    
+	    if(doColorsMatch((*it)->color, al_map_rgb(204,3,3))) {
+	       CircleLaser((*it));
+	    }
+	    //boss fire mechanics
+	    if(doColorsMatch((*it)->color, al_map_rgb(155, 0, 0))) {
+	       bossFire((*it));
+	    }
+	    
+	    //Purple enemies will spawn two extra projectiles
+	    else if(doColorsMatch((*it)->color, al_map_rgb(246, 64, 234))) {
+	       addLaser((*it)->centre, (*it)->color, (*it)->getProjSpeed() + Vector(0, 40));
+	       addLaser((*it)->centre, (*it)->color, (*it)->getProjSpeed() + Vector(0, -40));
+	    }	    
+	    else { //regular fire- straight horizontal shot
+
+	       /////////////////////
+	       // disabled for most of laser
+	       /////////////////////
+
+	       
+	       //addLaser((*it)->centre + Vector(20, 0), (*it)->color, (*it)->getProjSpeed());
+	    }
+	    (*it)->setFire(false);
+	    }
+      	 
+	 if (bossFlag()) {
+	    bossIntro();//start the series of events that leads to the boss spawning
+	 } 
+      }
+   }
+   if(enem.size() <= 3 && !_Boss)
+      spawn();  
+}
+
+
+void Single::checkCollisionOnEnemies() {
+   if (!proj.empty() && !enem.empty() && player) {
+      // set player color for which we will be checking for
+      for (std::list< std::shared_ptr<Projectile> >::iterator it_proj = 
+	      proj.begin(); it_proj != proj.end(); ++it_proj) {
+	    
+	 // check if colors match
+	 if (doColorsMatch(player->color, (*it_proj)->color)) {
+	    for (std::list< std::shared_ptr<Enemy> >::iterator it_enem = 
+		    enem.begin(); it_enem != enem.end(); ++it_enem) {
+		  
+	       // set bounding points
+	       Point pt_proj = (*it_proj)->centre;
+	       Point pt_enem = (*it_enem)->getCentre();
+	       int enem_size = (*it_enem)->getSize();
+
+	       // check for collision
+	       if ((pt_proj.x > pt_enem.x - enem_size) &&
+		   (pt_proj.x < pt_enem.x + enem_size) &&
+		   (pt_proj.y > pt_enem.y - enem_size) &&
+		   (pt_proj.y < pt_enem.y + enem_size)) {
+		     
+		  // register damage on enemy and flag projectile as dead
+		  (*it_proj)->live = false;
+		  (*it_enem)->hit();
+		     
+		  // check for enemy death, update score if true
+		  if ((*it_enem)->getDead())
+		     updateScore(player->color);
+		  
+	       }
+	    }
 	 }
-	 else if (doColorsMatch((*it)->getColor(), al_map_rgb(155, 0, 0)))
-	 {
-	    (*it)->draw(bossShip, enemyDeath);
-	 }				
-	 else
-	    (*it)->draw(enemyShip, enemyDeath);
       }
    }
 }
 
-void Single::setupPlayer() {
-   player = std::make_shared<Player> (Point(215, 245),
-				      al_map_rgb(0, 200, 0));
+void Single::checkCollidingEnemyWithPlayer() {
+   if (!enem.empty() && player) {
+      for (std::list< std::shared_ptr<Enemy> >::iterator it_enem = enem.begin();
+	   it_enem != enem.end(); ++it_enem) {
+	 if (!(*it_enem)->getDead()){
+	    if (doHitboxesIntersect(player->centre, PLAYER_SIZE,
+				    (*it_enem)->getCentre(), 
+				    (*it_enem)->getSize())) {
+	       // collision - register damage
+	       (*it_enem)->hit();
+	       player->hit(1);
+	    }
+	 }	       
+      }
+   }  
+}
+
+
+void Single::checkCollisionOnPlayer() {
+   if (!proj.empty() && player) {
+      for (std::list< std::shared_ptr<Projectile> >::iterator it_proj = 
+	      proj.begin(); it_proj != proj.end(); ++it_proj) {	    
+	 // check if projectile color is different from player color
+	 if (!doColorsMatch((*it_proj)->color, player->color)) {
+	    if (isPointBoxCollision((*it_proj)->centre, player->centre, PLAYER_SIZE)) {	  
+	       // register damage on player and flag projectile as dead
+	       (*it_proj)->live = false;
+	       player->hit(1);
+	    }
+	 }
+      }
+   }  
+}
+
+void Single::clean() {
+   cullPlayer();
+   cullProjectiles();
+   cullEnemies();
 }
 
 void Single::cullPlayer() {
@@ -708,3 +570,175 @@ void Single::cullEnemies() {
       enem.assign(newEnem.begin(), newEnem.end());
    }
 }
+
+void Single::collision() {
+   checkCollisionOnPlayer();
+   checkCollisionOnEnemies();
+   checkCollidingEnemyWithPlayer();
+}
+
+
+void Single::respawnPlayer() {
+   if (!playerRespawn->isRunning())
+      playerRespawn->startTimer();
+   
+   if (playerRespawn->getCount() > 80) {
+      setupPlayer();
+      playerRespawn->stopTimer();
+      playerRespawn->resetCount();
+   }
+}
+
+
+
+//==================================
+// DRAW FUNCTIONS
+//=================================
+void Single::drawProjectiles() {
+   if (!proj.empty()) {
+      for (std::list< std::shared_ptr<Projectile> >::iterator it = proj.begin(); 
+	   it != proj.end(); ++it) { 
+	 (*it)->draw();
+      }
+   }
+}
+
+void Single::drawEnemies() {
+   if (!enem.empty()) {
+      for (std::list< std::shared_ptr<Enemy> >::iterator it = enem.begin(); 
+	   it != enem.end(); ++it) {
+	 if(doColorsMatch((*it)->getColor(), al_map_rgb(204, 3, 3)))
+	 {
+	    (*it)->draw(enemyBomb, enemyDeath);
+	 }
+	 else if (doColorsMatch((*it)->getColor(), al_map_rgb(155, 0, 0)))
+	 {
+	    (*it)->draw(bossShip, enemyDeath);
+	 }				
+	 else
+	    (*it)->draw(enemyShip, enemyDeath);
+      }
+   }
+}
+
+void Single::drawLives() {
+   if (playerLives > 0)
+      al_draw_rectangle(displayWidth - 70, 50, displayWidth - 50, 70,
+			al_map_rgb(0, 255, 0), 5);
+   if (playerLives > 1)
+      al_draw_rectangle(displayWidth - 110, 50, displayWidth - 90, 70,
+			al_map_rgb(0, 255, 0), 5);
+   if (playerLives > 2)
+      al_draw_rectangle(displayWidth - 150, 50, displayWidth - 130, 70,
+			al_map_rgb(0, 255, 0) , 5);
+   
+   if (!player && playerLives > 0) {
+      gameOverFont->drawTextCenteredF(al_map_rgb(255, 0, 0), "%i LIVES REMAINING", playerLives);
+   }
+}
+
+void Single::drawWeaponUpgradeStatus(){
+   
+   al_draw_rounded_rectangle(displayWidth - (displayWidth/2)-50, 50,
+			     displayWidth-(displayWidth/2)+50,
+			     70, 2, 2, al_map_rgb(255, 255, 255), 1);
+   if(playerScore!=0){
+      if(playerScore<30)
+	 al_draw_filled_rounded_rectangle(displayWidth - (displayWidth/2)-49, 51, displayWidth-
+					  (displayWidth/2)-49+playerScore*3.3, 69, 2, 2,
+					  al_map_rgb(255, 0, 0));
+      if(playerScore >= 30 && playerScore <100){
+	 al_draw_filled_rounded_rectangle(displayWidth - (displayWidth/2)-49, 51, displayWidth-
+					  (displayWidth/2)-49+(playerScore-30)*1.428, 69, 2, 2,
+					  al_map_rgb(255, 0, 0));}
+      if(playerScore>=100){
+	 al_draw_filled_rounded_rectangle(displayWidth - (displayWidth/2)-49, 51, displayWidth-
+					  (displayWidth/2)+49, 69, 2, 2, al_map_rgb(0, 255, 0));}
+   }
+   if(playerScore==30 || playerScore==100)
+      upgradeText->startTimer();
+   if(upgradeText->isRunning()){
+      gameScoreFont->drawText(400, 31, al_map_rgb(255,255,255), "WEAPON UPGRADED");
+      if(upgradeText->getCount() > 50){
+	 upgradeText->stopTimer();
+	 upgradeText->resetCount();
+      }
+
+   }
+}
+
+void Single::showGameOverMessage() {
+   if (!gameOverTimer->isRunning()) {
+      gameOverTimer->startTimer();
+   }
+   if (gameOverTimer->getCount() < GAME_OVER_WAIT_TIME) {
+      gameOverFont->drawTextCentered(al_map_rgb(255, 0, 0), "GAME OVER");
+   }
+   
+   else {
+      gameOverTimer->stopTimer();
+   }
+}
+
+//==================================
+// ADD FUNCTIONS FOR GAME COMPONENTS
+//=================================
+
+void Single::setupPlayer() {
+   player = std::make_shared<Player> (Point(215, 245),
+				      al_map_rgb(0, 200, 0));
+}
+
+// function to add a Laser object onto the Projectile list
+void Single::addLaser(const Point& cen, const ALLEGRO_COLOR& col, const Vector& spd) {
+   proj.push_back(std::make_shared<Laser> (cen, col, spd));
+}
+
+// function to add a Missile object onto the Projectile list
+void Single::addMissile(const Point& cen, const ALLEGRO_COLOR& col, const Vector& spd) {
+   std::shared_ptr<Projectile> missileObject = std::make_shared<Missile> (cen, col, spd);
+   missileObject->load_assets();
+   proj.push_back(missileObject);
+}
+
+// function to add a Creep object onto the Enemy list
+void Single::addCreep(const Point& cen, const ALLEGRO_COLOR& col, const Vector& spd) {
+   enem.push_back(std::make_shared<Creep> (cen, col, spd));
+}
+
+// function to add a CreepBomb object onto the Enemy list
+void Single::addCreepB(const Point& cen, const ALLEGRO_COLOR& col, const Vector& spd) {
+   enem.push_back(std::make_shared<CreepBomb>(cen, col, spd));
+}
+void Single::addCreepMis
+(const Point& cen, Point p1, Point p2, Point p3, Point p4, const ALLEGRO_COLOR& col, const Vector& spd){
+   enem.push_back(std::make_shared<CreepMis>(cen, p1, p2, p3, p4, col, spd));
+}
+
+
+//==================================
+// UTILITY FUNCTIONS
+//=================================
+
+// where p1 is the point, p2 is the centre of the 'box' object, with half of 
+// its width s2
+bool Single::isPointBoxCollision(const Point& p1, const Point& p2, 
+				 const int& s2) {
+   return ((p1.x > p2.x - s2) &&
+	   (p1.x < p2.x + s2) &&
+	   (p1.y > p2.y - s2) &&
+	   (p1.y < p2.y + s2));
+}
+
+
+bool Single::doColorsMatch(const ALLEGRO_COLOR& a, const ALLEGRO_COLOR& b) {
+   return (a.r == b.r && a.g == b.g && a.b == b.b);
+}
+
+
+bool Single::doHitboxesIntersect(const Point& centre1, const int& size1,
+				 const Point& centre2, const int& size2) {
+   return (abs(centre1.x - centre2.x) < (size1 + size2) &&
+	   abs(centre1.y - centre2.y) < (size1 + size2));
+}
+

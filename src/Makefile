@@ -19,9 +19,10 @@ OBJECTST = $(SOURCEST:.cc=.o)
 
 LIBDIR = -L/home/lib2720/allegro/lib
 
-LNFLAGS = -lallegro -lallegro_primitives -lallegro_image -lallegro_font -lallegro_ttf
-LNFLAGST= -lallegro -lallegro_primitives -lallegro_image -lallegro_font -lallegro_ttf \
--ldl -lcppunit
+LNFLAGS = -lallegro -lallegro_primitives -lallegro_image -lallegro_font \
+-lallegro_ttf
+LNFLAGST= -lallegro -lallegro_primitives -lallegro_image -lallegro_font \
+-lallegro_ttf -ldl -lcppunit
 
 
 # main target

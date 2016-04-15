@@ -15,14 +15,17 @@
 #include "Root.h"
 #include "Single.h"
 #include "Versus.h"
-
-using namespace act;
+#include "Timer.h"
 
 Engine::Engine(int w, int h, int fps) : _displayWidth(w), _displayHeight(h), 
-					_fps(fps), _gameScore(-1),
-					_timer(NULL), _eventQueue(NULL), running(true),
-					_state(gs::state::MENU)
-{ }
+					_fps(fps),
+					_gameScore(-1),
+					_state(gs::state::MENU),
+					_timer(NULL),
+					_eventQueue(NULL)
+{
+   
+}
 
 Engine::~Engine() {
    if (_timer != NULL) al_destroy_timer(_timer);
@@ -36,22 +39,18 @@ Engine::~Engine() {
 // initialize Allegro, the _display window, the addons, the timers, and event 
 // sources
 void Engine::init() {
+   // initialize allegro
    al_init();
-   
+   // create the display
    if ((_display = al_create_display(_displayWidth, _displayHeight)) == NULL) {
       std::cout << "Cannot initialize the display\n";
-      exit(1); // non-zero argument means "trouble"
-     
-
-   }
-   
+      exit(1); 
+   }   
    // initialize addons
    al_init_primitives_addon();
    al_init_font_addon();
    al_init_ttf_addon();
    al_init_image_addon();
-
-   
    // initialize our timers
    if ((_timer = al_create_timer(1.0 / _fps)) == NULL) {
       std::cout << "error, could not create timer\n";
@@ -65,7 +64,6 @@ void Engine::init() {
    al_register_event_source(_eventQueue, al_get_display_event_source(_display)); 
    al_register_event_source(_eventQueue, al_get_timer_event_source(_timer));
    al_start_timer(_timer);
-   
    // install keyboard
    if (!al_install_keyboard()) {
       std::cerr << "Could not install keyboard\n";
