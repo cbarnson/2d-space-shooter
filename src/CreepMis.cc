@@ -82,16 +82,16 @@ void CreepMis::update(double dt) {
    centre = centre + speed * dt;
 				
    if (centre.x < stop1.x && !at1){ 
-      speed.Angle(stop1, centre, 3);
+      speed.Angle(stop1, centre, 2);
       at1=true;}
    if(centre.y < stop2.y&& !at2){
-      speed.Angle(stop2, centre, 4);
+      speed.Angle(stop2, centre, 3);
       at2=true;}
    if(centre.x < stop3.x && !at3){
-      speed.Angle(stop3, centre, 3);
+      speed.Angle(stop3, centre, 2);
       at3=true;}
    if(centre.y > stop4.y && !at4){
-      speed.Angle(stop4, centre, 4);
+      speed.Angle(stop4, centre, 3);
       at4=true;
       //at1=false;
    }

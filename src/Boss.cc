@@ -12,11 +12,14 @@
 #include "Timer.h"
 #include "Sprite.h"
 #include <iostream>
-int BOSS_SIZE = 80;
+
+//boss size is 60-80 depending on damage level-- set to one off the start so the boss is
+// "invulnerable" while entering the screen.
+int BOSS_SIZE = 1;
 
 Boss::Boss(Point cen, ALLEGRO_COLOR c, Vector spd) : Enemy(cen, c, spd),
 							 projSpeed(Vector(-400, 0)),
-							 fireSpeed(rand() % 40 + 30),
+						     fireSpeed(rand()%50+20),
 							 lives(30), dAnim(0),
 							 dAnim_complete(false), fire(true)
 {
@@ -59,16 +62,6 @@ void Boss::hit()
       dead = true;
       //aliveBoss = false;
    }
-   // chooseFrame();
-   /*
-   if(lives==20){
-      col=1;
-      BOSS_SIZE=70;
-   }
-   if(lives==10){
-      BOSS_SIZE=60;
-      col=2;
-      }*/
 }
 
 
@@ -104,11 +97,11 @@ void Boss::update(double dt)
 
    if(centre.x < 700 && speed.y == 0)
    {
+      BOSS_SIZE=80;
       speed.x = 0;
       speed.y = 100;
    }
-   
-   if(centre.y > 500 - BOSS_SIZE || centre.y < BOSS_SIZE)
+   if(centre.y > 450 || centre.y < 150 )
       speed.reflectY();
 
    if(fireDelay->getCount() > fireSpeed)
@@ -124,15 +117,17 @@ void Boss::chooseFrame(){
    if(lives>20){
       frame=0;
    }
-   if(lives<=20 && frame<3){
+   if(lives<=20 && frame<3){//middle damage animation--fire speed goes up.
+      fireSpeed=50;
+      speed*1.5;
       BOSS_SIZE=70;
       frame++;
    }
-   if(lives<=10 && frame <8){
+   if(lives<=10 && frame <8){//final damage animation-- fire speed up again.
+      fireSpeed=30;
       BOSS_SIZE=60;
       frame++;
    }
-   std::cout<<frame<<", ";
    row=frame/3;
    col=frame%3;
 }

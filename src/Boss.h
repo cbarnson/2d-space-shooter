@@ -42,7 +42,7 @@ class Boss : public Enemy {
    //ALLEGRO_TIMER *fireDelay;
    //shared_ptr<Sprite> bShip;
    //int size; 
-   int fireSpeed;
+   int fireSpeed; 
    int lives;
    int dAnim;
    bool dAnim_complete;
