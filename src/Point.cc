@@ -21,6 +21,9 @@ Point Point::operator+(Vector v) {
 Point Point::operator+(Point p) {
    return Point(x + p.x, y + p.y);
 }
+bool Point::operator==(Point p){
+   return this->x==p.x&&this->y==p.y;
+}
 
 double Point::distance(Point p) {
    return sqrt( pow( ( p.x - x ), 2 ) + pow( ( p.y - y ), 2 ) );

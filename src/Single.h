@@ -50,7 +50,9 @@ class Single : public Root {
    std::shared_ptr<Timer> playerWeapon1;
    std::shared_ptr<Timer> playerWeapon2;
    std::shared_ptr<Timer> playerRespawn;
-   std::shared_ptr<Timer> upgradeText;   
+   std::shared_ptr<Timer> upgradeText;
+   std::shared_ptr<Timer> bossTime;
+
    // base classes
    std::list< std::shared_ptr<Projectile> > proj;
    std::list< std::shared_ptr<Enemy> > enem;   
@@ -66,7 +68,7 @@ class Single : public Root {
 
    std::string _playerName;
    bool gameOver;
-   bool aliveBoss = false;
+   bool aliveBoss; bool killedBoss;
    int playerLives;
    int playerScoreTotal;
    int playerScore;
@@ -89,6 +91,7 @@ class Single : public Root {
    void addCreepB(const Point&, const ALLEGRO_COLOR&, const Vector&);
    void addCreep(const Point&, const ALLEGRO_COLOR&, const Vector&);
    void addBoss(const Point&, const ALLEGRO_COLOR&, const Vector&);
+   void addCreepMis(const Point&, Point, Point, Point, Point, const ALLEGRO_COLOR&, const Vector&);
    
    void input(ALLEGRO_KEYBOARD_STATE&);   
    bool is_game_over();
@@ -97,8 +100,10 @@ class Single : public Root {
       
    void spawn();
    void respawnPlayer();
+
+   void bossIntro();
    void spawnBoss();
-   
+   void bossFire(std::shared_ptr<Enemy>);
   private:   
    // HELPER FUNCTIONS - simplicity & readability
    void drawLives();

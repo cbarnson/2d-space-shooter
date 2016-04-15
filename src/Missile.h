@@ -31,7 +31,7 @@ class Missile : public Projectile {
    std::vector< std::shared_ptr<Sprite> > mvec;
    int mAnim;   
    bool in_bound();
-
+   double angle;
    
 };
 

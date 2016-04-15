@@ -1,4 +1,5 @@
 #include "Vector.h"
+#include "Point.h"
 #include <ctime>
 #include <cstdlib>
 
@@ -64,4 +65,9 @@ void Vector::xMod(int m) {
 
 void Vector::yMod(int m) {
    y = y + m;
+}
+
+void Vector::Angle(Point end, Point current, double time){
+   x=(end.x-current.x)/time;
+   y=(end.y-current.y)/time;
 }
