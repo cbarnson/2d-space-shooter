@@ -247,9 +247,7 @@ void Single::spawn() {
 	    spd.rollRandom();
 	    addCreep(pt, al_map_rgb(255, 51, 51), spd);
 	 }	 
-	 break;
-	 
-	 
+	 break;	 
       case 2: // wave of 8
 	 for (int i = 0; i < 8; i++) {
 	    pt.rollRandom();
