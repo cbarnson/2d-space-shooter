@@ -29,21 +29,22 @@
 #include "CreepBomb.h"
 #include "Boss.h"
 
-
 const int GAME_OVER_WAIT_TIME = 100;
 const int HIGH_SCORE_DISPLAY_TIME = 200;
 const int WEAPON_DELAY_LASER = 6;
 const int WEAPON_DELAY_MISSILE = 20;
 const Vector PLAYER_PROJECTILE_SPEED = Vector(500, 0);
 
-
 //-------------------------------
 // CONSTRUCTOR
 //-------------------------------
 Single::Single(int w, int h, int f, std::string playerName) :
-   Root(w, h, f), _playerName(playerName),
-   gameOver(false), playerLives(3),
-   playerScoreTotal(0), playerScore(0)
+   Root(w, h, f),
+   _playerName(playerName),
+   gameOver(false),
+   playerLives(3),
+   playerScoreTotal(0),
+   playerScore(0)
 {
    
 }
@@ -76,8 +77,8 @@ void Single::init() {
    playerWeapon1 = std::make_shared<Timer> (framesPerSec); playerWeapon1->create();   
    playerWeapon2 = std::make_shared<Timer> (framesPerSec); playerWeapon2->create();
    playerRespawn = std::make_shared<Timer> (framesPerSec); playerRespawn->create();
-   bossTimer      = std::make_shared<Timer> (framesPerSec); bossTimer->create();
-   upgradeText = std::make_shared<Timer> (framesPerSec); upgradeText->create();
+   bossTimer     = std::make_shared<Timer> (framesPerSec); bossTimer->create();
+   upgradeText   = std::make_shared<Timer> (framesPerSec); upgradeText->create();
    playerWeapon1->startTimer();
    playerWeapon2->startTimer();
    // create Player object
@@ -96,8 +97,8 @@ void Single::init() {
    playerShip = std::make_shared<Sprite> ("Sprite2.png");
    enemyShip = std::make_shared<Sprite> ("EnemyBasic.png");
    enemyDeath = std::make_shared<Sprite> ("explode.png");
-   enemyBomb = std::make_shared<Sprite> ("spikebomb.png");
-   bossShip = std::make_shared<Sprite> ("bossv2.png");
+   enemyBomb  = std::make_shared<Sprite> ("spikebomb.png");
+   bossShip   = std::make_shared<Sprite> ("bossv2.png");
    // delete path 
    al_destroy_path(path);
 }
@@ -165,61 +166,32 @@ void Single::draw() {
 //--------------------------------
 void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
    if (player) {
-      switch (player->input(kb)) {	 
-	 case act::action::QUIT_GAME: // player indicated they wish to quit the game
+      switch (player->input(kb)) { // movement events are handled within player	 
+	 case act::action::QUIT_GAME: 
 	    player.reset();
 	    return;
 	    
 	 case act::action::FIRE_PRIMARY: // case to handle lasers	    
 	    // single
-	    if (playerWeapon1->getCount() > WEAPON_DELAY_LASER &&
-		playerScore < 30) {
-	       
-	       addLaser(player->centre + Point(-20, 0), player->color, PLAYER_PROJECTILE_SPEED);
-	       playerWeapon1->stopTimer();
-	       playerWeapon1->resetCount();
-	       playerWeapon1->startTimer();
-	    }
-	    
+	    if (playerWeapon1->getCount() > WEAPON_DELAY_LASER && playerScore < 30) {
+	       addPlayerLaserSingleShot();
+	    }	    
 	    // double
-	    else if (playerWeapon1->getCount() > WEAPON_DELAY_LASER+4 &&
+	    else if (playerWeapon1->getCount() > WEAPON_DELAY_LASER + 4 &&
 		playerScore >= 30 && playerScore < 100) {
-
-	       addLaser(player->centre + Point(-25, 10), player->color,
-			PLAYER_PROJECTILE_SPEED);
-	       addLaser(player->centre + Point(-25, -10), player->color,
-			PLAYER_PROJECTILE_SPEED);
-	       
-	       playerWeapon1->stopTimer();
-	       playerWeapon1->resetCount();
-	       playerWeapon1->startTimer();
-	    }
-	    
+	       addPlayerLaserDoubleShot();
+	    }	    
 	    // triple
-	    else if (playerWeapon1->getCount() > WEAPON_DELAY_LASER+6 &&
+	    else if (playerWeapon1->getCount() > WEAPON_DELAY_LASER + 6 &&
 		playerScore >= 100) {
-
-	       addLaser(player->centre, player->color, PLAYER_PROJECTILE_SPEED);
-	       addLaser(player->centre + Point(0, 5), player->color,
-			Vector(0, 75) + PLAYER_PROJECTILE_SPEED);
-	       addLaser(player->centre + Point(0, -5), player->color,
-			Vector(0, -75) + PLAYER_PROJECTILE_SPEED);
-	       
-	       playerWeapon1->stopTimer();
-	       playerWeapon1->resetCount();
-	       playerWeapon1->startTimer();
+	       addPlayerLaserTripleShot();
 	    }
 	    break;
-
 	    
-	 case act::action::FIRE_SECONDARY: // case to handle missile  	    
+	 case act::action::FIRE_SECONDARY: // case to handle missile
+	    // single
 	    if (playerWeapon2->getCount() > WEAPON_DELAY_MISSILE) {
-	       
-	       addMissile(player->centre, player->color, PLAYER_PROJECTILE_SPEED);
-
-	       playerWeapon2->stopTimer();
-	       playerWeapon2->resetCount();
-	       playerWeapon2->startTimer();
+	       addPlayerMissileSingleShot();
 	    }
 	    break;
 	    
@@ -228,6 +200,8 @@ void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
       }
    }
 }
+
+
 
 // returns true if the gameOver is true and if the game over screen has completed
 // its duration
@@ -316,24 +290,37 @@ void Single::spawn() {
 
 
 void Single::CircleLaser(std::shared_ptr<Enemy> E) {
-   for(int i = -500; i <= 500; i += 300) {
-      for(int j = -500; j <= 500; j += 300) {
+   
+   for(int i = -500; i <= 500; i += 325) {
+      for(int j = -500; j <= 500; j += 325) {
 	 addLaser(E->getCentre(), E->getColor(), Vector(i, j));
       }
    }
+   /* addLaser(E->getCentre(), E->getColor(), Vector(500 , 0 ));
+   addLaser(E->getCentre(), E->getColor(), Vector(0 ,500 ));
+   addLaser(E->getCentre(), E->getColor(), Vector(-500 ,0 ));
+   addLaser(E->getCentre(), E->getColor(), Vector(0 ,-500 ));
+   addLaser(E->getCentre(), E->getColor(), Vector(250 , 250 ));
+   addLaser(E->getCentre(), E->getColor(), Vector(250 ,-250 ));
+   addLaser(E->getCentre(), E->getColor(), Vector(-250 ,250 ));
+   addLaser(E->getCentre(), E->getColor(), Vector(-250 ,-250 ));
+   addLaser(E->getCentre(), E->getColor(), Vector(350 , 150 ));
+   addLaser(E->getCentre(), E->getColor(), Vector(150 ,350 ));
+   addLaser(E->getCentre(), E->getColor(), Vector(-350 ,150 ));
+   addLaser(E->getCentre(), E->getColor(), Vector(350 ,-150 ));
+   addLaser(E->getCentre(), E->getColor(), Vector(-150 ,350 ));*/
    E->setFire(false);
+
 }
-
-
 void Single::bossFire(std::shared_ptr<Enemy> e){
    //if (!bossFirstShot) {
-//      for(int i = 800; i <= 1000; i += 50) {
-//	 addCreepMis(Point(i,300), Point(750,50), Point(580,50),
-//		     Point(580,550), Point(750,550), al_map_rgb(255,254,253), Vector(-90, 0));
+   //      for(int i = 800; i <= 1000; i += 50) {
+   //	 addCreepMis(Point(i,300), Point(750,50), Point(580,50),
+   //		     Point(580,550), Point(750,550), al_map_rgb(255,254,253), Vector(-90, 0));
       //}
       // bossFirstShot = true;
       //}
-   int n = rand() % 6 + 1;
+   int n = rand() % 7 + 1;
    Point playerloc;
 if (player) {
       playerloc = player->centre;
@@ -342,9 +329,8 @@ if (player) {
    //change this to be based on lives
    switch(n) {
       case 1:
-	 for(int i=0; i < 30; i+= 2)
-	    for(int j=50; j<80; j+=2)
-	       addLaser(e->centre+Point(j,i), e->color, e->getProjSpeed() + Vector(-50,0) );
+	 for(int i=-100; i<=100; i+=20)
+	    addLaser(e->centre+Point(0, i), e->color, e->getProjSpeed());
 	 break;
       case 2:
 	 aim.Angle(playerloc, e->centre, 0.9);
@@ -371,49 +357,26 @@ if (player) {
 //=================================
 void Single::spawnBoss() {
    addBoss(Point(850, 300), al_map_rgb(155, 0, 0), Vector(-50, 0));
-   _Boss = true;
+   bossExists = true;
+
 }
 
 void Single::addBoss(const Point& cen, const ALLEGRO_COLOR& col, const Vector& spd) {
    enem.push_back(std::make_shared<Boss> (cen, col, spd));
 }
-/*
-bool Single::bossFlag() { // wtf is boss flag???
-   if ((playerScoreTotal % 10 == 0) && !_Boss && playerScoreTotal != 0) {
-      return true;
-   }
-   return false;
-}
 
-void Single::bossIntro() {
-   if (bossFlag()) {
-      if (!bossTimer->isRunning()) {
-	 bossTimer->startTimer();
-      }
-   }
-   if (bossTimer->getCount() > 1 && bossTimer->getCount() < 200) {
-      gameOverFont->drawTextCentered(al_map_rgb(204, 204, 0), "BOSS INCOMING");
-   }
-   if (bossTimer->getCount() > 250) {
-      spawnBoss();
-      bossTimer->stopTimer();
-      bossTimer->resetCount();
-   }
-}
-*/
 void Single::updateBoss() {
    // spawn condition
-   if (playerScore > 30 && bossExists == false) {
+   if (bossSpawnConditionCounter > 30 && bossExists == false) {
       // start timer
       if (bossTimer->isRunning() == false) {
 	 bossTimer->startTimer();
 	 bossIncoming = true;
       }
-      if (bossTimer->getCount() > 250 ) {
-	 spawnBoss();
+      if (bossTimer->getCount() > 250) {
+	 spawnBoss(); // bossExists set to true from here
 	 bossTimer->stopTimer();
 	 bossTimer->resetCount();
-	 bossExists = true;
 	 bossIncoming = false;
       }      
    }
@@ -446,35 +409,34 @@ void Single::updateScore(ALLEGRO_COLOR& c) {
    if (player && doColorsMatch(player->color, c)) {
       playerScore += 1;
       playerScoreTotal += 1;
+      bossSpawnConditionCounter+=1;
    }
 }
+
 void Single::updateProjectilePosition(double dt) {
    if (!proj.empty()) {
-      for (std::list< std::shared_ptr<Projectile> >::iterator it = proj.begin(); 
-	   it != proj.end(); ++it) {
+      for (auto it = proj.begin(); it != proj.end(); ++it) {
 	 (*it)->update(dt);
       }
    }
 }
+
 void Single::updateEnemyPosition(double dt) {
    if (!enem.empty()) {
-      for (std::list< std::shared_ptr<Enemy> >::iterator it = enem.begin(); it != enem.end();
-	   ++it) {
+      for (auto it = enem.begin(); it != enem.end(); ++it) {
 	 (*it)->update(dt);
-	 //if boss is not set to spawn	 	    
 	 //fire routines for regular enemies	 
-	 if((*it)->getFire()) {
+	 if ((*it)->getFire()) {
 	    //explosion of lasers from creepBomb	    
-	    if(doColorsMatch((*it)->color, al_map_rgb(204,3,3))) {
+	    if (doColorsMatch((*it)->color, al_map_rgb(204,3,3))) {
 	       CircleLaser((*it));
 	    }
 	    //boss fire mechanics
-	    if(doColorsMatch((*it)->color, al_map_rgb(155, 0, 0))) {
+	    if (doColorsMatch((*it)->color, al_map_rgb(155, 0, 0))) {
 	       bossFire((*it));
-	    }
-	    
+	    }	    
 	    //Purple enemies will spawn two extra projectiles
-	    else if(doColorsMatch((*it)->color, al_map_rgb(246, 64, 234))) {
+	    else if (doColorsMatch((*it)->color, al_map_rgb(246, 64, 234))) {
 	       addLaser((*it)->centre, (*it)->color, (*it)->getProjSpeed() + Vector(0, 40));
 	       addLaser((*it)->centre, (*it)->color, (*it)->getProjSpeed() + Vector(0, -40));
 	    }	    
@@ -482,18 +444,20 @@ void Single::updateEnemyPosition(double dt) {
 	       addLaser((*it)->centre + Vector(20, 0), (*it)->color, (*it)->getProjSpeed());
 	    }
 	    (*it)->setFire(false);
-	    }
-      	 /*
-	 if (bossFlag()) {
-	    bossIntro();//start the series of events that leads to the boss spawning
 	 }
-	 */
       }
    }
-   if(enem.size() <= 3 && !bossExists && !bossIncoming)
-      spawn();  
+
+   if (enem.size() <= 3 && bossExists == false && !bossIncoming) {
+      spawn();
+   }
 }
 
+void Single::collision() {
+   checkCollisionOnPlayer();
+   checkCollisionOnEnemies();
+   checkCollidingEnemyWithPlayer();
+}
 
 void Single::checkCollisionOnEnemies() {
    if (!proj.empty() && !enem.empty() && player) {
@@ -522,9 +486,9 @@ void Single::checkCollisionOnEnemies() {
 		  (*it_enem)->hit();
 		     
 		  // check for enemy death, update score if true
-		  if ((*it_enem)->getDead())
+		  if ((*it_enem)->getDead()) {
 		     updateScore(player->color);
-		  
+		  }
 	       }
 	    }
 	 }
@@ -533,15 +497,13 @@ void Single::checkCollisionOnEnemies() {
 }
 
 void Single::checkCollidingEnemyWithPlayer() {
-   if (!enem.empty() && player) {
-      for (std::list< std::shared_ptr<Enemy> >::iterator it_enem = enem.begin();
-	   it_enem != enem.end(); ++it_enem) {
-	 if (!(*it_enem)->getDead()){
-	    if (doHitboxesIntersect(player->centre, PLAYER_SIZE,
-				    (*it_enem)->getCentre(), 
-				    (*it_enem)->getSize())) {
+   if (!enem.empty() && player) {      
+      for (auto it = enem.begin(); it != enem.end(); ++it) {	 
+	 if ((*it)->dead == false) {	    
+	    if (doHitboxesIntersect(player->centre, PLAYER_SIZE, (*it)->centre, 
+				    (*it)->getSize())) {
 	       // collision - register damage
-	       (*it_enem)->hit();
+	       (*it)->hit();
 	       player->hit(1);
 	    }
 	 }	       
@@ -552,13 +514,12 @@ void Single::checkCollidingEnemyWithPlayer() {
 
 void Single::checkCollisionOnPlayer() {
    if (!proj.empty() && player) {
-      for (std::list< std::shared_ptr<Projectile> >::iterator it_proj = 
-	      proj.begin(); it_proj != proj.end(); ++it_proj) {	    
+      for (auto it = proj.begin(); it != proj.end(); ++it) {	    
 	 // check if projectile color is different from player color
-	 if (!doColorsMatch((*it_proj)->color, player->color)) {
-	    if (isPointBoxCollision((*it_proj)->centre, player->centre, PLAYER_SIZE)) {	  
+	 if (!doColorsMatch((*it)->color, player->color)) {
+	    if (isPointBoxCollision((*it)->centre, player->centre, PLAYER_SIZE)) {	  
 	       // register damage on player and flag projectile as dead
-	       (*it_proj)->live = false;
+	       (*it)->live = false;
 	       player->hit(1);
 	    }
 	 }
@@ -596,16 +557,18 @@ void Single::cullProjectiles() {
 void Single::cullEnemies() {
    std::list< std::shared_ptr<Enemy> > newEnem;
    if (!enem.empty()) {
-      for (std::list< std::shared_ptr<Enemy> >::iterator it = enem.begin(); 
-	   it != enem.end(); ++it) {
-
-	 //check for boss
+      for (auto it = enem.begin(); it != enem.end(); ++it) {
+	 // color check for boss
 	 if (doColorsMatch((*it)->getColor(), al_map_rgb(155, 0, 0))) {
 	    if ((*it)->getdAnim_complete()) {
-	       _Boss=false; bossFirstShot=false;
+	       if(playerLives<3)
+		  playerLives++;
+	       bossExists = false;
+	       bossFirstShot = false;
+	       bossSpawnConditionCounter=0;
 	    }
 	 }
-	 if (!(*it)->getdAnim_complete())  {
+	 if (!(*it)->getdAnim_complete()) {
 	     // if not dead (death animation not complete)
 	    newEnem.push_back(*it);
 	 }
@@ -615,11 +578,6 @@ void Single::cullEnemies() {
    }
 }
 
-void Single::collision() {
-   checkCollisionOnPlayer();
-   checkCollisionOnEnemies();
-   checkCollidingEnemyWithPlayer();
-}
 
 
 void Single::respawnPlayer() {
@@ -640,8 +598,7 @@ void Single::respawnPlayer() {
 //=================================
 void Single::drawProjectiles() {
    if (!proj.empty()) {
-      for (std::list< std::shared_ptr<Projectile> >::iterator it = proj.begin(); 
-	   it != proj.end(); ++it) { 
+      for (auto it = proj.begin(); it != proj.end(); ++it) { 
 	 (*it)->draw();
       }
    }
@@ -649,16 +606,19 @@ void Single::drawProjectiles() {
 
 void Single::drawEnemies() {
    if (!enem.empty()) {
-      for (std::list< std::shared_ptr<Enemy> >::iterator it = enem.begin(); 
-	   it != enem.end(); ++it) {
+      for (auto it = enem.begin(); it != enem.end(); ++it) {
 	 if (doColorsMatch((*it)->getColor(), al_map_rgb(204, 3, 3))) {
+	    // bomb enemy
 	    (*it)->draw(enemyBomb, enemyDeath);
 	 }
 	 else if (doColorsMatch((*it)->getColor(), al_map_rgb(155, 0, 0))) {
+	    // boss enemy
 	    (*it)->draw(bossShip, enemyDeath);
 	 }				
-	 else
+	 else {
+	    // creep enemy
 	    (*it)->draw(enemyShip, enemyDeath);
+	 }
       }
    }
 }
@@ -783,9 +743,36 @@ void Single::addCreep(const Point& cen, const ALLEGRO_COLOR& col, const Vector& 
 void Single::addCreepB(const Point& cen, const ALLEGRO_COLOR& col, const Vector& spd) {
    enem.push_back(std::make_shared<CreepBomb>(cen, col, spd));
 }
+
+
 void Single::addCreepMis(const Point& cen, Point p1, Point p2, Point p3, Point p4,
-			 const ALLEGRO_COLOR& col, const Vector& spd){
+			 const ALLEGRO_COLOR& col, const Vector& spd) {
    enem.push_back(std::make_shared<CreepMis>(cen, p1, p2, p3, p4, col, spd));
+}
+
+
+void Single::addPlayerLaserSingleShot() {
+   addLaser(player->centre + Point(-20, 0), player->color, PLAYER_PROJECTILE_SPEED);
+   playerWeapon1->srsTimer();
+}
+void Single::addPlayerLaserDoubleShot() {
+   addLaser(player->centre + Point(-25, 10), player->color,
+	    PLAYER_PROJECTILE_SPEED);
+   addLaser(player->centre + Point(-25, -10), player->color,
+	    PLAYER_PROJECTILE_SPEED);
+   playerWeapon1->srsTimer();
+}
+void Single::addPlayerLaserTripleShot() {
+   addLaser(player->centre, player->color, PLAYER_PROJECTILE_SPEED);
+   addLaser(player->centre + Point(0, 5), player->color,
+	    Vector(0, 75) + PLAYER_PROJECTILE_SPEED);
+   addLaser(player->centre + Point(0, -5), player->color,
+	    Vector(0, -75) + PLAYER_PROJECTILE_SPEED);
+   playerWeapon1->srsTimer();
+}
+void Single::addPlayerMissileSingleShot() {
+   addMissile(player->centre, player->color, PLAYER_PROJECTILE_SPEED);
+   playerWeapon2->srsTimer();
 }
 
 //==================================

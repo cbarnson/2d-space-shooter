@@ -15,7 +15,7 @@
 
 //boss size is 60-80 depending on damage level-- set to one off the start so the boss is
 // "invulnerable" while entering the screen.
-const int BOSS_HP = 30;
+const int BOSS_HP = 50;
 
 Boss::Boss(Point cen, ALLEGRO_COLOR c, Vector spd) : Enemy(cen, c, spd),
 						     projSpeed(Vector(-400, 0)),
@@ -117,14 +117,14 @@ void Boss::chooseFrame() {
    // middle damage animation--fire speed goes up.
    if (lives <= BOSS_HP && spriteSheetIndex < 3) { 
       fireSpeed = rand()%50+20;
-      speed = speed * 1.2; // increase speed
+      speed = speed * 1.1; // increase speed
       hitbox = 70;
       spriteSheetIndex++;
    }
    // final damage animation-- fire speed up again
-   if (lives <= 10 && spriteSheetIndex < 8) {
+   if (lives <= 20 && spriteSheetIndex < 8) {
       fireSpeed = rand()%30+20;
-      speed = speed * 1.2; // increase speed
+      speed = speed * 1.1; // increase speed
       hitbox = 60;
       spriteSheetIndex++;
    }

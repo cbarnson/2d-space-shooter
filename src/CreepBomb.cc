@@ -48,7 +48,7 @@ void CreepBomb::load_assets() {
    size = 20;   
    dAnim = 0;      
    dAnim_complete = false;
-   fire = false; fire1=false; fire2=false;
+   fire = false; fired=false; fire2=false;
 }
 
 // decrement enemy life by a value of 1
@@ -68,7 +68,7 @@ void CreepBomb::draw(std::shared_ptr<Sprite> enemyShip, std::shared_ptr<Sprite> 
    else {
       // enemy has been hit and killed, proceed through death animation sequence
       if (dAnim < 5) deathAnim(enemyDeath);
-      else dAnim_complete = true;
+      else{ dAnim_complete = true;}
    }      
 }
 
@@ -93,8 +93,10 @@ void CreepBomb::update(double dt) {
    if(centre.x<540&& row==1){
       row++;
    }
-   if(centre.x<400){
+   if(centre.x<400 && !fired){
+      std::cout<<"firing";
       fire = true;
+      fired = true;
       dead = true;
       fireDelay->stopTimer();
       fireDelay->resetCount();

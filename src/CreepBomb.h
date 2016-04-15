@@ -40,7 +40,7 @@ class CreepBomb : public Enemy {
    int dAnim;/**<counter to play frames of the death animation */
    bool dAnim_complete;/**<bool flag for death animation- used to delete dead enemies in Single*/   
    // int fireSpeed;//pretty sure not needed   
-   bool fire, fire1, fire2;/**<bool flags to decide when to fire lasers */
+   bool fire, fired, fire2;/**<bool flags to decide when to fire lasers */
 	
   public:
    CreepBomb(Point cen, ALLEGRO_COLOR col, Vector spd);

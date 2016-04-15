@@ -90,14 +90,16 @@ class Single : public Root {
    void addBoss(const Point&, const ALLEGRO_COLOR&, const Vector&);
    void addCreepMis(const Point&, Point, Point, Point, Point, const ALLEGRO_COLOR&,
 		    const Vector&);
+   void addPlayerLaserSingleShot();
+   void addPlayerLaserDoubleShot();
+   void addPlayerLaserTripleShot();
+   void addPlayerMissileSingleShot();
    
    // utility functions
    void spawn();
-   //void bossIntro();
    void spawnBoss();
    void bossFire(std::shared_ptr<Enemy>);
    void CircleLaser(std::shared_ptr<Enemy>);
-   //bool bossFlag();
    bool doHitboxesIntersect(const Point&, const int&,
 			    const Point&, const int&);   
    bool doColorsMatch(const ALLEGRO_COLOR&, const ALLEGRO_COLOR&);
@@ -138,7 +140,7 @@ class Single : public Root {
 
    bool bossExists = false;
    bool bossIncoming = false;
-   
+   int  bossSpawnConditionCounter = 0;
    bool _Boss = false;
    bool killedBoss = false;
    bool writeComplete = false;
