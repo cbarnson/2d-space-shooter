@@ -111,6 +111,9 @@ class Sprite {
 			    destination.x - 47.0 / 2,
 			    destination.y - 40.0 / 2, f);
    }
+   void draw_lives(float bw, float bh, Point destination, int f){
+      al_draw_bitmap_region(image, 0, 0, bw, bh, destination.x - 141 / 2, destination.y - 40 / 2, f);
+	 }
    void draw_boss(int r, int c, float bw, float bh, Point destination, int f){
       al_draw_bitmap_region(image,
 			    c * bw, r * bh,

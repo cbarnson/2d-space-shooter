@@ -93,7 +93,7 @@ void Single::init() {
    // background
    bg = std::make_shared<Background> (Vector(50, 0), Vector(-90, 0));
    // sprites
-   playerShip = std::make_shared<Sprite> ("Sprite.png");
+   playerShip = std::make_shared<Sprite> ("Sprite2.png");
    enemyShip = std::make_shared<Sprite> ("EnemyBasic.png");
    enemyDeath = std::make_shared<Sprite> ("explode.png");
    enemyBomb = std::make_shared<Sprite> ("spikebomb.png");
@@ -326,37 +326,40 @@ void Single::CircleLaser(std::shared_ptr<Enemy> E) {
 
 
 void Single::bossFire(std::shared_ptr<Enemy> e){
-   if (!bossFirstShot) {
-      for(int i = 800; i <= 1000; i += 50) {
-	 addCreepMis(Point(i,300), Point(750,50), Point(580,50),
-		     Point(580,550), Point(750,550), al_map_rgb(255,254,253), Vector(-90, 0));
-      }
-      bossFirstShot = true;
-   }
-   int n = rand() % 3 + 1;
+   //if (!bossFirstShot) {
+//      for(int i = 800; i <= 1000; i += 50) {
+//	 addCreepMis(Point(i,300), Point(750,50), Point(580,50),
+//		     Point(580,550), Point(750,550), al_map_rgb(255,254,253), Vector(-90, 0));
+      //}
+      // bossFirstShot = true;
+      //}
+   int n = rand() % 6 + 1;
    Point playerloc;
-   if (player) {
+if (player) {
       playerloc = player->centre;
    }
    Vector aim(0, 0);
    //change this to be based on lives
    switch(n) {
       case 1:
-	
+	 for(int i=0; i < 30; i+= 2)
+	    for(int j=50; j<80; j+=2)
+	       addLaser(e->centre+Point(j,i), e->color, e->getProjSpeed() + Vector(-50,0) );
+	 break;
       case 2:
 	 aim.Angle(playerloc, e->centre, 0.9);
-	 //for(int i = -70; i <= 70; i += 20)
-	 // addLaser(e->centre+Point(50,0), e->color, aim+ Vector(-30,i));
+	 for(int i = -70; i <= 70; i += 20)
+	    addLaser(e->centre+Point(50,0), e->color, aim+ Vector(-30,i));
 	break;
       case 3:
-	 // addCreepB(e->centre+Point(50,0), al_map_rgb(204,3,3), Vector(-100, 0));
-// wave is too fucking hard
+	 addCreepB(e->centre+Point(50,0), al_map_rgb(204,3,3), Vector(-100, 0));
 	 break;
-      case 4:
+      default:
 	 aim.Angle(playerloc, e->centre+Point(0,50), 0.9);
-	 // addMissile(e->centre+Point(0,50), al_map_rgb(204, 3, 3), aim);
+	 addMissile(e->centre+Point(0,50), al_map_rgb(204, 3, 3), aim);
 	 aim.Angle(playerloc, e->centre+Point(0,-50), 0.9);
-	 //addMissile(e->centre+Point(0,-50), al_map_rgb(204, 3, 3), aim);
+	 addMissile(e->centre+Point(0,-50), al_map_rgb(204, 3, 3), aim);
+	 break;
    }
 }
    
@@ -367,7 +370,7 @@ void Single::bossFire(std::shared_ptr<Enemy> e){
 // UPDATE FUNCTIONS
 //=================================
 void Single::spawnBoss() {
-   addBoss(Point(850, 300), al_map_rgb(155, 0, 0), Vector(-100, 0));
+   addBoss(Point(850, 300), al_map_rgb(155, 0, 0), Vector(-50, 0));
    _Boss = true;
 }
 
@@ -406,7 +409,7 @@ void Single::updateBoss() {
 	 bossTimer->startTimer();
 	 bossIncoming = true;
       }
-      if (bossTimer->getCount() > 250) {
+      if (bossTimer->getCount() > 250 ) {
 	 spawnBoss();
 	 bossTimer->stopTimer();
 	 bossTimer->resetCount();
@@ -476,13 +479,7 @@ void Single::updateEnemyPosition(double dt) {
 	       addLaser((*it)->centre, (*it)->color, (*it)->getProjSpeed() + Vector(0, -40));
 	    }	    
 	    else { //regular fire- straight horizontal shot
-
-	       /////////////////////
-	       // disabled for most of laser
-	       /////////////////////
-
-	       
-	       //addLaser((*it)->centre + Vector(20, 0), (*it)->color, (*it)->getProjSpeed());
+	       addLaser((*it)->centre + Vector(20, 0), (*it)->color, (*it)->getProjSpeed());
 	    }
 	    (*it)->setFire(false);
 	    }
@@ -493,7 +490,7 @@ void Single::updateEnemyPosition(double dt) {
 	 */
       }
    }
-   if(enem.size() <= 3 && !_Boss)
+   if(enem.size() <= 3 && !bossExists && !bossIncoming)
       spawn();  
 }
 
@@ -667,9 +664,10 @@ void Single::drawEnemies() {
 }
 
 void Single::drawLives() {
+   Point centre(displayWidth-70, displayWidth-50);
    if (playerLives > 0) {
-      al_draw_rectangle(displayWidth - 70, 50, displayWidth - 50, 70,
-			al_map_rgb(0, 255, 0), 5);
+	  al_draw_rectangle(displayWidth - 70, 50, displayWidth - 50, 70,
+			    al_map_rgb(0, 255, 0), 5);
    }
    if (playerLives > 1) {
       al_draw_rectangle(displayWidth - 110, 50, displayWidth - 90, 70,

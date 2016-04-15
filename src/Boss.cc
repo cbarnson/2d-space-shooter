@@ -19,7 +19,7 @@ const int BOSS_HP = 30;
 
 Boss::Boss(Point cen, ALLEGRO_COLOR c, Vector spd) : Enemy(cen, c, spd),
 						     projSpeed(Vector(-400, 0)),
-						     fireSpeed(40),
+						     fireSpeed(400),
 						     lives(30), dAnim(0),
 						     dAnim_complete(false), fire(true)
 {
@@ -116,14 +116,14 @@ void Boss::chooseFrame() {
    }
    // middle damage animation--fire speed goes up.
    if (lives <= BOSS_HP && spriteSheetIndex < 3) { 
-      fireSpeed = 50;
-      speed = speed * 1.5; // increase speed
+      fireSpeed = rand()%50+20;
+      speed = speed * 1.2; // increase speed
       hitbox = 70;
       spriteSheetIndex++;
    }
    // final damage animation-- fire speed up again
    if (lives <= 10 && spriteSheetIndex < 8) {
-      fireSpeed = 30;
+      fireSpeed = rand()%30+20;
       speed = speed * 1.2; // increase speed
       hitbox = 60;
       spriteSheetIndex++;
@@ -131,4 +131,5 @@ void Boss::chooseFrame() {
    // interpret index as row and col of sprite sheet
    row = spriteSheetIndex / 3;
    col = spriteSheetIndex % 3;
+
 }
