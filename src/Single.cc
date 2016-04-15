@@ -511,7 +511,7 @@ void Single::updateEnemyPosition(double dt) {
 	 (*it)->update(dt);
 	 
 	 if((*it)->getFire()) {
-	    
+	    //explosion of lasers from creepBomb	    
 	    if(doColorsMatch((*it)->color, al_map_rgb(204,3,3))) {
 	       CircleLaser((*it));
 	    }
@@ -524,11 +524,9 @@ void Single::updateEnemyPosition(double dt) {
 	    else if(doColorsMatch((*it)->color, al_map_rgb(155, 0, 0)))
 	    {
 	       bossFire((*it));
-	       // for(int i = -70; i <= 70; i += 20)
-	       // addLaser((*it)->centre, (*it)->color, (*it)->getProjSpeed() + Vector(0,i));
 	    }
 	 
-	 //regular enemies spawn one straight projectile	    
+	    //regular enemies spawn one straight projectile	    
 	    else {
 	       addLaser((*it)->centre + Vector(20, 0), (*it)->color, (*it)->getProjSpeed());
 	    }
@@ -536,13 +534,14 @@ void Single::updateEnemyPosition(double dt) {
 	 }	 	 
       }
    }
-      
-   if(aliveBoss == false && playerScoreTotal >= 10)
+   //check should be for <100
+   if(aliveBoss == false && playerScoreTotal >= 10 &&!killedBoss)
    {
-      bossIntro();
       aliveBoss = true;
+      bossIntro();
+      
    }
-   if((enem.size() <= 0 && aliveBoss == false)||killedBoss&&enem.size()<=0) {
+   if((enem.size() <= 0 && aliveBoss == false) || killedBoss && enem.size()<=0) {
       spawn();
    }
 }
@@ -554,13 +553,11 @@ void Single::bossIntro(){
 	 gameOverFont->drawTextCentered(al_map_rgb(204, 204, 0), "BOSS INCOMING");
       if(bossTime->getCount()>200){
 	 spawnBoss();
-	 aliveBoss=false;
+	 // aliveBoss=false;
       }
    }
 }
       
-
-
 void Single::CircleLaser(std::shared_ptr<Enemy> E)
 {
    for(int i=-500; i<=500; i+=300)
@@ -574,13 +571,15 @@ void Single::bossFire(std::shared_ptr<Enemy> e){
    if(player)
       playerloc=player->centre;
    Vector aim(0,0);
+   //change this to be based on lives
    switch(n){
-     case 1:
+      case 1:
+	 aim.Angle(playerloc, e->centre, 0.9);
 	for(int i = -70; i <= 70; i += 20)
-	   addLaser(e->centre+Point(50,0), e->color, e->getProjSpeed() + Vector(0,i));
+	   addLaser(e->centre+Point(50,0), e->color, aim+ Vector(-30,i));
 	break;
       case 2:
-//	 addCreepB(e->centre+Point(50,0), al_map_rgb(204,3,3), Vector(-100, 0)); wave is too fucking hard
+//	 addCreepB(e->centre+Point(50,0), al_map_rgb(204,3,3), Vector(-100, 0));// wave is too fucking hard
 	 break;
       case 3:
 	 aim.Angle(playerloc, e->centre+Point(0,50), 0.9);
@@ -648,9 +647,11 @@ void Single::cullEnemies() {
    if (!enem.empty()) {
       for (std::list< std::shared_ptr<Enemy> >::iterator it = enem.begin(); 
 	   it != enem.end(); ++it) {
+
+	 //check for boss
 	 if(doColorsMatch((*it)->getColor(), al_map_rgb(155, 0, 0)))
-	    if((*it)->getdAnim_complete())
-	       killedBoss=true;
+	    if((*it)->getdAnim_complete()){
+	       killedBoss=true; std::cout<<"set kb to true";}
 	  if (!(*it)->getdAnim_complete()) 
 	     // if not dead (death animation not complete)
 	     newEnem.push_back(*it);	  

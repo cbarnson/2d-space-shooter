@@ -122,6 +122,7 @@ void Boss::update(double dt)
 }
 void Boss::chooseFrame(){
    if(lives>20){
+
       frame=0;
    }
    if(lives<=20 && frame<3){
@@ -132,7 +133,6 @@ void Boss::chooseFrame(){
       BOSS_SIZE=60;
       frame++;
    }
-   std::cout<<frame<<", ";
    row=frame/3;
    col=frame%3;
 }
