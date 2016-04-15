@@ -44,9 +44,7 @@ struct Vector {
    void rollRandomX();   
    void reflectY();
    void reflectX();
-   
-   void xMod(int m);
-   void yMod(int m);
+   void flip();
    void Angle(Point p, Point p2, double time);
    
 };

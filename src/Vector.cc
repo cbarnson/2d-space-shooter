@@ -58,16 +58,12 @@ void Vector::reflectY() {
 void Vector::reflectX() {
    x = -x;
 }
-
-void Vector::xMod(int m) {
-   x = x + m;
-}
-
-void Vector::yMod(int m) {
-   y = y + m;
-}
-
 void Vector::Angle(Point end, Point current, double time){
    x=(end.x-current.x)/time;
    y=(end.y-current.y)/time;
+}
+void Vector::flip(){
+   double temp=x;
+   x=y;
+   y=temp;
 }

@@ -459,7 +459,7 @@ void Single::spawn() {
    int n = rand() % 6 + 1;
    
    // select enemy routine
-   switch(n) {
+   switch(6) {
       case 1: // wave of 5
 	 for (int i = 0; i < 5; i++) {
 	    pt.rollRandom();
@@ -567,7 +567,7 @@ void Single::updateEnemyPosition(double dt) {
 	       addLaser((*it)->centre, (*it)->color, (*it)->getProjSpeed() + Vector(0, -40));
 	    }	    
 	    else {//regular fire- straight horizontal shot
-	       //  addLaser((*it)->centre + Vector(20, 0), (*it)->color, (*it)->getProjSpeed());
+	         addLaser((*it)->centre + Vector(20, 0), (*it)->color, (*it)->getProjSpeed());
 	    }
 	    (*it)->setFire(false);
 	    }

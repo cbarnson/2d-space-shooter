@@ -34,7 +34,7 @@ class CreepMis : public Enemy {
    int lives;
    int dAnim;   
    bool dAnim_complete;
-   bool fire, at1, at2, at3, at4;
+   bool fire, at1, at2, at3, at4, init;
    Point stop1, stop2, stop3, stop4, next, focal;
    double angle;
   public:
@@ -49,6 +49,7 @@ class CreepMis : public Enemy {
    void draw(std::shared_ptr<Sprite> ship, std::shared_ptr<Sprite> death);   
    void setFire(bool f);
    void updateAngle();
+   void updateVector();
    ALLEGRO_COLOR getColor();
    Vector getProjSpeed(); 
    int getSize();    
