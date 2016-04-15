@@ -40,6 +40,67 @@ extern const int WEAPON_DELAY_MISSILE;
 extern const Vector PLAYER_PROJECTILE_SPEED;
 
 class Single : public Root {
+  public:
+   // Single has public access to fps, displayWidth, and displayHeight
+   Single(int w, int h, int f, std::string playerName);
+   ~Single();
+   
+   // inherited from Root
+   void update(double);
+   void draw();
+   
+   // inherited from Root (pure virtual)
+   void init();
+   void input(ALLEGRO_KEYBOARD_STATE&);   
+   bool is_game_over();
+   void updateScore(ALLEGRO_COLOR&);
+   int getScore() const;
+
+   // draw functions for components - called by draw
+   void drawLives();
+   void drawWeaponUpgradeStatus();
+   void drawProjectiles();
+   void drawEnemies();
+   void showGameOverMessage();   
+
+   // update functions for components - called by update
+   void updateProjectilePosition(double);
+   void updateEnemyPosition(double);
+   void updateHighscores();
+   void collision();
+   void checkCollisionOnPlayer();
+   void checkCollisionOnEnemies();
+   void checkCollidingEnemyWithPlayer();
+   void clean();
+   void cullPlayer();
+   void cullProjectiles();
+   void cullEnemies();
+   void respawnPlayer();
+   
+   // add functions for game components
+   void setupPlayer();   
+   void addLaser(const Point&, const ALLEGRO_COLOR&, const Vector&);
+   void addMissile(const Point&, const ALLEGRO_COLOR&, const Vector&);
+   void addCreepB(const Point&, const ALLEGRO_COLOR&, const Vector&);
+   void addCreep(const Point&, const ALLEGRO_COLOR&, const Vector&);
+   void addBoss(const Point&, const ALLEGRO_COLOR&, const Vector&);
+   void addCreepMis(const Point&, Point, Point, Point, Point, const ALLEGRO_COLOR&,
+		    const Vector&);
+   
+   // utility functions
+   void spawn();
+   void bossIntro();
+   void spawnBoss();
+   void bossFire(std::shared_ptr<Enemy>);
+   void CircleLaser(std::shared_ptr<Enemy>);
+   bool bossFlag();
+   bool doHitboxesIntersect(const Point&, const int&,
+			    const Point&, const int&);   
+   bool doColorsMatch(const ALLEGRO_COLOR&, const ALLEGRO_COLOR&);
+   bool isPointBoxCollision(const Point&, const Point&, const int&);
+
+   
+  private:   
    // high score
    std::shared_ptr<Score> _highscores;
    // fonts
@@ -52,7 +113,6 @@ class Single : public Root {
    std::shared_ptr<Timer> playerRespawn;
    std::shared_ptr<Timer> upgradeText;
    std::shared_ptr<Timer> bossTime;
-
    // base classes
    std::list< std::shared_ptr<Projectile> > proj;
    std::list< std::shared_ptr<Enemy> > enem;   
@@ -65,75 +125,22 @@ class Single : public Root {
    std::shared_ptr<Sprite> enemyDeath;
    std::shared_ptr<Sprite> bossShip;
    std::shared_ptr<Sprite> enemyBomb;
-
+   // player name
    std::string _playerName;
+   
+   // flags
    bool gameOver;
-   bool _Boss=false; bool killedBoss;//dont think i use this currently
+   bool _Boss = false;
+   bool killedBoss = false;
+   bool writeComplete = false;
+   bool bossFirstShot = false;
+
+   // some game options
    int playerLives;
    int playerScoreTotal;
    int playerScore;
-   bool writeComplete = false;
-   bool bossFirstShot=false;
 
-  public:
-   // Single has public access to fps, displayWidth, and displayHeight
-   Single(int w, int h, int f, std::string playerName);
-   ~Single();
-
-   void shutdown();
-   void init();
    
-   // virtuals from root
-   void update(double);
-   void draw();
-
-   void addLaser(const Point&, const ALLEGRO_COLOR&, const Vector&);
-   void addMissile(const Point&, const ALLEGRO_COLOR&, const Vector&);
-   void addCreepB(const Point&, const ALLEGRO_COLOR&, const Vector&);
-   void addCreep(const Point&, const ALLEGRO_COLOR&, const Vector&);
-   void addBoss(const Point&, const ALLEGRO_COLOR&, const Vector&);
-   void addCreepMis(const Point&, Point, Point, Point, Point, const ALLEGRO_COLOR&, const Vector&);
-   
-   void input(ALLEGRO_KEYBOARD_STATE&);   
-   bool is_game_over();
-   void updateScore(ALLEGRO_COLOR&);
-   int getScore() const;
-      
-   void spawn();
-   void respawnPlayer();
-
-   void bossIntro();
-   void spawnBoss();
-   void bossFire(std::shared_ptr<Enemy>);
-  private:   
-   // HELPER FUNCTIONS - simplicity & readability
-   void drawLives();
-   void drawWeaponUpgradeStatus();
-   void drawProjectiles();
-   void drawEnemies();
-
-   void updateProjectilePosition(double);
-   void updateEnemyPosition(double);
-   void updateHighscores();
-   
-   void setupPlayer();
-   
-   void cullPlayer();
-   void cullProjectiles();
-   void cullEnemies();
-   void CircleLaser(std::shared_ptr<Enemy>);
-   void clean();
-   void showGameOverMessage();
-   
-   void collision();
-   void checkCollisionOnPlayer();
-   void checkCollisionOnEnemies();
-   void checkCollidingEnemyWithPlayer();
-   bool bossFlag();
-   bool doHitboxesIntersect(const Point&, const int&,
-			    const Point&, const int&);   
-   bool doColorsMatch(const ALLEGRO_COLOR&, const ALLEGRO_COLOR&);
-   bool isPointBoxCollision(const Point&, const Point&, const int&);
 
 };
 

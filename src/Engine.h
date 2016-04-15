@@ -13,12 +13,9 @@
 #include <string>
 
 #include "State.h"
-#include<allegro5/allegro_audio.h>
-#include<allegro5/allegro_acodec.h>
 // forward declarations
 class Menu;
 class Root;
-using namespace gs;
 
 class Engine {
       
@@ -48,27 +45,26 @@ class Engine {
    }
 
   private:
+   // general game variables
    int _displayWidth;
    int _displayHeight;
    int _fps;
-   int _gameScore; // initially -1
+   int _gameScore;
+   std::string _playerName;   
+   gs::state _state;
+   // allegro objects
    ALLEGRO_TIMER *_timer;
    ALLEGRO_EVENT_QUEUE *_eventQueue;
    ALLEGRO_DISPLAY *_display;
-   ALLEGRO_SAMPLE *sample;
-   std::string _playerName;
-   
-   bool running;
-   gs::state _state;
+   // menu scene
    std::shared_ptr<Menu> _menu;
-   std::shared_ptr<Root> _root; // interface for game modes
+   // root designates game mode - single or versus
+   std::shared_ptr<Root> _root; 
 
    // functions to add components
    void addSingle();
    void addVersus();
    void addMenu();
-   
-     
 };
 
 

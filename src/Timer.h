@@ -17,7 +17,7 @@ class Timer {
    ~Timer();
 
    void create();
-   
+
    void startTimer();
    void stopTimer();
    void resetCount();
