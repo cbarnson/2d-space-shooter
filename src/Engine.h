@@ -13,7 +13,8 @@
 #include <string>
 
 #include "State.h"
-
+#include<allegro5/allegro_audio.h>
+#include<allegro5/allegro_acodec.h>
 // forward declarations
 class Menu;
 class Root;
@@ -24,7 +25,7 @@ class Engine {
   public:
    Engine(int w, int h, int fps);
    ~Engine();
-
+   
    void init();
    void run();
    void draw();
@@ -54,7 +55,7 @@ class Engine {
    ALLEGRO_TIMER *_timer;
    ALLEGRO_EVENT_QUEUE *_eventQueue;
    ALLEGRO_DISPLAY *_display;
-
+   ALLEGRO_SAMPLE *sample;
    std::string _playerName;
    
    bool running;

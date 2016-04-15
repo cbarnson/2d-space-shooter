@@ -4,7 +4,8 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_image.h>
-
+#include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_acodec.h>
 #include <stdexcept>
 #include <iostream>
 
@@ -40,6 +41,8 @@ void Engine::init() {
    if ((_display = al_create_display(_displayWidth, _displayHeight)) == NULL) {
       std::cout << "Cannot initialize the display\n";
       exit(1); // non-zero argument means "trouble"
+     
+
    }
    
    // initialize addons
@@ -47,6 +50,7 @@ void Engine::init() {
    al_init_font_addon();
    al_init_ttf_addon();
    al_init_image_addon();
+
    
    // initialize our timers
    if ((_timer = al_create_timer(1.0 / _fps)) == NULL) {

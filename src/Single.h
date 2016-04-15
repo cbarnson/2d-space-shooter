@@ -68,11 +68,12 @@ class Single : public Root {
 
    std::string _playerName;
    bool gameOver;
-   bool aliveBoss; bool killedBoss;
+   bool _Boss=false; bool killedBoss;//dont think i use this currently
    int playerLives;
    int playerScoreTotal;
    int playerScore;
    bool writeComplete = false;
+   bool bossFirstShot=false;
 
   public:
    // Single has public access to fps, displayWidth, and displayHeight
@@ -128,7 +129,7 @@ class Single : public Root {
    void checkCollisionOnPlayer();
    void checkCollisionOnEnemies();
    void checkCollidingEnemyWithPlayer();
-   
+   bool bossFlag();
    bool doHitboxesIntersect(const Point&, const int&,
 			    const Point&, const int&);   
    bool doColorsMatch(const ALLEGRO_COLOR&, const ALLEGRO_COLOR&);
