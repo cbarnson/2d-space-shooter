@@ -14,12 +14,14 @@
 #include <list>
 #include <vector>
 #include <memory>
+#include <string>
 
 #include "Root.h"
 #include "Vector.h"
 #include "Background.h"
+#include "Score.h"
 
-// forward declaring classes is preferable to include "....h" in headers
+// forward declarations
 struct Point;
 class Timer;
 class Projectile;
@@ -38,11 +40,11 @@ extern const int WEAPON_DELAY_MISSILE;
 extern const Vector PLAYER_PROJECTILE_SPEED;
 
 class Single : public Root {
-
+   // high score
+   std::shared_ptr<Score> _highscores;
    // fonts
    std::shared_ptr<Font> gameOverFont;
-   std::shared_ptr<Font> gameScoreFont;
-   
+   std::shared_ptr<Font> gameScoreFont;   
    // timers
    std::shared_ptr<Timer> gameOverTimer;
    std::shared_ptr<Timer> playerWeapon1;
@@ -55,28 +57,26 @@ class Single : public Root {
    std::list< std::shared_ptr<Projectile> > proj;
    std::list< std::shared_ptr<Enemy> > enem;   
    std::shared_ptr<Player> player;
-
    // background
    std::shared_ptr<Background> bg;
-
    // sprites
-   std::vector< std::shared_ptr<Sprite> > missileVec;
-   
    std::shared_ptr<Sprite> playerShip;
    std::shared_ptr<Sprite> enemyShip;
    std::shared_ptr<Sprite> enemyDeath;
    std::shared_ptr<Sprite> bossShip;
    std::shared_ptr<Sprite> enemyBomb;
 
+   std::string _playerName;
    bool gameOver;
    bool aliveBoss; bool killedBoss;
    int playerLives;
    int playerScoreTotal;
    int playerScore;
+   bool writeComplete = false;
 
   public:
    // Single has public access to fps, displayWidth, and displayHeight
-   Single(int w, int h, int f);
+   Single(int w, int h, int f, std::string playerName);
    ~Single();
 
    void shutdown();
@@ -94,7 +94,7 @@ class Single : public Root {
    void addCreepMis(const Point&, Point, Point, Point, Point, const ALLEGRO_COLOR&, const Vector&);
    
    void input(ALLEGRO_KEYBOARD_STATE&);   
-   bool is_game_over() const;
+   bool is_game_over();
    void updateScore(ALLEGRO_COLOR&);
    int getScore() const;
       
@@ -113,6 +113,7 @@ class Single : public Root {
 
    void updateProjectilePosition(double);
    void updateEnemyPosition(double);
+   void updateHighscores();
    
    void setupPlayer();
    

@@ -9,6 +9,7 @@
 #include "Single.h"
 
 #include <iostream>
+#include <fstream>
 
 #include "Point.h"
 #include "Vector.h"
@@ -30,14 +31,16 @@
 
 using namespace act;
 
-const int GAME_OVER_WAIT_TIME = 80;
+const int GAME_OVER_WAIT_TIME = 100;
 const int WEAPON_DELAY_LASER = 6;
 const int WEAPON_DELAY_MISSILE = 20;
 const Vector PLAYER_PROJECTILE_SPEED = Vector(500, 0);
 
 // constructor
-Single::Single(int w, int h, int f) : Root(w, h, f), gameOver(false), playerLives(3),
-				      playerScoreTotal(0), playerScore(0)
+Single::Single(int w, int h, int f, std::string playerName) :
+   Root(w, h, f), _playerName(playerName),
+   gameOver(false), playerLives(1),
+   playerScoreTotal(0), playerScore(0)
 {
    //std::cout << "in the single constructor\n";
 }
@@ -59,7 +62,6 @@ Single::~Single() {
 
 // initialize Single player mode
 void Single::init() {
-   //std::cout << "in single init function\n";
    // timers
    gameOverTimer = std::make_shared<Timer> (framesPerSec); gameOverTimer->create();
    playerWeapon1 = std::make_shared<Timer> (framesPerSec); playerWeapon1->create();   
@@ -91,8 +93,8 @@ void Single::init() {
    bossShip = std::make_shared<Sprite> ("bossv2.png");
    // delete path 
    al_destroy_path(path);
-   aliveBoss=false;
-   killedBoss=false;
+   aliveBoss = false;
+   killedBoss = false;
    //std::cout << "end of single init \n";
 }
 
@@ -193,9 +195,40 @@ void Single::addCreepMis
 
 // returns true if the gameOver is true and if the game over screen has completed
 // its duration
-bool Single::is_game_over() const {
-   return (gameOverTimer->getCount() >= GAME_OVER_WAIT_TIME) && gameOver;
+bool Single::is_game_over() {
+   if (gameOverTimer->getCount() >= GAME_OVER_WAIT_TIME && gameOver) {
+      // do high score stuff here
+      updateHighscores();
+      return true;
+   }
+   return false;
 }
+
+void Single::updateHighscores() {
+   if (writeComplete == false) { // make sure this is a one time event
+      _highscores = std::make_shared<Score> ("leaderboard.txt");
+      _highscores->init();
+      _highscores->readPrev();
+      if (_highscores->getMin() < playerScoreTotal) {
+	 _highscores->swapWithMin(_playerName, playerScoreTotal);
+	 _highscores->sortRecords();
+      }
+      _highscores->update();
+      /*
+      // setup score stuff
+      _highscores = std::make_shared<Score> ("~/2720project/src/leaderboard.txt");
+      _highscores->readFrom(); // read in data available or create new file if does
+      // not exist   
+      if (_highscores->isNewRecord(playerScoreTotal)) {
+	 _highscores->replaceRecord(_playerName, playerScoreTotal);
+      }
+      std::cout << "now writing out\n";
+      _highscores->writeTo();
+      std::cout << "completed write out\n";*/
+      writeComplete = true;
+   }
+}
+
 
 // performs an update for all the necessary game logic
 void Single::update(double dt) {
@@ -228,9 +261,10 @@ void Single::draw() {
 
 
 void Single::showGameOverMessage() {
-   if (!gameOverTimer->isRunning())
-      gameOverTimer->startTimer();   
-   if (gameOverTimer->getCount() < 80) {
+   if (!gameOverTimer->isRunning()) {
+      gameOverTimer->startTimer();
+   }
+   if (gameOverTimer->getCount() < GAME_OVER_WAIT_TIME) {
       gameOverFont->drawTextCentered(al_map_rgb(255, 0, 0), "GAME OVER");
    }
    

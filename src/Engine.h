@@ -10,6 +10,7 @@
 
 #include <allegro5/allegro.h>
 #include <memory>
+#include <string>
 
 #include "State.h"
 
@@ -32,14 +33,15 @@ class Engine {
    void menuLoop();
    void gameLoop(float& prevTime);
 
+   inline void setName(std::string playerName) {
+      _playerName = playerName;
+   }   
    inline int getWidth() const {
       return _displayWidth;
    }
-
    inline int getHeight() const {
       return _displayHeight;
    }
-
    inline int getFps() const {
       return _fps;
    }
@@ -53,6 +55,8 @@ class Engine {
    ALLEGRO_EVENT_QUEUE *_eventQueue;
    ALLEGRO_DISPLAY *_display;
 
+   std::string _playerName;
+   
    bool running;
    gs::state _state;
    std::shared_ptr<Menu> _menu;

@@ -6,6 +6,7 @@
 
 #include <memory>
 #include <typeinfo>
+#include <string>
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
@@ -87,7 +88,7 @@ class TestGame: public CppUnit::TestFixture {
 
       engine = new Engine(800, 600, 60);
       
-      root = new Single(800, 600, 60);
+      root = new Single(800, 600, 60, "bob");
    }
    
    void tearDown() {

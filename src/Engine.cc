@@ -72,8 +72,6 @@ void Engine::init() {
 }
 
 
-
-
 // repeatedly call the state manager function until the _state is EXIT
 void Engine::run() {
    float prevTime = 0;
@@ -142,7 +140,7 @@ void Engine::gameLoop(float& prevTime) {
    
    // _display closes
    if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-      _state = state::EXIT;
+      _state = gs::state::EXIT;
       return;
    }
    
@@ -163,7 +161,7 @@ void Engine::gameLoop(float& prevTime) {
    
    // check if game over
    if (_root->is_game_over()) {
-      _state = state::MENU;
+      _state = gs::state::MENU;
       _root.reset();
    }   
 }
@@ -172,7 +170,6 @@ void Engine::gameLoop(float& prevTime) {
 void Engine::update(double dt) {
    if (_root) {
       _root->update(dt);
-      //_gameScore = _root->getScore();
    }
 }
 
@@ -185,7 +182,7 @@ void Engine::draw() {
 
 
 void Engine::addSingle() {
-   _root = std::make_shared<Single> (_displayWidth, _displayHeight, _fps);
+   _root = std::make_shared<Single> (_displayWidth, _displayHeight, _fps, _playerName);
    _root->init();
 }
 
