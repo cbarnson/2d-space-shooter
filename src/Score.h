@@ -78,10 +78,18 @@ class Score {
       addEmptyPair();
       addEmptyPair();
       addEmptyPair();
-   }   
+   }
+   // get methods
    inline int getMin() const {
       return _data[2]->_score;
-   }   
+   }
+   inline std::string getName(int index) const {
+      return _data[index]->_name;
+   }
+   inline int getScore(int index) const {
+      return _data[index]->_score;
+   }
+   // some add functions
    inline void addEmptyPair() {
       _data.push_back(std::make_shared<scorePair> ());
    }   

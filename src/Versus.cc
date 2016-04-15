@@ -182,11 +182,12 @@ bool Versus::is_game_over() {
    }
    return false;
 }
+/*
 // pure virtual from Root
 int Versus::getScore() const {
    return 0;
 }
-
+*/
 //================================
 // ADD FUNCTIONS FOR COMPONENTS
 //================================

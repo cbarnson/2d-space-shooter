@@ -10,6 +10,7 @@
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
+#include <allegro5/allegro_ttf.h>
 
 #include <list>
 #include <vector>
@@ -35,6 +36,7 @@ class Font;
  */
 
 extern const int GAME_OVER_WAIT_TIME;
+extern const int HIGH_SCORE_DISPLAY_TIME;
 extern const int WEAPON_DELAY_LASER;
 extern const int WEAPON_DELAY_MISSILE;
 extern const Vector PLAYER_PROJECTILE_SPEED;
@@ -54,16 +56,18 @@ class Single : public Root {
    void input(ALLEGRO_KEYBOARD_STATE&);   
    bool is_game_over();
    void updateScore(ALLEGRO_COLOR&);
-   int getScore() const;
 
    // draw functions for components - called by draw
+   void drawBossIncomingMessage(); //================
    void drawLives();
    void drawWeaponUpgradeStatus();
    void drawProjectiles();
    void drawEnemies();
-   void showGameOverMessage();   
+   void showGameOverMessage();
+   void drawHighScores();
 
    // update functions for components - called by update
+   void updateBoss(); //===========
    void updateProjectilePosition(double);
    void updateEnemyPosition(double);
    void updateHighscores();
@@ -89,11 +93,11 @@ class Single : public Root {
    
    // utility functions
    void spawn();
-   void bossIntro();
+   //void bossIntro();
    void spawnBoss();
    void bossFire(std::shared_ptr<Enemy>);
    void CircleLaser(std::shared_ptr<Enemy>);
-   bool bossFlag();
+   //bool bossFlag();
    bool doHitboxesIntersect(const Point&, const int&,
 			    const Point&, const int&);   
    bool doColorsMatch(const ALLEGRO_COLOR&, const ALLEGRO_COLOR&);
@@ -104,6 +108,7 @@ class Single : public Root {
    // high score
    std::shared_ptr<Score> _highscores;
    // fonts
+   ALLEGRO_FONT* _font24 = NULL;
    std::shared_ptr<Font> gameOverFont;
    std::shared_ptr<Font> gameScoreFont;   
    // timers
@@ -112,7 +117,7 @@ class Single : public Root {
    std::shared_ptr<Timer> playerWeapon2;
    std::shared_ptr<Timer> playerRespawn;
    std::shared_ptr<Timer> upgradeText;
-   std::shared_ptr<Timer> bossTime;
+   std::shared_ptr<Timer> bossTimer;
    // base classes
    std::list< std::shared_ptr<Projectile> > proj;
    std::list< std::shared_ptr<Enemy> > enem;   
@@ -130,6 +135,10 @@ class Single : public Root {
    
    // flags
    bool gameOver;
+
+   bool bossExists = false;
+   bool bossIncoming = false;
+   
    bool _Boss = false;
    bool killedBoss = false;
    bool writeComplete = false;

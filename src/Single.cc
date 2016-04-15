@@ -29,9 +29,9 @@
 #include "CreepBomb.h"
 #include "Boss.h"
 
-using namespace act;
 
 const int GAME_OVER_WAIT_TIME = 100;
+const int HIGH_SCORE_DISPLAY_TIME = 200;
 const int WEAPON_DELAY_LASER = 6;
 const int WEAPON_DELAY_MISSILE = 20;
 const Vector PLAYER_PROJECTILE_SPEED = Vector(500, 0);
@@ -63,6 +63,8 @@ Single::~Single() {
    playerWeapon2.reset();
    playerRespawn.reset();
    upgradeText.reset();
+
+   al_destroy_font(_font24);
 }
 
 //---------------------------------
@@ -74,7 +76,7 @@ void Single::init() {
    playerWeapon1 = std::make_shared<Timer> (framesPerSec); playerWeapon1->create();   
    playerWeapon2 = std::make_shared<Timer> (framesPerSec); playerWeapon2->create();
    playerRespawn = std::make_shared<Timer> (framesPerSec); playerRespawn->create();
-   bossTime      = std::make_shared<Timer> (framesPerSec); bossTime->create();
+   bossTimer      = std::make_shared<Timer> (framesPerSec); bossTimer->create();
    upgradeText = std::make_shared<Timer> (framesPerSec); upgradeText->create();
    playerWeapon1->startTimer();
    playerWeapon2->startTimer();
@@ -85,6 +87,7 @@ void Single::init() {
    al_append_path_component(path, "resources");
    al_change_directory(al_path_cstr(path, '/'));   
    // fonts
+   _font24 = al_load_font("ipag.ttf", 24, 0);
    gameOverFont = std::make_shared<Font> ("DavidCLM-BoldItalic.ttf", 64); gameOverFont->load();
    gameScoreFont = std::make_shared<Font> ("ipag.ttf", 18); gameScoreFont->load();   
    // background
@@ -103,14 +106,31 @@ void Single::init() {
 // UPDATE MAIN
 //-----------------------------
 void Single::update(double dt) {
+   // background
    bg->update(dt);
-   if (player) player->update(dt);
-   else if (!player && playerLives <= 0) gameOver = true;
-   else respawnPlayer();
+   // player
+   if (player) {
+      player->update(dt);
+   }
+   // gameover condition
+   else if (!player && playerLives <= 0) {
+      gameOver = true;
+   }
+   // respawn condition
+   else {
+      respawnPlayer();
+   }
+
+   // do boss stuff here
+   updateBoss();
    
+   // projectiles
    updateProjectilePosition(dt);
-   updateEnemyPosition(dt);   
+   // enemies
+   updateEnemyPosition(dt);
+   // all collision
    collision();
+   // cull enities out of bound or dead
    clean();      
 }
 //------------------------------
@@ -118,18 +138,26 @@ void Single::update(double dt) {
 //-----------------------------
 // renders the entire scene
 void Single::draw() {
+   // background
    bg->draw();
+   // life indicator
    drawLives();
-   //gameScoreFont->drawTextF(al_map_rgb(255, 255, 255), 100, 100, "Score: %i", playerScoreTotal);
-   drawProjectiles(); 
-
-   drawEnemies(); // calls draw on each enemy, provides Sprite pointer
-  
-   if (gameOver) showGameOverMessage();
-   else if (player) player->draw(playerShip, 0);
+   // projectiles on screen
+   drawProjectiles();
+   // enemies on screen
+   drawEnemies(); 
+   // conditional boss message
+   drawBossIncomingMessage();
+   
+   if (gameOver) {
+      showGameOverMessage();
+   }
+   else if (player) {
+      player->draw(playerShip, 0);
+   }
    gameScoreFont->drawTextF(al_map_rgb(255, 255, 255), 100, 50,"Score: %i", playerScoreTotal);
    drawWeaponUpgradeStatus();
-   bossIntro();
+   //bossIntro();
 }
 
 //--------------------------------
@@ -138,11 +166,11 @@ void Single::draw() {
 void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
    if (player) {
       switch (player->input(kb)) {	 
-	 case action::QUIT_GAME: // player indicated they wish to quit the game
+	 case act::action::QUIT_GAME: // player indicated they wish to quit the game
 	    player.reset();
 	    return;
 	    
-	 case action::FIRE_PRIMARY: // case to handle lasers	    
+	 case act::action::FIRE_PRIMARY: // case to handle lasers	    
 	    // single
 	    if (playerWeapon1->getCount() > WEAPON_DELAY_LASER &&
 		playerScore < 30) {
@@ -184,7 +212,7 @@ void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
 	    break;
 
 	    
-	 case action::FIRE_SECONDARY: // case to handle missile  	    
+	 case act::action::FIRE_SECONDARY: // case to handle missile  	    
 	    if (playerWeapon2->getCount() > WEAPON_DELAY_MISSILE) {
 	       
 	       addMissile(player->centre, player->color, PLAYER_PROJECTILE_SPEED);
@@ -201,26 +229,17 @@ void Single::input(ALLEGRO_KEYBOARD_STATE& kb) {
    }
 }
 
-// returns the total score the player has accumulated for the game
-int Single::getScore() const {
-   return playerScoreTotal;
-}
-
-
 // returns true if the gameOver is true and if the game over screen has completed
 // its duration
 bool Single::is_game_over() {
-   if (gameOverTimer->getCount() >= GAME_OVER_WAIT_TIME && gameOver) {
-      // do high score stuff here
-      updateHighscores();
+   // change this condition------------
+   if (gameOver && gameOverTimer->getCount() > GAME_OVER_WAIT_TIME + HIGH_SCORE_DISPLAY_TIME) {
+      // flush the display
+      bg->draw();
       return true;
    }
    return false;
 }
-
-
-
-
 
 
 void Single::spawn() {
@@ -228,9 +247,6 @@ void Single::spawn() {
    Point pt(800, 200);
    Point pt1, pt2, playerloc, pt3;
    Vector spd(0, 0);
-   ALLEGRO_COLOR color = al_map_rgb(255,255,255);
-
- 
    if (player)
       playerloc = player->centre;
    else
@@ -240,7 +256,7 @@ void Single::spawn() {
    int n = rand() % 6 + 1;
    
    // select enemy routine
-   switch(n) {
+   switch(n) {      
       case 1: // wave of 5
 	 for (int i = 0; i < 5; i++) {
 	    pt.rollRandom();
@@ -249,7 +265,6 @@ void Single::spawn() {
 	 }	 
 	 break;
 	 
-	 
       case 2: // wave of 8
 	 for (int i = 0; i < 8; i++) {
 	    pt.rollRandom();
@@ -257,11 +272,9 @@ void Single::spawn() {
 	    addCreep(pt, al_map_rgb(255, 159, 48), spd);
 	 }
 	 break;
-   
-   
+	 
       case 3: // V shaped spawn, shoots 2 shots
 	 addCreep(Point(800, 300), al_map_rgb(246, 64, 234),Vector(-180, 0));
-      
 	 addCreep(Point(900, 350), al_map_rgb(246, 64, 234), Vector(-180, 0));
 	 addCreep(Point(900, 250), al_map_rgb(246, 64, 234), Vector(-180, 0));
 	 addCreep(Point(1000, 400), al_map_rgb(246, 64, 234), Vector(-180, 0));
@@ -281,55 +294,25 @@ void Single::spawn() {
 	 spd.Angle(playerloc, pt3, 1);
 	 addCreep(pt3, al_map_rgb(255, 255, 255),spd);
 	 break;
-      
-      
+            
       case 5:
 	 pt.y=pt.y+(rand()%200);
 	 addCreepB(pt, al_map_rgb(204,3,3), Vector(-60, 0));
-	 //spawn();
 	 break;
+	 
       case 6:
-	 for(int i=800; i<=1000; i+=50)
+	 for(int i = 800; i <= 1000; i += 50) {
 	    addCreepMis(Point(i,300), Point(700,100), Point(100,100),
-			Point(100,500), Point(700,500), al_map_rgb(255,254,253), Vector(-90, 0));
-	 
-	 
-   }
-   
+			Point(100,500), Point(700,500), al_map_rgb(255,254,253),
+			Vector(-90, 0));
+	 }
+	 break;
+      default:
+	 break;
+   }   
 }
 
 
-void Single::spawnBoss() {
-   std::cout << "in spawnBoss";
-   addBoss(Point(850, 300), al_map_rgb(155, 0, 0), Vector(-100, 0));
-   std::cout << "boss did spawn";
-   _Boss = true;
-}
-
-void Single::addBoss(const Point& cen, const ALLEGRO_COLOR& col, const Vector& spd) {
-   enem.push_back(std::make_shared<Boss> (cen, col, spd));
-}
-
-bool Single::bossFlag() {
-   if ((playerScoreTotal % 10 == 0) && !_Boss && playerScoreTotal != 0) {
-      return true;
-   }
-   return false;
-}
-
-void Single::bossIntro() {
-   if (bossFlag())
-      if (!bossTime->isRunning())
-	 bossTime->startTimer();
-   if (bossTime->getCount() > 1 && bossTime->getCount() < 200) {
-      gameOverFont->drawTextCentered(al_map_rgb(204, 204, 0), "BOSS INCOMING");
-   }
-   if (bossTime->getCount() > 250) {
-      spawnBoss();
-      bossTime->stopTimer();
-      bossTime->resetCount();
-   }
-}
 
 
 void Single::CircleLaser(std::shared_ptr<Enemy> E) {
@@ -366,7 +349,8 @@ void Single::bossFire(std::shared_ptr<Enemy> e){
 	 // addLaser(e->centre+Point(50,0), e->color, aim+ Vector(-30,i));
 	break;
       case 3:
-	 // addCreepB(e->centre+Point(50,0), al_map_rgb(204,3,3), Vector(-100, 0));// wave is too fucking hard
+	 // addCreepB(e->centre+Point(50,0), al_map_rgb(204,3,3), Vector(-100, 0));
+// wave is too fucking hard
 	 break;
       case 4:
 	 aim.Angle(playerloc, e->centre+Point(0,50), 0.9);
@@ -382,6 +366,65 @@ void Single::bossFire(std::shared_ptr<Enemy> e){
 //==================================
 // UPDATE FUNCTIONS
 //=================================
+void Single::spawnBoss() {
+   addBoss(Point(850, 300), al_map_rgb(155, 0, 0), Vector(-100, 0));
+   _Boss = true;
+}
+
+void Single::addBoss(const Point& cen, const ALLEGRO_COLOR& col, const Vector& spd) {
+   enem.push_back(std::make_shared<Boss> (cen, col, spd));
+}
+/*
+bool Single::bossFlag() { // wtf is boss flag???
+   if ((playerScoreTotal % 10 == 0) && !_Boss && playerScoreTotal != 0) {
+      return true;
+   }
+   return false;
+}
+
+void Single::bossIntro() {
+   if (bossFlag()) {
+      if (!bossTimer->isRunning()) {
+	 bossTimer->startTimer();
+      }
+   }
+   if (bossTimer->getCount() > 1 && bossTimer->getCount() < 200) {
+      gameOverFont->drawTextCentered(al_map_rgb(204, 204, 0), "BOSS INCOMING");
+   }
+   if (bossTimer->getCount() > 250) {
+      spawnBoss();
+      bossTimer->stopTimer();
+      bossTimer->resetCount();
+   }
+}
+*/
+void Single::updateBoss() {
+   // spawn condition
+   if (playerScore > 30 && bossExists == false) {
+      // start timer
+      if (bossTimer->isRunning() == false) {
+	 bossTimer->startTimer();
+	 bossIncoming = true;
+      }
+      if (bossTimer->getCount() > 250) {
+	 spawnBoss();
+	 bossTimer->stopTimer();
+	 bossTimer->resetCount();
+	 bossExists = true;
+	 bossIncoming = false;
+      }      
+   }
+}
+
+void Single::drawBossIncomingMessage() {
+   if (bossTimer->isRunning() == true && bossIncoming == true) {
+      gameOverFont->drawTextCentered(al_map_rgb(204, 204, 0), "BOSS INCOMING");
+      if (bossTimer->getCount() > 200) {
+	 bossIncoming = false;
+      }      
+   }
+}
+
 void Single::updateHighscores() {
    if (writeComplete == false) { // make sure this is a one time event
       _highscores = std::make_shared<Score> ("leaderboard.txt");
@@ -443,10 +486,11 @@ void Single::updateEnemyPosition(double dt) {
 	    }
 	    (*it)->setFire(false);
 	    }
-      	 
+      	 /*
 	 if (bossFlag()) {
 	    bossIntro();//start the series of events that leads to the boss spawning
-	 } 
+	 }
+	 */
       }
    }
    if(enem.size() <= 3 && !_Boss)
@@ -559,12 +603,15 @@ void Single::cullEnemies() {
 	   it != enem.end(); ++it) {
 
 	 //check for boss
-	 if(doColorsMatch((*it)->getColor(), al_map_rgb(155, 0, 0)))
-	    if((*it)->getdAnim_complete()){
-	       _Boss=false; bossFirstShot=false;}
-	 if (!(*it)->getdAnim_complete()) 
+	 if (doColorsMatch((*it)->getColor(), al_map_rgb(155, 0, 0))) {
+	    if ((*it)->getdAnim_complete()) {
+	       _Boss=false; bossFirstShot=false;
+	    }
+	 }
+	 if (!(*it)->getdAnim_complete())  {
 	     // if not dead (death animation not complete)
-	    newEnem.push_back(*it);	  
+	    newEnem.push_back(*it);
+	 }
       }
       enem.clear();
       enem.assign(newEnem.begin(), newEnem.end());
@@ -579,9 +626,9 @@ void Single::collision() {
 
 
 void Single::respawnPlayer() {
-   if (!playerRespawn->isRunning())
+   if (!playerRespawn->isRunning()) {
       playerRespawn->startTimer();
-   
+   }
    if (playerRespawn->getCount() > 80) {
       setupPlayer();
       playerRespawn->stopTimer();
@@ -607,12 +654,10 @@ void Single::drawEnemies() {
    if (!enem.empty()) {
       for (std::list< std::shared_ptr<Enemy> >::iterator it = enem.begin(); 
 	   it != enem.end(); ++it) {
-	 if(doColorsMatch((*it)->getColor(), al_map_rgb(204, 3, 3)))
-	 {
+	 if (doColorsMatch((*it)->getColor(), al_map_rgb(204, 3, 3))) {
 	    (*it)->draw(enemyBomb, enemyDeath);
 	 }
-	 else if (doColorsMatch((*it)->getColor(), al_map_rgb(155, 0, 0)))
-	 {
+	 else if (doColorsMatch((*it)->getColor(), al_map_rgb(155, 0, 0))) {
 	    (*it)->draw(bossShip, enemyDeath);
 	 }				
 	 else
@@ -622,71 +667,101 @@ void Single::drawEnemies() {
 }
 
 void Single::drawLives() {
-   if (playerLives > 0)
+   if (playerLives > 0) {
       al_draw_rectangle(displayWidth - 70, 50, displayWidth - 50, 70,
 			al_map_rgb(0, 255, 0), 5);
-   if (playerLives > 1)
+   }
+   if (playerLives > 1) {
       al_draw_rectangle(displayWidth - 110, 50, displayWidth - 90, 70,
 			al_map_rgb(0, 255, 0), 5);
-   if (playerLives > 2)
+   }
+   if (playerLives > 2) {
       al_draw_rectangle(displayWidth - 150, 50, displayWidth - 130, 70,
 			al_map_rgb(0, 255, 0) , 5);
-   
+   }   
    if (!player && playerLives > 0) {
       gameOverFont->drawTextCenteredF(al_map_rgb(255, 0, 0), "%i LIVES REMAINING", playerLives);
    }
 }
 
-void Single::drawWeaponUpgradeStatus(){
-   
-   al_draw_rounded_rectangle(displayWidth - (displayWidth/2)-50, 50,
-			     displayWidth-(displayWidth/2)+50,
+void Single::drawWeaponUpgradeStatus() {   
+   al_draw_rounded_rectangle(displayWidth - (displayWidth / 2) - 50, 50,
+			     displayWidth - (displayWidth / 2) + 50,
 			     70, 2, 2, al_map_rgb(255, 255, 255), 1);
-   if(playerScore!=0){
-      if(playerScore<30)
-	 al_draw_filled_rounded_rectangle(displayWidth - (displayWidth/2)-49, 51, displayWidth-
-					  (displayWidth/2)-49+playerScore*3.3, 69, 2, 2,
+   if (playerScore != 0) {
+      
+      if (playerScore < 30) {
+	 al_draw_filled_rounded_rectangle(displayWidth - (displayWidth / 2) - 49, 51,
+					  displayWidth - (displayWidth / 2) - 49 +
+					  playerScore * 3.3, 69, 2, 2,
 					  al_map_rgb(255, 0, 0));
-      if(playerScore >= 30 && playerScore <100){
-	 al_draw_filled_rounded_rectangle(displayWidth - (displayWidth/2)-49, 51, displayWidth-
-					  (displayWidth/2)-49+(playerScore-30)*1.428, 69, 2, 2,
-					  al_map_rgb(255, 0, 0));}
-      if(playerScore>=100){
-	 al_draw_filled_rounded_rectangle(displayWidth - (displayWidth/2)-49, 51, displayWidth-
-					  (displayWidth/2)+49, 69, 2, 2, al_map_rgb(0, 255, 0));}
+      }
+      if (playerScore >= 30 && playerScore < 100) {
+	 al_draw_filled_rounded_rectangle(displayWidth - (displayWidth / 2) - 49, 51,
+					  displayWidth - (displayWidth / 2) - 49 +
+					  (playerScore - 30) * 1.428, 69, 2, 2,
+					  al_map_rgb(255, 0, 0));
+      }
+      if (playerScore >= 100){
+	 al_draw_filled_rounded_rectangle(displayWidth - (displayWidth / 2) - 49, 51,
+					  displayWidth - (displayWidth / 2) + 49, 69,
+					  2, 2, al_map_rgb(0, 255, 0));
+      }
    }
-   if(playerScore==30 || playerScore==100)
+   if (playerScore == 30 || playerScore == 100) {
       upgradeText->startTimer();
-   if(upgradeText->isRunning()){
+   }
+   if (upgradeText->isRunning()) {
       gameScoreFont->drawText(400, 31, al_map_rgb(255,255,255), "WEAPON UPGRADED");
-      if(upgradeText->getCount() > 50){
+      
+      if (upgradeText->getCount() > 50) {
 	 upgradeText->stopTimer();
 	 upgradeText->resetCount();
       }
-
    }
 }
 
 void Single::showGameOverMessage() {
    if (!gameOverTimer->isRunning()) {
+      // start timer and update scores
       gameOverTimer->startTimer();
+      updateHighscores();
    }
    if (gameOverTimer->getCount() < GAME_OVER_WAIT_TIME) {
+      // game over message
       gameOverFont->drawTextCentered(al_map_rgb(255, 0, 0), "GAME OVER");
-   }
-   
+   }   
    else {
-      gameOverTimer->stopTimer();
+      // draw high scores
+      drawHighScores();
    }
 }
+
+// draw each of the 3 lines with x = 300
+// then y = 150, 300, 450
+void Single::drawHighScores() {
+   int yPosition = 150;
+   for (int i = 0; i < 3; i++) {
+      
+      al_draw_textf(_font24,                    // font
+		    al_map_rgb(255, 255, 255),  // color
+		    300,                        // x
+		    yPosition,                  // y
+		    0,                          // flags
+		    "%i. %s %i", i + 1,             
+		    _highscores->getName(i).c_str(),
+		    _highscores->getScore(i));
+      yPosition += 150;
+   }
+}
+
 
 //==================================
 // ADD FUNCTIONS FOR GAME COMPONENTS
 //=================================
 
 void Single::setupPlayer() {
-   player = std::make_shared<Player> (Point(215, 245),
-				      al_map_rgb(0, 200, 0));
+   player = std::make_shared<Player> (Point(215, 245), al_map_rgb(0, 200, 0));
 }
 
 // function to add a Laser object onto the Projectile list
@@ -710,11 +785,10 @@ void Single::addCreep(const Point& cen, const ALLEGRO_COLOR& col, const Vector& 
 void Single::addCreepB(const Point& cen, const ALLEGRO_COLOR& col, const Vector& spd) {
    enem.push_back(std::make_shared<CreepBomb>(cen, col, spd));
 }
-void Single::addCreepMis
-(const Point& cen, Point p1, Point p2, Point p3, Point p4, const ALLEGRO_COLOR& col, const Vector& spd){
+void Single::addCreepMis(const Point& cen, Point p1, Point p2, Point p3, Point p4,
+			 const ALLEGRO_COLOR& col, const Vector& spd){
    enem.push_back(std::make_shared<CreepMis>(cen, p1, p2, p3, p4, col, spd));
 }
-
 
 //==================================
 // UTILITY FUNCTIONS

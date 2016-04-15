@@ -39,7 +39,7 @@ class Versus : public Root {
    void input(ALLEGRO_KEYBOARD_STATE&);
    void updateScore(ALLEGRO_COLOR&);
    bool is_game_over();
-   int getScore() const;
+   //int getScore() const;
    
   private:
    // general game information
