@@ -11,10 +11,11 @@ highscore tracking across local games, 2 game modes, and multiple weapon types.
 
 Allegro version 5.0.11 or later http://liballeg.org/old.html
 The following addons are required:
-* allegro_font
-* allegro_ttf
-* allegro_primitives
-* allegro_image
+
+* allegro-font
+* allegro-ttf
+* allegro-primitives
+* allegro-image
 
 ## Usage
 
